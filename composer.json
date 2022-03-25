@@ -1,0 +1,50 @@
+{
+	"name": "cusodede/yii2-permissions",
+	"description": "Permissions support module for Yii2",
+	"minimum-stability": "dev",
+	"license": "proprietary",
+	"authors": [
+		{
+			"name": "Pavel Dubrovsky",
+			"email": "antikillerxxl@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=8.0",
+		"pozitronik/yii2-traits": "dev-master",
+		"pozitronik/yii2-relations": "dev-master",
+		"cusodede/yii2-default-controller": "dev-master",
+		"yiisoft/yii2-bootstrap4": "~2.0.10",
+		"kartik-v/yii2-widget-touchspin": "dev-master",
+		"kartik-v/yii2-widget-select2": "dev-master",
+		"cusodede/yii2-multi-select-widget": "dev-master"
+	},
+	"require-dev": {
+		"yiisoft/yii2": "dev-master"
+	},
+	"autoload": {
+		"psr-4": {
+			"cusodede\\permissions\\": "src"
+		}
+	},
+	"config": {
+		"process-timeout": 1800,
+		"fxp-asset": {
+			"enabled": false
+		}
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://asset-packagist.org"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/cusodede/yii2-default-controller"
+		},
+		{
+			"type": "vcs",
+			"url": "https://github.com/cusodede/yii2-multi-select-widget.git"
+		}
+	]
+}
