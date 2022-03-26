@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions\filters;
 
+use cusodede\permissions\PermissionsModule;
 use Throwable;
 use Yii;
 use yii\base\Action;
@@ -36,7 +37,7 @@ class PermissionFilter extends ActionFilter {
 	 * @throws Throwable
 	 */
 	public function beforeAction($action):bool {
-		$user = Users::Current();
+		$user = PermissionsModule::UserCurrentIdentity();
 		if (true === $user->hasActionPermission($action)) return true;
 
 		if (null !== $this->denyCallback) {

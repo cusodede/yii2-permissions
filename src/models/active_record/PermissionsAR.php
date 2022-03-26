@@ -8,9 +8,14 @@ use cusodede\permissions\models\active_record\relations\RelUsersToPermissions;
 use cusodede\permissions\models\active_record\relations\RelUsersToPermissionsCollections;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
+use cusodede\permissions\PermissionsModule;
 use pozitronik\traits\traits\ActiveRecordTrait;
+use Throwable;
+use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
+
 /**
  * This is the model class for table "sys_permissions".
  *
@@ -26,9 +31,9 @@ use yii\db\ActiveRecord;
  * @property RelUsersToPermissions[] $relatedUsersToPermissions Связь к промежуточной таблице к правам доступа
  * @property RelUsersToPermissionsCollections[] $relatedUsersToPermissionsCollections Связь к таблице к группам прав доступа через промежуточную таблицу
  * @property RelPermissionsCollectionsToPermissions[] $relatedPermissionsCollectionsToPermissions Связь к промежуточной таблице прав доступа из групп прав доступа
- * @property-read Users[] $relatedUsers Связь к пользователям, имеющим этот доступ напрямую
+ * @property-read IdentityInterface[] $relatedUsers Связь к пользователям, имеющим этот доступ напрямую
  * @property-read PermissionsCollections[] $relatedPermissionsCollections Связь к группам прав доступа, в которые входит доступ
- * @property-read Users[] $relatedUsersViaPermissionsCollections Связь к пользователям, имеющим этот доступ через группу доступов
+ * @property-read IdentityInterface[] $relatedUsersViaPermissionsCollections Связь к пользователям, имеющим этот доступ через группу доступов
  */
 class PermissionsAR extends ActiveRecord {
 	use ActiveRecordTrait;
@@ -97,9 +102,11 @@ class PermissionsAR extends ActiveRecord {
 
 	/**
 	 * @return ActiveQuery
+	 * @throws Throwable
+	 * @throws InvalidConfigException
 	 */
 	public function getRelatedUsers():ActiveQuery {
-		return $this->hasMany(Users::class, ['id' => 'user_id'])->via('relatedUsersToPermissions');
+		return $this->hasMany(PermissionsModule::UserIdentityClass(), ['id' => 'user_id'])->via('relatedUsersToPermissions');
 	}
 
 	/**
@@ -111,9 +118,11 @@ class PermissionsAR extends ActiveRecord {
 
 	/**
 	 * @return ActiveQuery
+	 * @throws Throwable
+	 * @throws InvalidConfigException
 	 */
 	public function getRelatedUsersViaPermissionsCollections():ActiveQuery {
-		return $this->hasMany(Users::class, ['id' => 'user_id'])->via('relatedUsersToPermissionsCollections');
+		return $this->hasMany(PermissionsModule::UserIdentityClass(), ['id' => 'user_id'])->via('relatedUsersToPermissionsCollections');
 	}
 
 }

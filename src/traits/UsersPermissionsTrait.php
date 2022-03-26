@@ -90,6 +90,7 @@ trait UsersPermissionsTrait {
 	 * @return ActiveQuery
 	 */
 	public function getRelatedUsersToPermissions():ActiveQuery {
+		/** @var ActiveRecord $this */
 		return $this->hasMany(RelUsersToPermissions::class, ['user_id' => 'id']);
 	}
 
@@ -97,6 +98,7 @@ trait UsersPermissionsTrait {
 	 * @return ActiveQuery
 	 */
 	public function getRelatedPermissions():ActiveQuery {
+		/** @var ActiveRecord $this */
 		return $this->hasMany(Permissions::class, ['id' => 'permission_id'])->via('relatedUsersToPermissions');
 	}
 
@@ -118,6 +120,7 @@ trait UsersPermissionsTrait {
 	 * @return ActiveQuery
 	 */
 	public function getRelatedUsersToPermissionsCollections():ActiveQuery {
+		/** @var ActiveRecord $this */
 		return $this->hasMany(RelUsersToPermissionsCollections::class, ['user_id' => 'id']);
 	}
 
@@ -125,6 +128,7 @@ trait UsersPermissionsTrait {
 	 * @return ActiveQuery
 	 */
 	public function getRelatedPermissionsCollections():ActiveQuery {
+		/** @var ActiveRecord $this */
 		return $this->hasMany(PermissionsCollections::class, ['id' => 'collection_id'])->via('relatedUsersToPermissionsCollections');
 	}
 
@@ -217,8 +221,9 @@ trait UsersPermissionsTrait {
 	 * @throws Throwable
 	 */
 	protected function invalidateUserTag(string $methodSignature):void {
+		/** @var ActiveRecord $this */
 		if ($this->isNewRecord) {
-			$this->on(self::EVENT_AFTER_INSERT, function($event) {//отложим сброс кеша до сохранения
+			$this->on(ActiveRecord::EVENT_AFTER_INSERT, function($event) {//отложим сброс кеша до сохранения
 				$this->invalidateUserTag($event->data[0]);
 			}, [$methodSignature]);
 			return;

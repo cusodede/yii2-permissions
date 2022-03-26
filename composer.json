@@ -17,6 +17,7 @@
 		"yiisoft/yii2-bootstrap4": "~2.0.10",
 		"kartik-v/yii2-widget-touchspin": "dev-master",
 		"kartik-v/yii2-widget-select2": "dev-master",
+		"kartik-v/yii2-editable": "dev-master",
 		"cusodede/yii2-multi-select-widget": "dev-master"
 	},
 	"require-dev": {

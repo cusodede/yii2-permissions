@@ -7,19 +7,25 @@ declare(strict_types = 1);
  * @var ActiveDataProvider $dataProvider
  */
 
+use cusodede\permissions\models\Permissions;
+use cusodede\permissions\models\PermissionsSearch;
+use cusodede\permissions\PermissionsModule;
+use kartik\editable\Editable;
 use kartik\grid\ActionColumn;
 use kartik\grid\DataColumn;
 use kartik\grid\EditableColumn;
 use kartik\grid\GridView;
 use pozitronik\grid_config\GridConfig;
+use pozitronik\helpers\ControllerHelper;
 use pozitronik\helpers\Utils;
+use pozitronik\widgets\BadgeWidget;
+use yii\bootstrap4\Html;
 use yii\data\ActiveDataProvider;
 use yii\web\JsExpression;
 use yii\web\View;
 use kartik\select2\Select2;
 
-ModalHelperAsset::register($this);
-GridHelperAsset::register($this);
+//GridHelperAsset::register($this); todo
 
 $id = 'permissions-index-grid';
 ?>
@@ -34,19 +40,15 @@ $id = 'permissions-index-grid';
 			'heading' => false,
 		],
 		'replaceTags' => [
-			'{optionsBtn}' => ToolbarFilterWidget::widget(['content' => '{options}']),
 			'{totalCount}' => ($dataProvider->totalCount > 0)?Utils::pluralForm($dataProvider->totalCount, ['разрешение', 'разрешения', 'разрешений']):"Нет разрешений",
-			'{newRecord}' => ToolbarFilterWidget::widget([
-				'label' => ($dataProvider->totalCount > 0)?Utils::pluralForm($dataProvider->totalCount, ['разрешение', 'разрешения', 'разрешений']):"Нет разрешений",
-				'content' => Html::link('Новая запись', PermissionsController::to('create'), ['class' => 'btn btn-success'])
-			]),
-			'{filterBtn}' => ToolbarFilterWidget::widget(['content' => Html::button("<i class='fa fa-filter'></i>", ['onclick' => new JsExpression('setFakeGridFilter("#'.$id.'")'), 'class' => 'btn btn-info'])]),
-			'{collectionsLink}' => ToolbarFilterWidget::widget(['content' => Html::link('Редактор групп', PermissionsCollectionsController::to('index'), ['class' => 'btn btn-info'])])
+			'{newRecord}' =>  Html::a('Новая запись', PermissionsModule::to('permissions/create'), ['class' => 'btn btn-success']),
+			'{filterBtn}' => Html::button("<i class='fa fa-filter'></i>", ['onclick' => new JsExpression('setFakeGridFilter("#'.$id.'")'), 'class' => 'btn btn-info']),
+			'{collectionsLink}' => Html::a('Редактор групп', PermissionsModule::to('permissions-collections/index'), ['class' => 'btn btn-info'])
 		],
 		'toolbar' => [
 			'{filterBtn}'
 		],
-		'panelBeforeTemplate' => '{optionsBtn}{newRecord}{collectionsLink}{toolbarContainer}{before}<div class="clearfix"></div>',
+		'panelBeforeTemplate' => '{options}{newRecord}{collectionsLink}{toolbarContainer}{before}<div class="clearfix"></div>',
 		'summary' => null,
 		'showOnEmpty' => true,
 		'export' => false,
@@ -58,12 +60,12 @@ $id = 'permissions-index-grid';
 				'hAlign' => GridView::ALIGN_LEFT,
 				'template' => '<div class="btn-group">{edit}{delete}</div>',
 				'buttons' => [
-					'edit' => static fn(string $url) => Html::link('<i class="fa fa-edit"></i>', $url, [
+					'edit' => static fn(string $url) => Html::a('<i class="fa fa-edit"></i>', $url, [
 							'class' => 'btn btn-sm btn-outline-primary',
 							'data' => ['trigger' => 'hover', 'toggle' => 'tooltip', 'placement' => 'top', 'original-title' => 'Редактирование']
 						]
 					),
-					'delete' => static fn(string $url) => Html::link('<i class="fa fa-trash"></i>', $url, [
+					'delete' => static fn(string $url) => Html::a('<i class="fa fa-trash"></i>', $url, [
 						'class' => ['btn btn-sm btn-outline-primary'],
 						'data' => [
 							'method' => "post",
@@ -73,9 +75,7 @@ $id = 'permissions-index-grid';
 							'placement' => 'top',
 							'original-title' => 'Удалить'
 						]
-					],
-						Html::NO
-					),
+					]),
 				],
 			],
 			'id',
@@ -83,7 +83,7 @@ $id = 'permissions-index-grid';
 				'class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
 					'formOptions' => [
-						'action' => PermissionsController::to('editDefault')
+						'action' => PermissionsModule::to('permissions/editDefault')
 					],
 					'inputType' => Editable::INPUT_TEXT
 				],
@@ -94,7 +94,7 @@ $id = 'permissions-index-grid';
 				'class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
 					'formOptions' => [
-						'action' => PermissionsController::to('editDefault')
+						'action' => PermissionsModule::to('permissions/editDefault')
 					],
 					'inputType' => Editable::INPUT_SPIN,
 					'options' => [
@@ -111,11 +111,11 @@ $id = 'permissions-index-grid';
 				'class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
 					'formOptions' => [
-						'action' => PermissionsController::to('editDefault')
+						'action' => PermissionsModule::to('permissions/editDefault')
 					],
 					'inputType' => Editable::INPUT_SELECT2,
 					'options' => [
-						'data' => TemporaryHelper::GetControllersList(Permissions::ConfigurationParameter(Permissions::CONTROLLER_DIRS)),
+						'data' => ControllerHelper::GetControllersList(Permissions::ConfigurationParameter(Permissions::CONTROLLER_DIRS)),
 						'pluginOptions' => [
 							'multiple' => false,
 							'allowClear' => true,
@@ -131,7 +131,7 @@ $id = 'permissions-index-grid';
 				'class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
 					'formOptions' => [
-						'action' => PermissionsController::to('editAction'),
+						'action' => PermissionsModule::to('permissions/editAction'),
 					],
 					'inputType' => Editable::INPUT_TEXT
 				],
@@ -142,11 +142,11 @@ $id = 'permissions-index-grid';
 				'class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
 					'formOptions' => [
-						'action' => PermissionsController::to('editDefault')
+						'action' => PermissionsModule::to('permissions/editDefault')
 					],
 					'inputType' => Editable::INPUT_SELECT2,
 					'options' => [
-						'data' => TemporaryHelper::VERBS,
+						'data' => PermissionsModule::VERBS,
 						'pluginOptions' => [
 							'multiple' => false,
 							'allowClear' => true,
@@ -158,7 +158,7 @@ $id = 'permissions-index-grid';
 				'filter' => Select2::widget([
 					'model' => $searchModel,
 					'attribute' => 'verb',
-					'data' => TemporaryHelper::VERBS,
+					'data' => PermissionsModule::VERBS,
 					'pluginOptions' => [
 						'allowClear' => true,
 						'placeholder' => ''
@@ -173,7 +173,7 @@ $id = 'permissions-index-grid';
 			['class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
 					'formOptions' => [
-						'action' => PermissionsController::to('editDefault')
+						'action' => PermissionsModule::to('permissions/editDefault')
 					],
 					'inputType' => Editable::INPUT_TEXTAREA,
 				],
@@ -187,7 +187,7 @@ $id = 'permissions-index-grid';
 				'value' => static fn(Permissions $permission) => BadgeWidget::widget([
 					'items' => $permission->relatedPermissionsCollections,
 					'subItem' => 'name',
-					'urlScheme' => [PermissionsCollectionsController::to('edit'), 'id' => 'id']
+					'urlScheme' => [PermissionsModule::to('permissions-collections/edit'), 'id' => 'id']
 				]),
 				'format' => 'raw'
 			],
@@ -198,7 +198,6 @@ $id = 'permissions-index-grid';
 				'value' => static fn(Permissions $permission) => BadgeWidget::widget([
 					'items' => $permission->relatedUsers,
 					'subItem' => 'username',
-					'urlScheme' => [UsersController::to('view'), 'id' => 'id']
 				]),
 				'format' => 'raw'
 			]

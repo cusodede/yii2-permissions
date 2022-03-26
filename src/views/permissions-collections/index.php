@@ -7,18 +7,25 @@ declare(strict_types = 1);
  * @var ActiveDataProvider $dataProvider
  */
 
+use cusodede\permissions\assets\PermissionsCollectionsAsset;
+use cusodede\permissions\controllers\PermissionsCollectionsController;
+use cusodede\permissions\controllers\PermissionsController;
+use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\models\PermissionsCollectionsSearch;
+use cusodede\permissions\PermissionsModule;
 use kartik\grid\ActionColumn;
 use kartik\grid\DataColumn;
 use kartik\grid\GridView;
 use pozitronik\grid_config\GridConfig;
 use pozitronik\helpers\Utils;
+use pozitronik\widgets\BadgeWidget;
+use yii\bootstrap4\Html;
 use yii\data\ActiveDataProvider;
 use yii\web\JsExpression;
 use yii\web\View;
 
 PermissionsCollectionsAsset::register($this);
-ModalHelperAsset::register($this);
+//GridHelperAsset::register($this); todo
 
 $id = 'permissions-collections-index-grid';
 
@@ -34,20 +41,16 @@ $id = 'permissions-collections-index-grid';
 			'heading' => false,
 		],
 		'replaceTags' => [
-			'{optionsBtn}' => ToolbarFilterWidget::widget(['content' => '{options}']),
 			'{totalCount}' => ($dataProvider->totalCount > 0)?Utils::pluralForm($dataProvider->totalCount, ['разрешение', 'разрешения', 'разрешений']):"Нет разрешений",
-			'{newRecord}' => ToolbarFilterWidget::widget([
-				'label' => ($dataProvider->totalCount > 0)?Utils::pluralForm($dataProvider->totalCount, ['разрешение', 'разрешения', 'разрешений']):"Нет разрешений",
-				'content' => Html::link('Новая запись', PermissionsController::to('create'), ['class' => 'btn btn-success'])
-			]),
-			'{filterBtn}' => ToolbarFilterWidget::widget(['content' => Html::button("<i class='fa fa-filter'></i>", ['onclick' => new JsExpression('setFakeGridFilter("#'.$id.'")'), 'class' => 'btn btn-info'])]),
-			'{collectionsLink}' => ToolbarFilterWidget::widget(['content' => Html::link("Редактор разрешений", PermissionsController::to('index'), ['class' => 'btn btn-info'])])
+			'{newRecord}' => Html::a('Новая запись', PermissionsModule::to('permissions-collections/create'), ['class' => 'btn btn-success']),
+			'{filterBtn}' => Html::button("<i class='fa fa-filter'></i>", ['onclick' => new JsExpression('setFakeGridFilter("#'.$id.'")'), 'class' => 'btn btn-info']),
+			'{collectionsLink}' => Html::a("Редактор разрешений", PermissionsModule::to('permissions/index'), ['class' => 'btn btn-info'])
 		],
 		'toolbar' => [
 			'{filterBtn}'
 		],
-		'panelBeforeTemplate' => '{optionsBtn}{newRecord}{collectionsLink}{toolbarContainer}{before}<div class="clearfix"></div>',
-		'emptyText' => Html::link('Новая группа', PermissionsCollectionsController::to('create'), ['class' => 'btn btn-success']),
+		'panelBeforeTemplate' => '{options}{newRecord}{collectionsLink}{toolbarContainer}{before}<div class="clearfix"></div>',
+		'emptyText' => Html::a('Новая группа', PermissionsCollectionsController::to('create'), ['class' => 'btn btn-success']),
 		'export' => false,
 		'resizableColumns' => true,
 		'responsive' => true,
@@ -57,7 +60,7 @@ $id = 'permissions-collections-index-grid';
 				'hAlign' => GridView::ALIGN_LEFT,
 				'template' => '<div class="btn-group">{edit}</div>',
 				'buttons' => [
-					'edit' => static fn(string $url) => Html::link('<i class="fa fa-edit"></i>', $url, [
+					'edit' => static fn(string $url) => Html::a('<i class="fa fa-edit"></i>', $url, [
 							'class' => 'btn btn-sm btn-outline-primary',
 							'data' => ['trigger' => 'hover', 'toggle' => 'tooltip', 'placement' => 'top', 'original-title' => 'Редактирование']
 						]
@@ -97,7 +100,6 @@ $id = 'permissions-collections-index-grid';
 				'value' => static fn(PermissionsCollections $collections) => BadgeWidget::widget([
 					'items' => $collections->relatedUsersRecursively,
 					'subItem' => 'username',
-					'urlScheme' => [UsersController::to('view'), 'id' => 'id']
 				])
 			]
 		]

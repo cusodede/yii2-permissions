@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions\traits;
 
+use cusodede\permissions\PermissionsModule;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\traits\traits\ControllerTrait;
 use Throwable;
@@ -24,7 +25,7 @@ trait ControllerPermissionsTrait {
 	 * @throws Throwable
 	 */
 	public static function hasPermission(?string $actionId = null, ?int $userId = null, ?string $moduleId = null):bool {
-		if (null === ($user = null === $userId?Users::Current():Users::findOne($userId))) {
+		if (null === ($user = PermissionsModule::FindIdentityById($userId))) {
 			throw new NotFoundHttpException();
 		}
 

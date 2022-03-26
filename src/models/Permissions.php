@@ -5,6 +5,7 @@ namespace cusodede\permissions\models;
 
 use cusodede\permissions\models\active_record\PermissionsAR;
 use pozitronik\helpers\ArrayHelper;
+use pozitronik\helpers\CacheHelper;
 use Throwable;
 use Yii;
 use yii\caching\TagDependency;

@@ -8,11 +8,14 @@ use cusodede\permissions\models\active_record\relations\RelPermissionsCollection
 use cusodede\permissions\models\active_record\relations\RelUsersToPermissionsCollections;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
+use cusodede\permissions\PermissionsModule;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\traits\traits\ActiveRecordTrait;
 use Throwable;
+use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "sys_permissions_collections".
@@ -29,8 +32,8 @@ use yii\db\ActiveRecord;
  * (родительские нам не нужны ни для чего)
  * @property RelUsersToPermissionsCollections[] $relatedUsersToPermissionsCollections Связь к промежуточной таблице к пользователям
  * @property Permissions[] $relatedPermissions Входящие в группу доступа права доступа
- * @property Users[] $relatedUsers Все пользователи, у которых есть эта группа доступа
- * @property Users[] $relatedUsersRecursively Все пользователи, с учетом вложенности групп
+ * @property IdentityInterface[] $relatedUsers Все пользователи, у которых есть эта группа доступа
+ * @property IdentityInterface[] $relatedUsersRecursively Все пользователи, с учетом вложенности групп
  * @property-read Permissions[] $unrelatedPermissions Права доступа, которые не включены в набор
  * @property RelPermissionsCollectionsToPermissions[] $relatedSlavePermissionsCollectionsToPermissions Связь к промежуточной таблице к правам доступа для всех ВКЛЮЧЁННЫХ групп
  * @property-read Permissions[] $relatedPermissionsViaSlaveGroups Права доступа, попавшие в группу из дочерних групп
@@ -117,19 +120,23 @@ class PermissionsCollectionsAR extends ActiveRecord {
 
 	/**
 	 * @return ActiveQuery
+	 * @throws Throwable
+	 * @throws InvalidConfigException
 	 */
 	public function getRelatedUsers():ActiveQuery {
-		return $this->hasMany(Users::class, ['id' => 'user_id'])->via('relatedUsersToPermissionsCollections');
+		return $this->hasMany(PermissionsModule::UserIdentityClass(), ['id' => 'user_id'])->via('relatedUsersToPermissionsCollections');
 	}
 
 	/**
 	 * Проблематично построить связь для join'а при использовании CTE, поэтому только live-получение.
 	 * CTE нужен, чтобы рекурсивно вычислять группы, включённые в группы.
 	 * Выборка не проверялась в поисковых моделях, но должно будет работать.
-	 * @return Users[]
+	 * @return IdentityInterface[]
+	 * @throws Throwable
+	 * @throws InvalidConfigException
 	 */
 	public function getRelatedUsersRecursively():array {
-		return Users::find()
+		return PermissionsModule::UserIdentityClass()::find()
 			->alias('users')
 			->innerJoin('t', 't.user_id = users.id')
 			->withQuery(

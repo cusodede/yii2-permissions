@@ -3,6 +3,9 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions\models;
 
+use cusodede\permissions\PermissionsModule;
+use Throwable;
+use yii\base\InvalidConfigException;
 use yii\data\ActiveDataProvider;
 
 /**
@@ -29,6 +32,8 @@ final class PermissionsSearch extends Permissions {
 	/**
 	 * @param array $params
 	 * @return ActiveDataProvider
+	 * @throws InvalidConfigException
+	 * @throws Throwable
 	 */
 	public function search(array $params):ActiveDataProvider {
 		$query = Permissions::find()->distinct()->active();
@@ -51,6 +56,8 @@ final class PermissionsSearch extends Permissions {
 	/**
 	 * @param $query
 	 * @return void
+	 * @throws Throwable
+	 * @throws InvalidConfigException
 	 */
 	private function filterData($query):void {
 		$query->andFilterWhere([self::tableName().'.id' => $this->id])
@@ -59,7 +66,7 @@ final class PermissionsSearch extends Permissions {
 			->andFilterWhere(['like', self::tableName().'.controller', $this->controller])
 			->andFilterWhere(['like', self::tableName().'.action', $this->action])
 			->andFilterWhere([self::tableName().'.verb' => $this->verb])
-			->andFilterWhere(['like', Users::tableName().'.username', $this->user])
+			->andFilterWhere(['like', PermissionsModule::UserIdentityClass()::tableName().'.username', $this->user])
 			->andFilterWhere(['like', PermissionsCollections::tableName().'.name', $this->collection]);
 	}
 
