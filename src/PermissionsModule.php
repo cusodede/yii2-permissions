@@ -19,7 +19,7 @@ class PermissionsModule extends Module {
 	use ModuleTrait;
 
 	private static ?string $_userIdentityClass = null;
-	private static ?string $_userCurrentIdentity = null;
+	private static ?IdentityInterface $_userCurrentIdentity = null;
 
 	public const VERBS = [
 		'GET' => 'GET',
@@ -36,13 +36,13 @@ class PermissionsModule extends Module {
 	 * @throws Throwable
 	 */
 	public static function UserIdentityClass():string|ActiveRecordInterface {
-		if (null === static::$_userCurrentIdentity) {
+		if (null === static::$_userIdentityClass) {
 			$identity = static::param('userIdentityClass', Yii::$app->user->identityClass);
-			static::$_userCurrentIdentity = (is_callable($identity))
+			static::$_userIdentityClass = (is_callable($identity))
 				?$identity()
 				:$identity;
 		}
-		return static::$_userCurrentIdentity;
+		return static::$_userIdentityClass;
 	}
 
 	/**
@@ -52,13 +52,13 @@ class PermissionsModule extends Module {
 	 * @noinspection PhpDocSignatureInspection
 	 */
 	public static function UserCurrentIdentity():IdentityInterface {
-		if (null === static::$_userIdentityClass) {
+		if (null === static::$_userCurrentIdentity) {
 			$identity = static::param('userCurrentIdentity', Yii::$app->user->identity);
-			static::$_userIdentityClass = (is_callable($identity))
+			static::$_userCurrentIdentity = (is_callable($identity))
 				?$identity()
 				:$identity;
 		}
-		return static::$_userIdentityClass;
+		return static::$_userCurrentIdentity;
 	}
 
 	/**
