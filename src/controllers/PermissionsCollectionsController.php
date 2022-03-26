@@ -22,7 +22,7 @@ class PermissionsCollectionsController extends DefaultController {
 	 * @inheritDoc
 	 */
 	public function getViewPath():string {
-		return '@app/views/permissions-collections';
+		return '@vendor/cusodede/yii2-permissions/src/views/permissions-collections';
 	}
 
 }

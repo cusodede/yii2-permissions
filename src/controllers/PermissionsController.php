@@ -24,7 +24,7 @@ class PermissionsController extends DefaultController {
 	 * @inheritDoc
 	 */
 	public function getViewPath():string {
-		return '@app/views/permissions';
+		return '@vendor/cusodede/yii2-permissions/src/views/permissions';
 	}
 
 	/**

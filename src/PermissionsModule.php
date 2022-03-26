@@ -4,12 +4,15 @@ declare(strict_types = 1);
 namespace cusodede\permissions;
 
 use cusodede\permissions\traits\UsersPermissionsTrait;
+use pozitronik\helpers\ArrayHelper;
+use pozitronik\helpers\ControllerHelper;
 use pozitronik\traits\traits\ModuleTrait;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Module;
 use yii\db\ActiveRecordInterface;
+use yii\web\Controller;
 use yii\web\IdentityInterface;
 
 /**
@@ -72,5 +75,23 @@ class PermissionsModule extends Module {
 		return (null === $id)
 			?static::UserCurrentIdentity()
 			:static::UserIdentityClass()::findOne($id);
+	}
+
+	/**
+	 * Возвращает список контроллеров в указанном каталоге, обрабатываемых модулем (в формате конфига)
+	 * @return string[]
+	 * @throws Throwable
+	 */
+	public static function GetControllersList(array $controllerDirs = ['@app/controllers']):array {
+		$result = [];
+		foreach ($controllerDirs as $controllerDir => $idPrefix) {
+			$controllers = ControllerHelper::GetControllersList((string)$controllerDir, null, [Controller::class]);
+			$result[$controllerDir] = ArrayHelper::map($controllers, static function(Controller $model) use ($idPrefix) {
+				return ('' === $idPrefix)?$model->id:$idPrefix.'/'.$model->id;
+			}, static function(Controller $model) use ($idPrefix) {
+				return ('' === $idPrefix)?$model->id:$idPrefix.'/'.$model->id;
+			});
+		}
+		return $result;
 	}
 }
