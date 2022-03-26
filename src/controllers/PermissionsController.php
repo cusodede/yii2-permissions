@@ -5,6 +5,7 @@ namespace cusodede\permissions\controllers;
 
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsSearch;
+use cusodede\permissions\traits\ControllerPermissionsTrait;
 use cusodede\web\default_controller\models\DefaultController;
 use kartik\grid\EditableColumnAction;
 use pozitronik\helpers\ArrayHelper;
@@ -13,6 +14,7 @@ use pozitronik\helpers\ArrayHelper;
  * Class PermissionsController
  */
 class PermissionsController extends DefaultController {
+	use ControllerPermissionsTrait;
 
 	public ?string $modelClass = Permissions::class;
 	public ?string $modelSearchClass = PermissionsSearch::class;
