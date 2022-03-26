@@ -16,7 +16,6 @@ use kartik\grid\DataColumn;
 use kartik\grid\EditableColumn;
 use kartik\grid\GridView;
 use pozitronik\grid_config\GridConfig;
-use pozitronik\helpers\ControllerHelper;
 use pozitronik\helpers\Utils;
 use pozitronik\widgets\BadgeWidget;
 use yii\bootstrap4\Html;

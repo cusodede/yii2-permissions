@@ -9,7 +9,6 @@ declare(strict_types = 1);
 
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\PermissionsModule;
-use pozitronik\helpers\ControllerHelper;
 use yii\bootstrap4\ActiveForm;
 use kartik\select2\Select2;
 use kartik\touchspin\TouchSpin;

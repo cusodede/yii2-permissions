@@ -35,7 +35,6 @@ class Permissions extends PermissionsAR {
 	/*Параметры разрешения, для которых пустой фильтр приравнивается к любому значению*/
 	public const ALLOWED_EMPTY_PARAMS = ['action', 'verb'];
 
-	public const COMPONENT_NAME = 'permissions';
 	public const GRANT_ALL = 'grantAll';
 	public const CONTROLLER_DIRS = 'controllerDirs';
 	/*Название параметра с преднастроенными правилами доступов*/
