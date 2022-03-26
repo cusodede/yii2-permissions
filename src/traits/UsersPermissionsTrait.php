@@ -7,6 +7,7 @@ use cusodede\permissions\models\active_record\relations\RelUsersToPermissions;
 use cusodede\permissions\models\active_record\relations\RelUsersToPermissionsCollections;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
+use cusodede\permissions\PermissionsModule;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\CacheHelper;
 use Throwable;
@@ -196,7 +197,7 @@ trait UsersPermissionsTrait {
 	 * @throws Throwable
 	 */
 	public function isAllPermissionsGranted():bool {
-		return in_array($this->id, Permissions::ConfigurationParameter(Permissions::GRANT_ALL, []), true);
+		return in_array($this->id, PermissionsModule::param(Permissions::GRANT_ALL, []), true);
 	}
 
 	/**

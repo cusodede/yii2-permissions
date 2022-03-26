@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace cusodede\permissions\models;
 
 use cusodede\permissions\models\active_record\PermissionsAR;
+use cusodede\permissions\PermissionsModule;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\CacheHelper;
 use Throwable;
@@ -59,23 +60,12 @@ class Permissions extends PermissionsAR {
 	}
 
 	/**
-	 * Возвращает значение конфига для компонента
-	 * @param string $parameter
-	 * @param mixed|null $default
-	 * @return mixed
-	 * @throws Throwable
-	 */
-	public static function ConfigurationParameter(string $parameter, mixed $default = null) {
-		return ArrayHelper::getValue(Yii::$app->components, self::COMPONENT_NAME.".".$parameter, $default);
-	}
-
-	/**
 	 * Вернуть список преднастроенных правил из конфига
 	 * @return self[]
 	 * @throws Throwable
 	 */
 	public static function GetConfigurationPermissions(?array $filter = null):array {
-		$permissionsConfig = self::ConfigurationParameter(self::CONFIGURATION_PERMISSIONS, []);
+		$permissionsConfig = PermissionsModule::param(self::CONFIGURATION_PERMISSIONS, []);
 		if (null !== $filter) $permissionsConfig = ArrayHelper::filter($permissionsConfig, $filter);
 		$result = [];
 		/*convert to models*/
@@ -146,7 +136,7 @@ class Permissions extends PermissionsAR {
 	 */
 	public static function allUserConfigurationPermissions(int $user_id /*, array $permissionFilters = [], bool $asArray = true*/ /*todo*/):array {
 		/** @var array $userConfigurationGrantedPermissions */
-		$userConfigurationGrantedPermissions = ArrayHelper::getValue(self::ConfigurationParameter(self::GRANT_PERMISSIONS, []), $user_id, []);
+		$userConfigurationGrantedPermissions = ArrayHelper::getValue(PermissionsModule::param(self::GRANT_PERMISSIONS, []), $user_id, []);
 		return self::GetConfigurationPermissions($userConfigurationGrantedPermissions);
 	}
 

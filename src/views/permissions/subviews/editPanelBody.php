@@ -30,7 +30,7 @@ use yii\web\View;
 <div class="row">
 	<div class="col-md-12">
 		<?= $form->field($model, 'controllerPath')->widget(Select2::class, [
-			'data' => ControllerHelper::GetControllersList(Permissions::ConfigurationParameter(Permissions::CONTROLLER_DIRS)),
+			'data' => ControllerHelper::GetControllersList(PermissionsModule::param(Permissions::CONTROLLER_DIRS)),
 			'pluginOptions' => [
 				'multiple' => false,
 				'allowClear' => true,
