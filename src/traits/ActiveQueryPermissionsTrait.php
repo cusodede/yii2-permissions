@@ -21,6 +21,7 @@ trait ActiveQueryPermissionsTrait {
 	 * @return ActiveQueryPermissionsTrait
 	 * @throws Throwable
 	 * @throws InvalidConfigException
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	public function scope(object|string $modelObjectOrClass = null, ?IdentityInterface $user = null):self {
 		//todo if (Options::getValue(Options::SCOPE_IGNORE_ENABLE)) return $this;

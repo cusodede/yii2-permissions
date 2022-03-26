@@ -49,6 +49,7 @@ class PermissionsModule extends Module {
 	 * @return IdentityInterface|UsersPermissionsTrait
 	 * @throws InvalidConfigException
 	 * @throws Throwable
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	public static function UserCurrentIdentity():IdentityInterface {
 		if (null === static::$_userIdentityClass) {
@@ -65,6 +66,7 @@ class PermissionsModule extends Module {
 	 * @return IdentityInterface|null|UsersPermissionsTrait
 	 * @throws InvalidConfigException
 	 * @throws Throwable
+	 * @noinspection PhpDocSignatureInspection
 	 */
 	public static function FindIdentityById(mixed $id):?IdentityInterface {
 		return (null === $id)
