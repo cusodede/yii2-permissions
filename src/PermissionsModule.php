@@ -11,4 +11,13 @@ use yii\base\Module;
  */
 class PermissionsModule extends Module {
 	use ModuleTrait;
+
+	public const VERBS = [
+		'GET' => 'GET',
+		'HEAD' => 'HEAD',
+		'POST' => 'POST',
+		'PUT' => 'PUT',
+		'PATCH' => 'PATCH',
+		'DELETE' => 'DELETE'
+	];
 }
