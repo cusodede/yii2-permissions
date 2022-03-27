@@ -29,14 +29,15 @@ class DefaultController extends Controller {
 
 	/**
 	 * Для всех контроллеров по пути $path добавляет наборы правил доступа в БД
-	 * @param string $path
+	 * @param string $path Путь к каталогу с контроллерами (рекурсивный корень).
+	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры, null для автоматического определения
+	 * @throws InvalidConfigException
 	 * @throws ReflectionException
 	 * @throws Throwable
-	 * @throws InvalidConfigException
 	 * @throws UnknownClassException
 	 */
-	public function actionInitControllersPermissions(string $path = "@app/controllers"):void {
-		PermissionsModule::InitControllersPermissions($path, static function(Permissions $permission, bool $saved) {
+	public function actionInitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null):void {
+		PermissionsModule::InitControllersPermissions($path, $moduleId, static function(Permissions $permission, bool $saved) {
 			Console::output(Console::renderColoredString($saved?"%gДоступ {$permission->name}: добавлен%n":"%rДоступ {$permission->name}: пропущен (".static::Errors2String($permission->errors).")%n"));
 		}, static function(PermissionsCollections $permissionsCollection, bool $saved) {
 			Console::output(Console::renderColoredString($saved?"%g{$permissionsCollection->name}: добавлено%n":"%r{$permissionsCollection->name}: пропущено (".static::Errors2String($permissionsCollection->errors).")%n"));

@@ -115,24 +115,27 @@ class PermissionsModule extends Module {
 	}
 
 	/**
-	 * @param string $path
+	 * @param string $path Путь к каталогу с контроллерами (рекурсивный корень).
+	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры, null для автоматического определения
 	 * @param callable|null $initPermissionHandler
 	 * @param callable|null $initPermissionCollectionHandler
 	 * @return void
 	 * @throws InvalidConfigException
-	 * @throws Throwable
 	 * @throws ReflectionException
+	 * @throws Throwable
 	 * @throws UnknownClassException
 	 */
-	public static function InitControllersPermissions(string $path = "@app/controllers", ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
+	public static function InitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
 		/** @var Controller[] $foundControllers */
-		$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class]);
+		$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class]);
 		foreach ($foundControllers as $controller) {
+			$module = $controller?->module?->id;
 			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
 			$controllerPermissions = [];
 			foreach ($controllerActions as $action) {
 				$permission = new Permissions([
 					'name' => "{$controller->id}:{$action}",
+					'module' => $module,
 					'controller' => $controller->id,
 					'action' => $action,
 					'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}"
