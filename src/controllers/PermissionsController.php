@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions\controllers;
 
+use cusodede\permissions\filters\PermissionFilter;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsSearch;
 use cusodede\permissions\traits\ControllerPermissionsTrait;
@@ -25,6 +26,17 @@ class PermissionsController extends DefaultController {
 	 */
 	public function getViewPath():string {
 		return '@vendor/cusodede/yii2-permissions/src/views/permissions';
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function behaviors():array {
+		return [
+			'access' => [
+				'class' => PermissionFilter::class
+			]
+		];
 	}
 
 	/**

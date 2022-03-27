@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions\controllers;
 
+use cusodede\permissions\filters\PermissionFilter;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\models\PermissionsCollectionsSearch;
 use cusodede\permissions\traits\ControllerPermissionsTrait;
@@ -17,6 +18,18 @@ class PermissionsCollectionsController extends DefaultController {
 	public ?string $modelClass = PermissionsCollections::class;
 	public ?string $modelSearchClass = PermissionsCollectionsSearch::class;
 	public bool $enablePrototypeMenu = false;
+
+
+	/**
+	 * @inheritDoc
+	 */
+	public function behaviors():array {
+		return [
+			'access' => [
+				'class' => PermissionFilter::class
+			]
+		];
+	}
 
 	/**
 	 * @inheritDoc
