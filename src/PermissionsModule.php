@@ -25,7 +25,7 @@ use yii\web\IdentityInterface;
 class PermissionsModule extends Module {
 	use ModuleTrait;
 
-	public $controllerPath = '@vendor/cusodede/yii2-permissions/scr/controllers';
+	public $controllerPath = '@vendor/cusodede/yii2-permissions/src/controllers';
 
 	private static ?string $_userIdentityClass = null;
 	private static ?IdentityInterface $_userCurrentIdentity = null;
