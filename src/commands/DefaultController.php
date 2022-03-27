@@ -1,8 +1,14 @@
 <?php
 declare(strict_types = 1);
+
+namespace cusodede\permissions\commands;
+
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use pozitronik\helpers\ControllerHelper;
+use ReflectionException;
+use Throwable;
+use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
 use yii\console\Controller;
