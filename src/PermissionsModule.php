@@ -25,6 +25,8 @@ use yii\web\IdentityInterface;
 class PermissionsModule extends Module {
 	use ModuleTrait;
 
+	public $controllerPath = '@vendor/cusodede/yii2-permissions/scr/controllers';
+
 	private static ?string $_userIdentityClass = null;
 	private static ?IdentityInterface $_userCurrentIdentity = null;
 
@@ -129,7 +131,9 @@ class PermissionsModule extends Module {
 		/** @var Controller[] $foundControllers */
 		$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class]);
 		foreach ($foundControllers as $controller) {
-			$module = $controller?->module?->id;
+			$module = ($controller?->module?->id === Yii::$app->module->id)
+				?null/*для приложения не сохраняем модуль, для удобства*/
+				:$controller?->module?->id;
 			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
 			$controllerPermissions = [];
 			foreach ($controllerActions as $action) {
