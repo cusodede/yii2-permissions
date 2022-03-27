@@ -29,7 +29,7 @@ trait ControllerPermissionsTrait {
 			throw new NotFoundHttpException();
 		}
 
-		return $user->hasControllerPermission(ControllerHelper::ExtractControllerId(static::class), $actionId, $moduleId);
+		return $user->hasControllerPermission(ControllerHelper::ExtractControllerId(static::class), $actionId, null, $moduleId);
 	}
 
 }
