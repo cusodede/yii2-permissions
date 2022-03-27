@@ -3,14 +3,18 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions;
 
+use cusodede\permissions\models\Permissions;
+use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\traits\UsersPermissionsTrait;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\traits\traits\ModuleTrait;
+use ReflectionException;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Module;
+use yii\base\UnknownClassException;
 use yii\db\ActiveRecordInterface;
 use yii\web\Controller;
 use yii\web\IdentityInterface;
@@ -93,5 +97,59 @@ class PermissionsModule extends Module {
 			});
 		}
 		return $result;
+	}
+
+	/**
+	 * @param callable|null $initHandler
+	 * @return void
+	 * @throws Throwable
+	 */
+	public static function InitConfigPermissions(?callable $initHandler = null):void {
+		$configPermissions = Permissions::GetConfigurationPermissions();
+		foreach ($configPermissions as $permissionAttributes) {
+			$permission = new Permissions($permissionAttributes);
+			if (null !== $initHandler) {
+				$initHandler($permission, $permission->save());
+			}
+		}
+	}
+
+	/**
+	 * @param string $path
+	 * @param callable|null $initPermissionHandler
+	 * @param callable|null $initPermissionCollectionHandler
+	 * @return void
+	 * @throws InvalidConfigException
+	 * @throws Throwable
+	 * @throws ReflectionException
+	 * @throws UnknownClassException
+	 */
+	public static function InitControllersPermissions(string $path = "@app/controllers", ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
+		/** @var Controller[] $foundControllers */
+		$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class]);
+		foreach ($foundControllers as $controller) {
+			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
+			$controllerPermissions = [];
+			foreach ($controllerActions as $action) {
+				$permission = new Permissions([
+					'name' => "{$controller->id}:{$action}",
+					'controller' => $controller->id,
+					'action' => $action,
+					'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}"
+				]);
+				if (null !== $initPermissionHandler) {
+					$initPermissionHandler($permission, $permission->save());
+				}
+				$controllerPermissions[] = $permission;
+			}
+			$controllerPermissionsCollection = new PermissionsCollections([
+				'name' => "Доступ к контроллеру {$controller->id}",
+				'comment' => "Доступ ко всем действиям контроллера {$controller->id}",
+			]);
+			$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
+			if (null !== $initPermissionCollectionHandler) {
+				$initPermissionCollectionHandler($controllerPermissionsCollection, $controllerPermissionsCollection->save());
+			}
+		}
 	}
 }
