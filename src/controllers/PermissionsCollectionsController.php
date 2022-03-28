@@ -6,6 +6,7 @@ namespace cusodede\permissions\controllers;
 use cusodede\permissions\filters\PermissionFilter;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\models\PermissionsCollectionsSearch;
+use cusodede\permissions\PermissionsModule;
 use cusodede\permissions\traits\ControllerPermissionsTrait;
 use cusodede\web\default_controller\models\DefaultController;
 
@@ -35,7 +36,7 @@ class PermissionsCollectionsController extends DefaultController {
 	 * @inheritDoc
 	 */
 	public function getViewPath():string {
-		return '@vendor/cusodede/yii2-permissions/src/views/permissions-collections';
+		return PermissionsModule::param('viewPath.permissions', '@vendor/cusodede/yii2-permissions/src/views/permissions-collections');
 	}
 
 }

@@ -6,6 +6,7 @@ namespace cusodede\permissions\controllers;
 use cusodede\permissions\filters\PermissionFilter;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsSearch;
+use cusodede\permissions\PermissionsModule;
 use cusodede\permissions\traits\ControllerPermissionsTrait;
 use cusodede\web\default_controller\models\DefaultController;
 use kartik\grid\EditableColumnAction;
@@ -25,7 +26,7 @@ class PermissionsController extends DefaultController {
 	 * @inheritDoc
 	 */
 	public function getViewPath():string {
-		return '@vendor/cusodede/yii2-permissions/src/views/permissions';
+		return PermissionsModule::param('viewPath.permissions', '@vendor/cusodede/yii2-permissions/src/views/permissions');
 	}
 
 	/**
