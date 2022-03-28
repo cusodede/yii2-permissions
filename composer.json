@@ -18,7 +18,8 @@
 		"kartik-v/yii2-widget-touchspin": "dev-master",
 		"kartik-v/yii2-widget-select2": "dev-master",
 		"kartik-v/yii2-editable": "dev-master",
-		"cusodede/yii2-multi-select-widget": "dev-master"
+		"cusodede/yii2-multi-select-widget": "dev-master",
+		"pozitronik/yii2-grid-helper-asset": "dev-master"
 	},
 	"require-dev": {
 		"yiisoft/yii2": "dev-master"

@@ -16,6 +16,7 @@ use kartik\grid\DataColumn;
 use kartik\grid\EditableColumn;
 use kartik\grid\GridView;
 use pozitronik\grid_config\GridConfig;
+use pozitronik\grid_helper_asset\GridHelperAsset;
 use pozitronik\helpers\Utils;
 use pozitronik\widgets\BadgeWidget;
 use yii\bootstrap4\Html;
@@ -24,7 +25,7 @@ use yii\web\JsExpression;
 use yii\web\View;
 use kartik\select2\Select2;
 
-//GridHelperAsset::register($this); todo
+GridHelperAsset::register($this);
 
 $id = 'permissions-index-grid';
 ?>
