@@ -119,7 +119,7 @@ class PermissionsModule extends Module {
 
 	/**
 	 * @param string $path Путь к каталогу с контроллерами (рекурсивный корень).
-	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры, null для автоматического определения
+	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры (null для контроллеров приложения)
 	 * @param callable|null $initPermissionHandler
 	 * @param callable|null $initPermissionCollectionHandler
 	 * @return void
