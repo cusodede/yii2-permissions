@@ -110,8 +110,9 @@ class PermissionsModule extends Module {
 		$configPermissions = Permissions::GetConfigurationPermissions();
 		foreach ($configPermissions as $permissionAttributes) {
 			$permission = new Permissions($permissionAttributes);
+			$saved = $permission->save();
 			if (null !== $initHandler) {
-				$initHandler($permission, $permission->save());
+				$initHandler($permission, $saved);
 			}
 		}
 	}
@@ -144,8 +145,9 @@ class PermissionsModule extends Module {
 					'action' => $action,
 					'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}"
 				]);
+				$saved = $permission->save();
 				if (null !== $initPermissionHandler) {
-					$initPermissionHandler($permission, $permission->save());
+					$initPermissionHandler($permission, $saved);
 				}
 				$controllerPermissions[] = $permission;
 			}
