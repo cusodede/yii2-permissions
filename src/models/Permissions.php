@@ -115,10 +115,12 @@ class Permissions extends PermissionsAR {
 		$query = self::find()->from(['q' => $mainQuery])->orderBy(['priority' => SORT_DESC, 'id' => SORT_ASC]);
 
 		foreach ($permissionFilters as $paramName => $paramValue) {
-			/*Для перечисленных параметров пустое значение приравнивается к любому*/
-			if (!(null === $paramValue && in_array($paramName, self::ALLOWED_EMPTY_PARAMS, true))) {
-				$query->andWhere(["q.$paramName" => [$paramValue]]);
+			$paramValues = [$paramValue];
+			/* Для перечисленных параметров пустое значение в БД приравнивается к любому, например verb = null => доступ с любым verb */
+			if (in_array($paramName, self::ALLOWED_EMPTY_PARAMS, true)) {
+				$paramValues[] = null;
 			}
+			$query->andWhere(["q.$paramName" => $paramValues]);
 		}
 		return $query->asArray($asArray)->all();
 	}
