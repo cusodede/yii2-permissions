@@ -116,7 +116,7 @@ class Permissions extends PermissionsAR {
 
 		foreach ($permissionFilters as $paramName => $paramValue) {
 			/*Для перечисленных параметров пустое значение приравнивается к любому*/
-			if (!(null !== $paramValue && in_array($paramName, self::ALLOWED_EMPTY_PARAMS, true))) {
+			if (!(null === $paramValue && in_array($paramName, self::ALLOWED_EMPTY_PARAMS, true))) {
 				$query->andWhere(["q.$paramName" => [$paramValue]]);
 			}
 		}
