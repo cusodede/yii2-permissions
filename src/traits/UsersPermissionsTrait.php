@@ -177,14 +177,12 @@ trait UsersPermissionsTrait {
 			'action' => $actionId,
 			'verb' => $verb
 		]);
-		return Yii::$app->cache->getOrSet($cacheKey, function() use ($controllerId, $actionId, $verb, $moduleId) {
-			return [] !== Permissions::allUserPermissions($this->id, [
-					'module' => $moduleId,
-					'controller' => $controllerId,
-					'action' => $actionId,
-					'verb' => $verb
-				]) || [] !== Permissions::allUserConfigurationPermissions($this->id);
-		}, null, new TagDependency([
+		return Yii::$app->cache->getOrSet($cacheKey, fn() => [] !== Permissions::allUserPermissions($this->id, [
+				'module' => $moduleId,
+				'controller' => $controllerId,
+				'action' => $actionId,
+				'verb' => $verb
+			]), null, new TagDependency([
 			'tags' => [
 				CacheHelper::MethodSignature('Users::allPermissions', ['id' => $this->id]),//сброс кеша при изменении прав пользователя
 			]
