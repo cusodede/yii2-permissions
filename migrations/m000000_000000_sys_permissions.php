@@ -24,11 +24,13 @@ class m000000_000000_sys_permissions extends Migration {
 			'controller' => $this->string()->null()->comment('Контроллер, к которому устанавливается доступ, null для внутреннего доступа'),
 			'action' => $this->string()->null()->comment('Действие, для которого устанавливается доступ, null для всех действий контроллера'),
 			'verb' => $this->string()->null()->comment('REST-метод, для которого устанавливается доступ'),
+			'module' => $this->string()->null()->comment('Модуль, для которого устанавливается доступ, null для дефолтного'),
 			'comment' => $this->text()->null()->comment('Описание доступа'),
 			'priority' => $this->integer()->notNull()->defaultValue(0)->comment('Приоритет использования (больше - выше)')
 		]);
 
 		$this->createIndex(self::SYS_PERMISSIONS_TABLE_NAME.'_controller_action_verb', self::SYS_PERMISSIONS_TABLE_NAME, ['controller', 'action', 'verb']);
+		$this->createIndex(self::SYS_PERMISSIONS_TABLE_NAME.'_module', self::SYS_PERMISSIONS_TABLE_NAME, ['module']);/*Составного ключа не получится, вылезаем за размеры*/
 		$this->createIndex(self::SYS_PERMISSIONS_TABLE_NAME.'_priority', self::SYS_PERMISSIONS_TABLE_NAME, ['priority']);
 		$this->createIndex(self::SYS_PERMISSIONS_TABLE_NAME.'_name', self::SYS_PERMISSIONS_TABLE_NAME, ['name'], true);
 
@@ -71,7 +73,8 @@ class m000000_000000_sys_permissions extends Migration {
 			'slave_id' => $this->integer()->notNull()->comment('Вторичная группа'),
 		]);
 
-		$this->createIndex(self::SYS_RELATION_PERMISSIONS_COLLECTIONS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME.'_master_id_slave_id', self::SYS_RELATION_PERMISSIONS_COLLECTIONS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME, ['master_id', 'slave_id'], true);
+		$this->createIndex('idx_master_id_slave_id',//иначе слишком большой идентификатор
+			self::SYS_RELATION_PERMISSIONS_COLLECTIONS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME, ['master_id', 'slave_id'], true);
 
 	}
 
