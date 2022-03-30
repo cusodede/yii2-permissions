@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-use app\models\sys\users\active_record\Users;
+use app\models\Users;
 use Codeception\Exception\ModuleException;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;

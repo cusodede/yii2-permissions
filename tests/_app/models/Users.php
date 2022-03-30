@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace app\models\sys\users\active_record;
+namespace app\models;
 
 use cusodede\permissions\traits\UsersPermissionsTrait;
 use pozitronik\helpers\Utils;
@@ -94,7 +94,6 @@ class Users extends ActiveRecord implements IdentityInterface {
 			'login' => 'test',
 			'username' => 'test_user',
 			'password' => 'test',
-			'phones' => ''
 		]);
 	}
 

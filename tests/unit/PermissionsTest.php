@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace unit\modules\permissions;
 
-use app\models\sys\users\active_record\Users;
+use app\models\Users;
 use Codeception\Test\Unit;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
