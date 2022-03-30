@@ -7,6 +7,7 @@ use yii\log\FileTarget;
 use yii\caching\DummyCache;
 
 $permissions = require __DIR__.'/permissions.php';
+$db = require __DIR__.'/db.php';
 
 $config = [
 	'id' => 'basic',
@@ -49,13 +50,7 @@ $config = [
 			'rules' => [
 			],
 		],
-        'db' => [
-            'class' => Connection::class,
-            'dsn' => getenv('DB_DSN'),
-            'username' => getenv('DB_USER'),
-            'password' => getenv('DB_PASS'),
-            'enableSchemaCache' => false,
-        ]
+        'db' => $db
 	],
 	'params' => [],
 ];

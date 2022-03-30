@@ -9,6 +9,10 @@ actor_suffix: Tester
 bootstrap: _bootstrap.php
 modules:
     config:
+        Db:
+            dsn: "%DB_DSN%"
+            user: "%DB_USER%"
+            password: "%DB_PASS%"
         Yii2:
             parts: [ orm ]
             configFile: 'tests/_app/config/main.php'
