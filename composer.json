@@ -22,7 +22,14 @@
 		"pozitronik/yii2-grid-helper-asset": "dev-master"
 	},
 	"require-dev": {
-		"yiisoft/yii2": "dev-master"
+		"yiisoft/yii2": "dev-master",
+		"phpunit/phpunit": "^9.5",
+		"codeception/codeception": "^4.1",
+		"codeception/module-asserts": "^1.3",
+		"codeception/module-phpbrowser": "^1.0.0",
+		"codeception/module-yii2": "^1.1",
+		"codeception/module-db": "^1.1",
+		"codeception/module-filesystem": "^1.0"
 	},
 	"autoload": {
 		"psr-4": {
