@@ -91,6 +91,7 @@ class Users extends ActiveRecord implements IdentityInterface {
 	 */
 	public static function CreateUser():self {
 		return new self([
+			'id' => 1,
 			'login' => 'test',
 			'username' => 'test_user',
 			'password' => 'test',
