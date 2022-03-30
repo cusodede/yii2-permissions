@@ -66,7 +66,9 @@ $config = [
 		],
 		'db' => $db
 	],
-	'params' => [],
+	'params' => [
+		'bsVersion' => '4'
+	],
 ];
 
 return $config;
