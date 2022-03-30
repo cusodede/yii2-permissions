@@ -35,7 +35,7 @@ class PermissionsCest {
 		$I->amOnRoute('permissions/permissions/index');
 		$I->seeResponseCodeIs(403);
 
-		PermissionsModule::InitControllersPermissions('./src/controllers',
+		PermissionsModule::InitControllersPermissions('@app/controllers',
 			'permissions',
 			static function(Permissions $permission, bool $saved) use (&$generatedPermissions, $I) {
 				$I->assertTrue($saved);

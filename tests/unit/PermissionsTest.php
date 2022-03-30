@@ -66,8 +66,8 @@ class PermissionsTest extends Unit {
 		/** @var PermissionsCollections[] $generatedPermissionsCollections */
 		$generatedPermissionsCollections = [];
 		/*Для теста используются контроллеры внутри модуля, потому что они а) точно есть; б) соответствуют всем требованиям; в) известны все их параметры*/
-		PermissionsModule::InitControllersPermissions('@vendor/cusodede/yii2-permissions/src/controllers',
-			'permissions',
+		PermissionsModule::InitControllersPermissions('@app/controllers',
+			null,
 			static function(Permissions $permission, bool $saved) use (&$generatedPermissions) {
 				static::assertTrue($saved);
 				$generatedPermissions[] = $permission;
@@ -82,10 +82,10 @@ class PermissionsTest extends Unit {
 
 		/*Загрузим один из контроллеров для проверки*/
 		/** @var ControllerPermissionsTrait|Controller $controller */
-		$controller = ControllerHelper::GetControllerByControllerId($generatedPermissions[0]->controller, 'permissions');
+		$controller = ControllerHelper::GetControllerByControllerId($generatedPermissions[0]->controller);
 		$this::assertInstanceOf(Controller::class, $controller);
 		/*Пользователь не имеет доступа к контроллеру*/
-		$this::assertFalse($controller::hasPermission(null, $user->id, 'permissions'));
+		$this::assertFalse($controller::hasPermission(null, $user->id));
 
 		$user->setRelatedPermissions($generatedPermissions);
 		$user->save();
@@ -101,7 +101,7 @@ class PermissionsTest extends Unit {
 
 		/*Пользователь имеет доступ к каждому действию в контроллере (проверка от контроллера)*/
 		foreach ($controllerActions as $action) {
-			$this::assertTrue($controller::hasPermission($action, $user->id, 'permissions'));
+			$this::assertTrue($controller::hasPermission($action, $user->id));
 		}
 		/*Пользователь имеет доступ к каждому действию в контроллере (проверка от пользователя)*/
 		foreach ($generatedPermissions as $permission) {
