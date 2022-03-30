@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 
 use app\models\sys\users\active_record\Users;
+use yii\db\Connection;
 use yii\log\FileTarget;
 use yii\caching\DummyCache;
 
@@ -48,6 +49,13 @@ $config = [
 			'rules' => [
 			],
 		],
+        'db' => [
+            'class' => Connection::class,
+            'dsn' => getenv('DB_DSN'),
+            'username' => getenv('DB_USER'),
+            'password' => getenv('DB_PASS'),
+            'enableSchemaCache' => false,
+        ]
 	],
 	'params' => [],
 ];

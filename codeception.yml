@@ -12,6 +12,8 @@ modules:
         Yii2:
             parts: [ orm ]
             configFile: 'tests/_app/config/main.php'
+params:
+    env: tests/.env
 extensions:
     enabled:
         - Codeception\Extension\RunFailed

@@ -6,10 +6,6 @@ use cusodede\permissions\PermissionsModule;
 return [
 	'class' => PermissionsModule::class,
 	'params' => [
-		'viewPath' => [
-			'permissions' => '@app/views/custom/permissions/permissions',
-			'permissions-collections' => '@app/views/custom/permissions/permissions-collections'
-		],
 //		'userIdentityClass' => Yii::$app->user->identityClass,
 //		'userCurrentIdentity' => Yii::$app->user->identity,
 		'controllerDirs' => [
