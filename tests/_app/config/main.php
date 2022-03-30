@@ -2,9 +2,12 @@
 declare(strict_types = 1);
 
 use app\models\Users;
-use yii\db\Connection;
+use kartik\grid\Module as GridModule;
+use pozitronik\grid_config\GridConfigModule;
 use yii\log\FileTarget;
 use yii\caching\DummyCache;
+use yii\web\AssetManager;
+use yii\web\ErrorHandler;
 
 $permissions = require __DIR__.'/permissions.php';
 $db = require __DIR__.'/db.php';
@@ -14,15 +17,21 @@ $config = [
 	'basePath' => dirname(__DIR__),
 	'bootstrap' => ['log'],
 	'aliases' => [
+		'@vendor' => './vendor',
 		'@bower' => '@vendor/bower-asset',
 		'@npm' => '@vendor/npm-asset',
 	],
 	'modules' => [
-		'permissions' => $permissions
+		'permissions' => $permissions,
+		'gridview' => [
+			'class' => GridModule::class,
+		],
+		'gridconfig' => [
+			'class' => GridConfigModule::class
+		],
 	],
 	'components' => [
 		'request' => [
-			// !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
 			'cookieValidationKey' => 'sosijopu',
 		],
 		'cache' => [
@@ -33,6 +42,7 @@ $config = [
 			'enableAutoLogin' => true,
 		],
 		'errorHandler' => [
+			'class' => ErrorHandler::class,
 			'errorAction' => 'site/error',
 		],
 		'log' => [
@@ -50,7 +60,11 @@ $config = [
 			'rules' => [
 			],
 		],
-        'db' => $db
+		'assetManager' => [
+			'class' => AssetManager::class,
+			'basePath' => '@app/assets'
+		],
+		'db' => $db
 	],
 	'params' => [],
 ];

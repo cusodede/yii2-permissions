@@ -8,6 +8,7 @@ $config = [
 	'basePath' => dirname(__DIR__),
 	'controllerNamespace' => 'app\commands',
 	'aliases' => [
+		'@vendor' => './vendor',
 		'@bower' => '@vendor/bower-asset',
 		'@npm' => '@vendor/npm-asset',
 		'@tests' => '@app/tests',

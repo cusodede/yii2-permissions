@@ -6,11 +6,13 @@ use cusodede\permissions\PermissionsModule;
 return [
 	'class' => PermissionsModule::class,
 	'params' => [
-//		'userIdentityClass' => Yii::$app->user->identityClass,
-//		'userCurrentIdentity' => Yii::$app->user->identity,
+		'viewPath' => [
+			'permissions' => './src/views/permissions',
+			'permissions-collections' => './src/views/permissions-collections'
+		],
 		'controllerDirs' => [
 			'@app/controllers' => null,
-			'@vendor/cusodede/yii2-permissions/src/controllers' => 'permissions',
+			'./src/controllers' => 'permissions',
 		],
 		'grantAll' => [],
 		'grant' => [
