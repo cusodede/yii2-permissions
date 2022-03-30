@@ -1,6 +1,7 @@
-<?php
+<?php /** @noinspection UsingInclusionReturnValueInspection */
 declare(strict_types = 1);
 
+use app\models\sys\users\active_record\Users;
 use yii\log\FileTarget;
 use yii\caching\DummyCache;
 
@@ -26,7 +27,7 @@ $config = [
 			'class' => DummyCache::class,
 		],
 		'user' => [
-			'identityClass' => 'app\models\User',
+			'identityClass' => Users::class,
 			'enableAutoLogin' => true,
 		],
 		'errorHandler' => [

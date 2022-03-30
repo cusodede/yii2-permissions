@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace unit\modules\permissions;
 
-use app\tests\models\sys\users\UsersTest;
+use app\models\sys\users\active_record\Users;
 use Codeception\Test\Unit;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
@@ -21,13 +21,16 @@ use yii\web\Controller;
 /**
  * Class PermissionsTest
  * Тесты модуля доступов
- * todo: перенести в компонент после отладки
  */
 class PermissionsTest extends Unit {
 
+	/**
+	 * @return void
+	 * @throws Exception
+	 * @throws Throwable
+	 */
 	public function testUserDirectPermissions():void {
-		/** @var UsersTest $user */
-		$user = UsersTest::CreateUser()->saveAndReturn();
+		$user = Users::CreateUser()->saveAndReturn();
 		PermissionsModule::InitConfigPermissions();
 		/*В конфиге у юзера прибит один один пермишшен*/
 		$this::assertCount(1, $user->allPermissions());
@@ -53,8 +56,7 @@ class PermissionsTest extends Unit {
 	 * @throws Exception
 	 */
 	public function testUserControllerPermissions():void {
-		/** @var UsersTest $user */
-		$user = UsersTest::CreateUser()->saveAndReturn();
+		$user = Users::CreateUser()->saveAndReturn();
 		$this::assertFalse($user->hasControllerPermission('index'));
 		/*Прямо*/
 		$this::assertEmpty($user->relatedPermissions);

@@ -1,6 +1,6 @@
 <?php
 declare(strict_types = 1);
-use app\tests\models\sys\users\UsersTest;
+use app\models\sys\users\active_record\Users;
 use Codeception\Exception\ModuleException;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
@@ -25,7 +25,7 @@ class PermissionsCest {
 	 * @throws DbException
 	 */
 	public function checkPermissionsFilter(FunctionalTester $I):void {
-		$user = UsersTest::CreateUser()->saveAndReturn();
+		$user = Users::CreateUser()->saveAndReturn();
 
 		$I->amOnPage(['home/home']);
 		$I->seeResponseCodeIs(403);
