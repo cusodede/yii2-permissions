@@ -27,16 +27,15 @@ class PermissionsCest {
 	public function checkPermissionsFilter(FunctionalTester $I):void {
 		$user = Users::CreateUser()->saveAndReturn();
 
-		$I->amOnPage(['home/home']);
-		$I->seeResponseCodeIs(403);
-		$I->canSee("Пользователь не авторизован");
+		$I->amOnPage(['site/index']);
+		$I->seeResponseCodeIs(200);
 
 		$I->amLoggedInAs($user);
 		/*Фильтр должен отбрить*/
 		$I->amOnRoute('permissions/permissions/index');
 		$I->seeResponseCodeIs(403);
 
-		PermissionsModule::InitControllersPermissions('@vendor/cusodede/yii2-permissions/src/controllers',
+		PermissionsModule::InitControllersPermissions('./src/controllers',
 			'permissions',
 			static function(Permissions $permission, bool $saved) use (&$generatedPermissions, $I) {
 				$I->assertTrue($saved);
