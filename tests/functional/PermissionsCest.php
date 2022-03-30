@@ -27,9 +27,6 @@ class PermissionsCest {
 	public function checkPermissionsFilter(FunctionalTester $I):void {
 		$user = Users::CreateUser()->saveAndReturn();
 
-		$I->amOnPage(['site/index']);
-		$I->seeResponseCodeIs(200);
-
 		$I->amLoggedInAs($user);
 		/*Фильтр должен отбрить*/
 		$I->amOnRoute('permissions/permissions/index');
