@@ -13,6 +13,8 @@ modules:
       dsn: "%PERM_DB_DSN%"
       user: "%PERM_DB_USER%"
       password: "%PERM_DB_PASS%"
+      transaction: true
+      cleanup: true
     Yii2:
       parts: [ orm ]
       configFile: 'tests/_app/config/main.php'
