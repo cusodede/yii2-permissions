@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+declare(strict_types = 1);
 /**
  * Yii console bootstrap file.
  *
@@ -15,9 +16,6 @@ defined('YII_ENV') or define('YII_ENV', 'dev');
 
 require __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/../../vendor/yiisoft/yii2/Yii.php';
-
-$env = Dotenv::createUnsafeMutable(__DIR__ . '/../');
-$env->load();
 
 $config = require __DIR__ . '/config/console.php';
 
