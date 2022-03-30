@@ -12,6 +12,7 @@ class m000000_000000_sys_permissions extends Migration {
 	private const SYS_PERMISSIONS_COLLECTIONS_TABLE_NAME = 'sys_permissions_collections';
 	private const SYS_RELATION_PERMISSIONS_COLLECTIONS_TO_PERMISSIONS_TABLE_NAME = 'sys_relation_permissions_collections_to_permissions';
 	private const SYS_RELATION_USERS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME = 'sys_relation_users_to_permissions_collections';
+	private const SYS_RELATION_PERMISSIONS_COLLECTIONS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME = 'sys_relation_permissions_collections_to_permissions_collections';
 
 	/**
 	 * {@inheritdoc}
@@ -42,7 +43,8 @@ class m000000_000000_sys_permissions extends Migration {
 		$this->createTable(self::SYS_PERMISSIONS_COLLECTIONS_TABLE_NAME, [
 			'id' => $this->primaryKey(),
 			'name' => $this->string(128)->notNull()->comment('Название группы доступа'),
-			'comment' => $this->text()->null()->comment('Описание группы доступа')
+			'comment' => $this->text()->null()->comment('Описание группы доступа'),
+			'default' => $this->boolean()->defaultValue(false)->notNull()->comment('Группа доступа по умолчанию')
 		]);
 
 		$this->createIndex(self::SYS_PERMISSIONS_COLLECTIONS_TABLE_NAME.'_name', self::SYS_PERMISSIONS_COLLECTIONS_TABLE_NAME, ['name'], true);
@@ -63,6 +65,14 @@ class m000000_000000_sys_permissions extends Migration {
 
 		$this->createIndex(self::SYS_RELATION_USERS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME.'_user_id_collection_id', self::SYS_RELATION_USERS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME, ['user_id', 'collection_id'], true);
 
+		$this->createTable(self::SYS_RELATION_PERMISSIONS_COLLECTIONS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME, [
+			'id' => $this->primaryKey(),
+			'master_id' => $this->integer()->notNull()->comment('Первичная группа'),
+			'slave_id' => $this->integer()->notNull()->comment('Вторичная группа'),
+		]);
+
+		$this->createIndex(self::SYS_RELATION_PERMISSIONS_COLLECTIONS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME.'_master_id_slave_id', self::SYS_RELATION_PERMISSIONS_COLLECTIONS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME, ['master_id', 'slave_id'], true);
+
 	}
 
 	/**
@@ -74,6 +84,7 @@ class m000000_000000_sys_permissions extends Migration {
 		$this->dropTable(self::SYS_PERMISSIONS_COLLECTIONS_TABLE_NAME);
 		$this->dropTable(self::SYS_RELATION_PERMISSIONS_COLLECTIONS_TO_PERMISSIONS_TABLE_NAME);
 		$this->dropTable(self::SYS_RELATION_USERS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME);
+		$this->dropTable(self::SYS_RELATION_PERMISSIONS_COLLECTIONS_TO_PERMISSIONS_COLLECTIONS_TABLE_NAME);
 	}
 
 }
