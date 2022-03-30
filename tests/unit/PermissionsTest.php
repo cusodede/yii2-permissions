@@ -77,8 +77,8 @@ class PermissionsTest extends Unit {
 			});
 
 		/*Мы знаем, сколько сгенерится доступов и коллекций*/
-		$this::assertCount(14, $generatedPermissions);
-		$this::assertCount(2, $generatedPermissionsCollections);
+		$this::assertCount(15, $generatedPermissions);
+		$this::assertCount(3, $generatedPermissionsCollections);
 
 		/*Загрузим один из контроллеров для проверки*/
 		/** @var ControllerPermissionsTrait|Controller $controller */
@@ -91,7 +91,7 @@ class PermissionsTest extends Unit {
 		$user->save();
 
 		/*Количество пермиссий пользователя равно количеству пермиссий из релейшенов + 1 из конфига*/
-		$this::assertCount(15, $user->allPermissions());
+		$this::assertCount(16, $user->allPermissions());
 
 		/*Пользователь имеет все назначенные пермиссии*/
 		$this::assertTrue($user->hasPermission(ArrayHelper::getColumn($generatedPermissions, 'name')));
@@ -125,7 +125,7 @@ class PermissionsTest extends Unit {
 		$user->save();
 
 		/*Количество пермиссий пользователя равно количеству пермиссий - через коллекции*/
-		$this::assertCount(15, $user->allPermissions());
+		$this::assertCount(16, $user->allPermissions());
 
 		/*Пользователь снова имеет доступ к каждому действию в контроллере, но уже через коллекции*/
 		foreach ($generatedPermissions as $permission) {
@@ -139,7 +139,7 @@ class PermissionsTest extends Unit {
 		$this::assertCount(0, $generatedPermissionsCollections[1]->relatedPermissions);
 
 		/*Количество пермиссий пользователя должно уменьшиться соответственно уменьшению пермиссий в коллекции*/
-		$this::assertCount(8, $user->allPermissions());
+		$this::assertCount(9, $user->allPermissions());
 
 	}
 
