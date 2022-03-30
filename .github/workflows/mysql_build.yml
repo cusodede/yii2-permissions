@@ -1,0 +1,76 @@
+name: CI with MySQL
+on:
+  pull_request:
+    branches: [ master ]
+
+env:
+  PERM_DB_DSN: "mysql:host=127.0.0.1;port=33306;dbname=yii2-permissions"
+  PERM_DB_USER: "root"
+  PERM_DB_PASS: "password"
+
+  TEST_DB_DSN: "mysql:host=127.0.0.1;dbname=bc;port=33306"
+  TEST_DB_USER: "root"
+  TEST_DB_PASS: "password"
+  MYSQL_HOST: 127.0.0.1
+  MYSQL_DATABASE: "yii2-permissions"
+  MYSQL_USER: "root"
+  MYSQL_PASSWORD: "password"
+  MYSQL_ROOT_PASSWORD: "password"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+        ports:
+          - 33306:3306
+        env:
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_DATABASE: "yii2-permissions"
+          MYSQL_USER: "root"
+          MYSQL_PASSWORD: "password"
+          MYSQL_ROOT_PASSWORD: "password"
+    steps:
+      - uses: actions/checkout@v2
+
+
+      - name: Set dirs
+        run: |
+          chmod 777 .git/HEAD
+      - name: Setup PHP with PECL extension
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.0'
+          tools: composer:v2
+          extensions: imagick, mysql, opcache
+          ini-values: opcache.enable=1, opcache.enable_cli=1, apc.enable_cli=1
+        env:
+          COMPOSER_TOKEN: ${{ secrets.COMPOSER_GITHUB_TOKEN }}
+      - name: Set up MySQL
+        run: sudo systemctl start mysql
+      - name: Check MySQL
+        run: mysql -h127.0.0.1 --port 33306 -uroot -ppassword -e 'CREATE DATABASE IF NOT EXISTS yii2-permissions;'
+      - name: Check php and composer
+        run: php -v && composer --version
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+      - name: Install composer dependencies
+        run: composer install
+      - name: CP CONFIG
+        run: cp config/db.env.php config/db.php
+
+      - name: Prepare test
+        run: cp tests/.env.example tests/.env
+      - name: Run tests
+        run: vendor/bin/codecept run
+        env:
+          COMPOSER_TOKEN: ${{ secrets.COMPOSER_GITHUB_TOKEN }}
