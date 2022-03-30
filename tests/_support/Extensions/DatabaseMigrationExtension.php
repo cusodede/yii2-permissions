@@ -18,5 +18,6 @@ class DatabaseMigrationExtension extends Extension
         $cli = $this->getModule('Cli');
         $alias = __DIR__ . '/../../_app/yii';
         $cli->runShellCommand("php $alias migrate/up --interactive=0");
+        $cli->runShellCommand("php $alias migrate/up --migrationPath=./migrations --interactive=0");
     }
 }

@@ -1,7 +1,7 @@
 <?php /** @noinspection UsingInclusionReturnValueInspection */
 declare(strict_types = 1);
 
-use app\models\sys\users\active_record\Users;
+use app\models\Users;
 use yii\db\Connection;
 use yii\log\FileTarget;
 use yii\caching\DummyCache;
