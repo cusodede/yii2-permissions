@@ -23,7 +23,9 @@ class DefaultController extends Controller {
 	 */
 	public function actionInitConfigPermissions():void {
 		PermissionsModule::InitConfigPermissions(static function(Permissions $permission, bool $saved) {
-			Console::output(Console::renderColoredString($saved?"%g{$permission->name}: добавлено%n":"%r{$permission->name}: пропущено (".static::Errors2String($permission->errors).")%n"));
+			Console::output(Console::renderColoredString($saved
+				?"%b{$permission->name}%g добавлено%n"
+				:"%b{$permission->name}%r пропущено: (".static::Errors2String($permission->errors).")%n"));
 		});
 	}
 
