@@ -2,6 +2,8 @@
 
 Управление пользовательскими разрешениями для Yii2
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cusodede/yii2-permissions/CI%20with%20PostgreSQL)
+
 # Установка
 
 Добавляем
