@@ -5,7 +5,12 @@ modules:
     - Filesystem
     - Db
     - Asserts
+    - Cli
     - \Helper\Module\Yii2Module:
         configFile: './tests/_app/config/console.php'
         applicationClass: \yii\console\Application
         recreateApplication: true
+extensions:
+  enabled:
+    - Codeception\Extension\RunFailed
+    - Extensions\DatabaseMigrationExtension
