@@ -42,9 +42,13 @@ class DefaultController extends Controller {
 
 		foreach ($pathMapping as $controller_dir => $module_id) {
 			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved) {
-				Console::output(Console::renderColoredString($saved?"%gДоступ {$permission->name}: добавлен%n":"%rДоступ {$permission->name}: пропущен (".static::Errors2String($permission->errors).")%n"));
+				Console::output(Console::renderColoredString($saved
+					?"%gДоступ %b{$permission->name}%g добавлен%n"
+					:"%rДоступ %b{$permission->name}%r пропущен (".static::Errors2String($permission->errors).")%n"));
 			}, static function(PermissionsCollections $permissionsCollection, bool $saved) {
-				Console::output(Console::renderColoredString($saved?"%g{$permissionsCollection->name}: добавлено%n":"%r{$permissionsCollection->name}: пропущено (".static::Errors2String($permissionsCollection->errors).")%n"));
+				Console::output(Console::renderColoredString($saved
+					?"%gКоллекция %b{$permissionsCollection->name} %gдобавлена%n"
+					:"%rКоллекция %b{$permissionsCollection->name} %rпропущена (".static::Errors2String($permissionsCollection->errors).")%n"));
 			});
 		}
 	}
