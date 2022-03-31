@@ -8,12 +8,8 @@ use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\traits\UsersPermissionsTrait;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
-use pozitronik\helpers\ReflectionHelper;
 use pozitronik\traits\traits\ModuleTrait;
-use RecursiveIteratorIterator;
-use RecursiveRegexIterator;
 use ReflectionException;
-use RegexIterator;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
@@ -21,7 +17,6 @@ use yii\base\Module;
 use yii\base\UnknownClassException;
 use yii\console\Application as ConsoleApplication;
 use yii\db\ActiveRecordInterface;
-use yii\helpers\Inflector;
 use yii\web\Controller;
 use yii\web\IdentityInterface;
 
@@ -175,36 +170,6 @@ class PermissionsModule extends Module {
 			$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
 			if (null !== $initPermissionCollectionHandler) {
 				$initPermissionCollectionHandler($controllerPermissionsCollection, $controllerPermissionsCollection->save());
-			}
-		}
-	}
-
-	/**
-	 * todo: перенести в ControllerHelper
-	 * Выдаёт список контроллеров в каталоге не загружая их
-	 * @param string $path
-	 * @param array|null $parentClassFilter
-	 * @return void
-	 */
-	public static function ListControllers(string $path, ?array $parentClassFilter = null) {
-		$controllerPath = Yii::getAlias($path);
-		if (is_dir($controllerPath)) {
-			$iterator = new RecursiveIteratorIterator(new \RecursiveDirectoryIterator($controllerPath, \RecursiveDirectoryIterator::KEY_AS_PATHNAME));
-			$iterator = new RegexIterator($iterator, '/.*Controller\.php$/', RecursiveRegexIterator::GET_MATCH);
-			foreach ($iterator as $matches) {
-				$file = $matches[0];
-				$relativePath = str_replace($controllerPath, '', $file);
-				$class = strtr($relativePath, ['/' => '\\', '.php' => '',]);
-				$controllerClass = $module->controllerNamespace.$class;
-				if (ReflectionHelper::IsInSubclassOf($controllerClass, $parentClassFilter)) {
-					$dir = ltrim(pathinfo($relativePath, PATHINFO_DIRNAME), '\\/');
-
-					$command = Inflector::camel2id(substr(basename($file), 0, -14), '-', true);
-					if (!empty($dir)) {
-						$command = $dir.'/'.$command;
-					}
-					$commands[] = $prefix.$command;
-				}
 			}
 		}
 	}
