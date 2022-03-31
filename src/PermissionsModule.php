@@ -151,7 +151,7 @@ class PermissionsModule extends Module {
 			$controllerPermissions = [];
 			foreach ($controllerActions as $action) {
 				$permission = new Permissions([
-					'name' => "{$controller->id}:{$action}",
+					'name' => sprintf("%s%s:%s", null === $module?"":"{$module}:", $controller->id, $action),
 					'module' => $module,
 					'controller' => $controller->id,
 					'action' => $action,
@@ -164,8 +164,8 @@ class PermissionsModule extends Module {
 				$controllerPermissions[] = $permission;
 			}
 			$controllerPermissionsCollection = new PermissionsCollections([
-				'name' => "Доступ к контроллеру {$controller->id}",
-				'comment' => "Доступ ко всем действиям контроллера {$controller->id}",
+				'name' => sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", $controller->id),
+				'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),
 			]);
 			$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
 			if (null !== $initPermissionCollectionHandler) {
