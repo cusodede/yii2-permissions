@@ -15,6 +15,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Module;
 use yii\base\UnknownClassException;
+use yii\console\Application as ConsoleApplication;
 use yii\db\ActiveRecordInterface;
 use yii\web\Controller;
 use yii\web\IdentityInterface;
@@ -38,6 +39,17 @@ class PermissionsModule extends Module {
 		'PATCH' => 'PATCH',
 		'DELETE' => 'DELETE'
 	];
+
+	/**
+	 * @inheritDoc
+	 */
+	public function init():void {
+		parent::init();
+		if (Yii::$app instanceof ConsoleApplication) {
+			$this->controllerNamespace = 'cusodede\permissions\commands';
+			$this->setControllerPath('vendor\cusodede\yii2-permissions\src\commands');
+		}
+	}
 
 	/**
 	 * @return string|ActiveRecordInterface
@@ -139,7 +151,7 @@ class PermissionsModule extends Module {
 			$controllerPermissions = [];
 			foreach ($controllerActions as $action) {
 				$permission = new Permissions([
-					'name' => "{$controller->id}:{$action}",
+					'name' => sprintf("%s%s:%s", null === $module?"":"{$module}:", $controller->id, $action),
 					'module' => $module,
 					'controller' => $controller->id,
 					'action' => $action,
@@ -152,8 +164,8 @@ class PermissionsModule extends Module {
 				$controllerPermissions[] = $permission;
 			}
 			$controllerPermissionsCollection = new PermissionsCollections([
-				'name' => "Доступ к контроллеру {$controller->id}",
-				'comment' => "Доступ ко всем действиям контроллера {$controller->id}",
+				'name' => sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", $controller->id),
+				'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),
 			]);
 			$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
 			if (null !== $initPermissionCollectionHandler) {

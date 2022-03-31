@@ -8,7 +8,12 @@ modules:
     - Asserts
     - \Helper\Unit
     - Db
+    - Cli
     - Yii2:
         configFile: './tests/_app/config/main.php'
 
   step_decorators: ~
+extensions:
+  enabled:
+    - Codeception\Extension\RunFailed
+    - Extensions\DatabaseMigrationExtension

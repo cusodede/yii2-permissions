@@ -23,25 +23,36 @@ class DefaultController extends Controller {
 	 */
 	public function actionInitConfigPermissions():void {
 		PermissionsModule::InitConfigPermissions(static function(Permissions $permission, bool $saved) {
-			Console::output(Console::renderColoredString($saved?"%g{$permission->name}: добавлено%n":"%r{$permission->name}: пропущено (".static::Errors2String($permission->errors).")%n"));
+			Console::output(Console::renderColoredString($saved
+				?"%b{$permission->name}%g добавлено%n"
+				:"%b{$permission->name}%r пропущено: (".static::Errors2String($permission->errors).")%n"));
 		});
 	}
 
 	/**
-	 * Для всех контроллеров по пути $path добавляет наборы правил доступа в БД
-	 * @param string $path Путь к каталогу с контроллерами (рекурсивный корень).
+	 * Для всех контроллеров по пути $path добавляет наборы правил доступа в БД. Если путь не указан, берётся маппинг из параметра controllerDirs конфига.
+	 * @param null|string $path Путь к каталогу с контроллерами (рекурсивный корень). Если null, берётся маппинг из параметра controllerDirs конфига.
 	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры, null для автоматического определения
 	 * @throws InvalidConfigException
 	 * @throws ReflectionException
 	 * @throws Throwable
 	 * @throws UnknownClassException
 	 */
-	public function actionInitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null):void {
-		PermissionsModule::InitControllersPermissions($path, $moduleId, static function(Permissions $permission, bool $saved) {
-			Console::output(Console::renderColoredString($saved?"%gДоступ {$permission->name}: добавлен%n":"%rДоступ {$permission->name}: пропущен (".static::Errors2String($permission->errors).")%n"));
-		}, static function(PermissionsCollections $permissionsCollection, bool $saved) {
-			Console::output(Console::renderColoredString($saved?"%g{$permissionsCollection->name}: добавлено%n":"%r{$permissionsCollection->name}: пропущено (".static::Errors2String($permissionsCollection->errors).")%n"));
-		});
+	public function actionInitControllersPermissions(?string $path = null, ?string $moduleId = null):void {
+		if (is_string($path)) $pathMapping = [$path => $moduleId];
+		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
+
+		foreach ($pathMapping as $controller_dir => $module_id) {
+			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved) {
+				Console::output(Console::renderColoredString($saved
+					?"%gДоступ %b{$permission->name}%g добавлен%n"
+					:"%rДоступ %b{$permission->name}%r пропущен (".static::Errors2String($permission->errors).")%n"));
+			}, static function(PermissionsCollections $permissionsCollection, bool $saved) {
+				Console::output(Console::renderColoredString($saved
+					?"%gКоллекция %b{$permissionsCollection->name} %gдобавлена%n"
+					:"%rКоллекция %b{$permissionsCollection->name} %rпропущена (".static::Errors2String($permissionsCollection->errors).")%n"));
+			});
+		}
 	}
 
 	/**
