@@ -18,13 +18,13 @@
 В секцию `repositories` файла `composer.json`, затем запускаем
 
 ```
-php composer.phar require cusodede/yii2-permissions "dev-master"
+php composer.phar require cusodede/yii2-permissions "^1.0.0"
 ```
 
 или добавляем
 
 ```
-"cusodede/yii2-permissions": "dev-master"
+"cusodede/yii2-permissions": "^1.0.0"
 ```
 
 в секцию `require`.
