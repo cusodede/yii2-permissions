@@ -36,7 +36,7 @@ class PermissionsCollectionsController extends DefaultController {
 	 * @inheritDoc
 	 */
 	public function getViewPath():string {
-		return PermissionsModule::param('viewPath.permissions', '@vendor/cusodede/yii2-permissions/src/views/permissions-collections');
+		return PermissionsModule::param('viewPath.permissions-collections', '@vendor/cusodede/yii2-permissions/src/views/permissions-collections');
 	}
 
 }
