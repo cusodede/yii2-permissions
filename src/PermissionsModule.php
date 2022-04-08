@@ -44,11 +44,11 @@ class PermissionsModule extends Module {
 	 * @inheritDoc
 	 */
 	public function init():void {
-		parent::init();
 		if (Yii::$app instanceof ConsoleApplication) {
 			$this->controllerNamespace = 'cusodede\permissions\commands';
 			$this->setControllerPath('@vendor/cusodede/yii2-permissions/src/commands');
 		}
+		parent::init();
 	}
 
 	/**
