@@ -47,7 +47,7 @@ class PermissionsModule extends Module {
 		parent::init();
 		if (Yii::$app instanceof ConsoleApplication) {
 			$this->controllerNamespace = 'cusodede\permissions\commands';
-			$this->setControllerPath('@vendor\cusodede\yii2-permissions\src\commands');
+			$this->setControllerPath('@vendor/cusodede/yii2-permissions/src/commands');
 		}
 	}
 
