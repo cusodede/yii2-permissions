@@ -102,12 +102,19 @@ class PermissionsModule extends Module {
 	 */
 	public static function GetControllersList(array $controllerDirs = ['@app/controllers']):array {
 		$result = [];
-		foreach ($controllerDirs as $controllerDir => $idPrefix) {
-			$controllers = ControllerHelper::GetControllersList((string)$controllerDir, null, [Controller::class]);
-			$result[$controllerDir] = ArrayHelper::map($controllers, static function(Controller $model) use ($idPrefix) {
-				return ('' === $idPrefix)?$model->id:$idPrefix.'/'.$model->id;
-			}, static function(Controller $model) use ($idPrefix) {
-				return ('' === $idPrefix)?$model->id:$idPrefix.'/'.$model->id;
+		foreach ($controllerDirs as $controllerDir => $moduleId) {
+			/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
+			if (null !== $moduleId && '@' === $moduleId[0]) {
+				$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($controllerDir), null, [Controller::class]);
+				$module = substr($moduleId, 1);
+			} else {
+				$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($controllerDir), $moduleId, [Controller::class]);
+				$module = null;
+			}
+			$result[$controllerDir] = ArrayHelper::map($foundControllers, static function(Controller $model) use ($module) {
+				return (null === $module)?$model->id:$module.'/'.$model->id;
+			}, static function(Controller $model) use ($module) {
+				return (null === $module)?$model->id:$module.'/'.$model->id;
 			});
 		}
 		return $result;

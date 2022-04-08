@@ -162,7 +162,7 @@ class Permissions extends PermissionsAR {
 	 * @return string|null
 	 */
 	public function getControllerPath():?string {
-		return (null === $this->module)?$this->controller:"@{$this->module}/{$this->controller}";
+		return (null === $this->module)?$this->controller:"{$this->module}/{$this->controller}";
 	}
 
 	/**
@@ -171,11 +171,12 @@ class Permissions extends PermissionsAR {
 	public function setControllerPath(?string $controllerPath):void {
 		$this->module = null;
 		$this->controller = $controllerPath;/*by default*/
-		/*Если контроллер пришёл в виде @foo/bar - foo указывает на модуль*/
-		if ((!empty($path = explode('/', $this->controller))) && (false !== $matches = preg_grep('/^@(\w+)/', $path)) && 1 === count($matches)) {
+		/*Если контроллер пришёл в виде foo/bar или @foo/bar - foo указывает на модуль*/
+		if ((!empty($path = explode('/', $this->controller))) && 2 === count($path)) {
 			/** @var array $matches */
-			$this->module = substr($matches[0], 1);
-			$this->controller = substr($this->controller, strlen($this->module) + 2); //@foo/bar => bar
+			$this->module = $path[0];
+			$this->module = '@' === $this->module[0]?substr($this->module, 1):$this->module;//strip @ if presents
+			$this->controller = $path[1];
 		}
 	}
 }
