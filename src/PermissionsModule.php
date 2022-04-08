@@ -141,12 +141,20 @@ class PermissionsModule extends Module {
 	 * @throws UnknownClassException
 	 */
 	public static function InitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
+		$module = null;
+		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
+		if (null !== $moduleId && '@' === $moduleId[0]) {
+			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class]);
+			$module = substr($moduleId, 1);
+		} else {
+			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class]);
+		}
+
 		/** @var Controller[] $foundControllers */
-		$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class]);
 		foreach ($foundControllers as $controller) {
-			$module = ($controller?->module?->id === Yii::$app->id)
-				?null/*для приложения не сохраняем модуль, для удобства*/
-				:$controller?->module?->id;
+			$module = $module??(($controller?->module?->id === Yii::$app->id)
+					?null/*для приложения не сохраняем модуль, для удобства*/
+					:$controller?->module?->id);
 			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
 			$controllerPermissions = [];
 			foreach ($controllerActions as $action) {
