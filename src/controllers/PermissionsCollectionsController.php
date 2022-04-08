@@ -20,7 +20,6 @@ class PermissionsCollectionsController extends DefaultController {
 	public ?string $modelSearchClass = PermissionsCollectionsSearch::class;
 	public bool $enablePrototypeMenu = false;
 
-
 	/**
 	 * @inheritDoc
 	 */
@@ -37,6 +36,13 @@ class PermissionsCollectionsController extends DefaultController {
 	 */
 	public function getViewPath():string {
 		return PermissionsModule::param('viewPath.permissions-collections', '@vendor/cusodede/yii2-permissions/src/views/permissions-collections');
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function Title():string {
+		return 'Группы разрешений';
 	}
 
 }

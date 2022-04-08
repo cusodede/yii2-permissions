@@ -25,19 +25,26 @@ class PermissionsController extends DefaultController {
 	/**
 	 * @inheritDoc
 	 */
-	public function getViewPath():string {
-		return PermissionsModule::param('viewPath.permissions', '@vendor/cusodede/yii2-permissions/src/views/permissions');
-	}
-
-	/**
-	 * @inheritDoc
-	 */
 	public function behaviors():array {
 		return [
 			'access' => [
 				'class' => PermissionFilter::class
 			]
 		];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getViewPath():string {
+		return PermissionsModule::param('viewPath.permissions', '@vendor/cusodede/yii2-permissions/src/views/permissions');
+	}
+
+	/**
+	 * @return string
+	 */
+	public static function Title():string {
+		return 'Доступы';
 	}
 
 	/**
