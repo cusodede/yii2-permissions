@@ -64,7 +64,7 @@ class PermissionsController extends DefaultController {
 				'showModelErrors' => true,
 				'outputValue' => function(Permissions $model, string $attribute, int $key, int $index) {
 					if (in_array($attribute, Permissions::ALLOWED_EMPTY_PARAMS) && empty($model->$attribute)) {
-						return "Любой";
+						return "*";
 					}
 					return '';
 				},

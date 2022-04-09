@@ -113,6 +113,7 @@ $id = 'permissions-index-grid';
 			[
 				'class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
+					'valueIfNull' => '*',
 					'formOptions' => [
 						'action' => PermissionsModule::to('permissions/editDefault'),
 					],
@@ -124,6 +125,7 @@ $id = 'permissions-index-grid';
 			[
 				'class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
+					'valueIfNull' => '*',
 					'formOptions' => [
 						'action' => PermissionsModule::to('permissions/editDefault')
 					],
