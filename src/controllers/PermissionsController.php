@@ -51,11 +51,6 @@ class PermissionsController extends DefaultController {
 	 * @inheritDoc
 	 */
 	public function actions():array {
-		$defaultEditableActionConfig = [
-			'class' => EditableColumnAction::class,
-			'modelClass' => Permissions::class,
-			'showModelErrors' => true,
-		];
 		/*@see https://webtips.krajee.com/setup-editable-column-grid-view-manipulate-records/*/
 		return ArrayHelper::merge(parent::actions(), [
 			/**
@@ -63,8 +58,7 @@ class PermissionsController extends DefaultController {
 			 * данные всё равно грузятся так, будто постится полная форма.
 			 * @see \kartik\grid\EditableColumnAction::validateEditable()
 			 */
-			'editDefault' => $defaultEditableActionConfig,
-			'editAction' => [
+			'editDefault' => [
 				'class' => EditableColumnAction::class,
 				'modelClass' => Permissions::class,
 				'showModelErrors' => true,
