@@ -170,7 +170,7 @@ class PermissionsModule extends Module {
 					'module' => $module,
 					'controller' => $controller->id,
 					'action' => $action,
-					'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":"модуля {$module}")
+					'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
 				]);
 				$saved = $permission->save();
 				if (null !== $initPermissionHandler) {
