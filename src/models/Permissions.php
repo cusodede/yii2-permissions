@@ -54,7 +54,7 @@ class Permissions extends PermissionsAR {
 	 */
 	public function attributeLabels():array {
 		return parent::attributeLabels() + [
-				'controllerPath' => 'Контроллер'
+				'controllerPath' => 'Маршрут контроллера'
 			];
 	}
 
