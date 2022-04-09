@@ -96,23 +96,6 @@ $id = 'permissions-index-grid';
 					'formOptions' => [
 						'action' => PermissionsModule::to('permissions/editDefault')
 					],
-					'inputType' => Editable::INPUT_SPIN,
-					'options' => [
-						'pluginOptions' => [
-							'min' => Permissions::PRIORITY_MIN,
-							'max' => Permissions::PRIORITY_MAX
-						]
-					]
-				],
-				'attribute' => 'priority',
-				'format' => 'text'
-			],
-			[
-				'class' => EditableColumn::class,
-				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
-					'formOptions' => [
-						'action' => PermissionsModule::to('permissions/editDefault')
-					],
 					'inputType' => Editable::INPUT_SELECT2,
 					'options' => [
 						'data' => PermissionsModule::GetControllersList(PermissionsModule::param(Permissions::CONTROLLER_DIRS)),

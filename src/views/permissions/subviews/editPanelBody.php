@@ -11,7 +11,6 @@ use cusodede\permissions\models\Permissions;
 use cusodede\permissions\PermissionsModule;
 use yii\bootstrap4\ActiveForm;
 use kartik\select2\Select2;
-use kartik\touchspin\TouchSpin;
 use yii\web\View;
 
 ?>
@@ -19,11 +18,6 @@ use yii\web\View;
 <div class="row">
 	<div class="col-md-12">
 		<?= $form->field($model, 'name')->textInput() ?>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		<?= $form->field($model, 'priority')->widget(TouchSpin::class) ?>
 	</div>
 </div>
 <div class="row">
