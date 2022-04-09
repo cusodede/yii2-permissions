@@ -41,7 +41,7 @@ $id = 'permissions-index-grid';
 		],
 		'replaceTags' => [
 			'{totalCount}' => ($dataProvider->totalCount > 0)?Utils::pluralForm($dataProvider->totalCount, ['разрешение', 'разрешения', 'разрешений']):"Нет разрешений",
-			'{newRecord}' =>  Html::a('Новая запись', PermissionsModule::to('permissions/create'), ['class' => 'btn btn-success']),
+			'{newRecord}' => Html::a('Новая запись', PermissionsModule::to('permissions/create'), ['class' => 'btn btn-success']),
 			'{filterBtn}' => Html::button("<i class='fa fa-filter'></i>", ['onclick' => new JsExpression('setFakeGridFilter("#'.$id.'")'), 'class' => 'btn btn-info']),
 			'{collectionsLink}' => Html::a('Редактор групп', PermissionsModule::to('permissions-collections/index'), ['class' => 'btn btn-info'])
 		],
@@ -153,9 +153,13 @@ $id = 'permissions-index-grid';
 				'format' => 'text'
 			],
 			[
-				'attribute' => 'module'
+				'class' => DataColumn::class,
+				'attribute' => 'module',
+				'format' => 'raw',
+				'value' => static fn(Permissions $permission):string => $permission->module??''
 			],
-			['class' => EditableColumn::class,
+			[
+				'class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
 					'formOptions' => [
 						'action' => PermissionsModule::to('permissions/editDefault')
