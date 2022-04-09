@@ -159,6 +159,11 @@ $id = 'permissions-index-grid';
 				'value' => static fn(Permissions $permission):string => $permission->module??''
 			],
 			[
+				'class' => DataColumn::class,
+				'attribute' => 'controller',
+				'format' => 'text',
+			],
+			[
 				'class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
 					'formOptions' => [
