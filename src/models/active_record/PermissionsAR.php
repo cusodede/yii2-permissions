@@ -71,7 +71,7 @@ class PermissionsAR extends ActiveRecord {
 			'controller' => 'Контроллер',
 			'action' => 'Действие',
 			'verb' => 'Метод запроса',
-			'module' => 'Модуль контроллера',
+			'module' => 'Модуль',
 			'comment' => 'Комментарий',
 			'priority' => 'Приоритет',
 			'relatedUsersToPermissionsCollections' => 'Входит в наборы',
