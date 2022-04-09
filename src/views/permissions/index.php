@@ -107,7 +107,7 @@ $id = 'permissions-index-grid';
 						]
 					]
 				],
-				'attribute' => 'controller',
+				'attribute' => 'controllerPath',
 				'format' => 'text'
 			],
 			[
