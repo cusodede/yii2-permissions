@@ -7,16 +7,19 @@ use cusodede\permissions\PermissionsModule;
 use Throwable;
 use yii\base\InvalidConfigException;
 use yii\data\ActiveDataProvider;
+use yii\db\Expression;
 
 /**
  * Class PermissionsSearch
  * @property null|string $user
  * @property null|string $collection
+ * @property null|string $controllerPath
  */
 final class PermissionsSearch extends Permissions {
 
 	public ?string $user = null;
 	public ?string $collection = null;
+	public ?string $controllerPath = null;
 
 	/**
 	 * @inheritDoc
@@ -25,7 +28,7 @@ final class PermissionsSearch extends Permissions {
 		return [
 			['id', 'integer'],
 			['priority', 'integer', 'min' => 0, 'max' => 100],
-			[['name', 'controller', 'action', 'verb', 'user', 'collection'], 'string', 'max' => 255]
+			[['name', 'module', 'controller', 'action', 'verb', 'user', 'collection', 'controllerPath'], 'string', 'max' => 255]
 		];
 	}
 
@@ -62,6 +65,8 @@ final class PermissionsSearch extends Permissions {
 	private function filterData($query):void {
 		$query->andFilterWhere([self::tableName().'.id' => $this->id])
 			->andFilterWhere([self::tableName().'.priority' => $this->priority])
+			->andFilterWhere(['like', new Expression('CONCAT("'.self::tableName().'"."module"'.',\'/\',"'.self::tableName().'"."controller")'), $this->controllerPath])
+			->andFilterWhere(['like', self::tableName().'.module', $this->module])
 			->andFilterWhere(['like', self::tableName().'.name', $this->name])
 			->andFilterWhere(['like', self::tableName().'.controller', $this->controller])
 			->andFilterWhere(['like', self::tableName().'.action', $this->action])
@@ -76,7 +81,12 @@ final class PermissionsSearch extends Permissions {
 	private function setSort($dataProvider):void {
 		$dataProvider->setSort([
 			'defaultOrder' => ['id' => SORT_ASC],
-			'attributes' => ['id', 'name', 'controller', 'action', 'verb', 'priority']
+			'attributes' => ['id', 'module', 'name', 'controller', 'action', 'verb', 'priority',
+				'controllerPath' => [
+					'asc' => [self::tableName().'.module' => SORT_ASC, self::tableName().'.controller' => SORT_ASC],
+					'desc' => [self::tableName().'.module' => SORT_DESC, self::tableName().'.controller' => SORT_DESC]
+				]
+			]
 		]);
 	}
 
