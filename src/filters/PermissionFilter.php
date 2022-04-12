@@ -38,7 +38,7 @@ class PermissionFilter extends ActionFilter {
 	 */
 	public function beforeAction($action):bool {
 		$user = PermissionsModule::UserCurrentIdentity();
-		if (true === $user->hasActionPermission($action)) return true;
+		if (null !== $user && true === $user->hasActionPermission($action)) return true;
 
 		if (null !== $this->denyCallback) {
 			call_user_func($this->denyCallback, $user, $action);

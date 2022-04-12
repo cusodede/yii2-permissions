@@ -67,12 +67,12 @@ class PermissionsModule extends Module {
 	}
 
 	/**
-	 * @return IdentityInterface|UsersPermissionsTrait
+	 * @return null|IdentityInterface|UsersPermissionsTrait
 	 * @throws InvalidConfigException
 	 * @throws Throwable
 	 * @noinspection PhpDocSignatureInspection
 	 */
-	public static function UserCurrentIdentity():IdentityInterface {
+	public static function UserCurrentIdentity():?IdentityInterface {
 		if (null === static::$_userCurrentIdentity) {
 			$identity = static::param('userCurrentIdentity', Yii::$app->user->identity);
 			static::$_userCurrentIdentity = (is_callable($identity))
