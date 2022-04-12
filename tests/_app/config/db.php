@@ -5,8 +5,8 @@ use yii\db\Connection;
 
 return [
 	'class' => Connection::class,
-	'dsn' => "pgsql:host=localhost;dbname=yii2-permissions",
-	'username' => "postgres",
-	'password' => "postgres",
+	'dsn' => $_ENV['PERM_DB_DSN'],
+	'username' => $_ENV['PERM_DB_USER'],
+	'password' => $_ENV['PERM_DB_PASS'],
 	'enableSchemaCache' => false,
 ];
