@@ -29,7 +29,6 @@ class PermissionsModule extends Module {
 	public $controllerPath = '@vendor/cusodede/yii2-permissions/src/controllers';
 
 	private static ?string $_userIdentityClass = null;
-	private static ?IdentityInterface $_userCurrentIdentity = null;
 
 	public const VERBS = [
 		'GET' => 'GET',
@@ -67,19 +66,16 @@ class PermissionsModule extends Module {
 	}
 
 	/**
-	 * @return IdentityInterface|UsersPermissionsTrait
+	 * @return null|IdentityInterface|UsersPermissionsTrait
 	 * @throws InvalidConfigException
 	 * @throws Throwable
 	 * @noinspection PhpDocSignatureInspection
 	 */
-	public static function UserCurrentIdentity():IdentityInterface {
-		if (null === static::$_userCurrentIdentity) {
-			$identity = static::param('userCurrentIdentity', Yii::$app->user->identity);
-			static::$_userCurrentIdentity = (is_callable($identity))
-				?$identity()
-				:$identity;
-		}
-		return static::$_userCurrentIdentity;
+	public static function UserCurrentIdentity():?IdentityInterface {
+		$identity = static::param('userCurrentIdentity', Yii::$app->user->identity);
+		return (is_callable($identity))
+			?$identity()
+			:$identity;
 	}
 
 	/**
