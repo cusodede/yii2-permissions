@@ -56,7 +56,7 @@ class PermissionsCest {
 	public function checkUnauthorizedUser(FunctionalTester $I):void {
 		Yii::$app->user->logout();
 		$I->amOnRoute('permissions/permissions/index');
-		$I->seeResponseCodeIs(200);
+		$I->seeResponseCodeIs(403);
 	}
 
 }
