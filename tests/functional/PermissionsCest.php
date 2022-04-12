@@ -48,4 +48,15 @@ class PermissionsCest {
 		$I->seeResponseCodeIs(200);
 	}
 
+	/**
+	 * Попытка пролезть под неавторизованным пользователем
+	 * @param FunctionalTester $I
+	 * @return void
+	 */
+	public function checkUnauthorizedUser(FunctionalTester $I):void {
+		Yii::$app->user->logout();
+		$I->amOnRoute('permissions/permissions/index');
+		$I->seeResponseCodeIs(200);
+	}
+
 }
