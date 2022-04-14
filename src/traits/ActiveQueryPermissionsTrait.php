@@ -30,6 +30,7 @@ trait ActiveQueryPermissionsTrait {
 		$modelObjectOrClass = $modelObjectOrClass??$this->modelClass;
 		if (method_exists($modelObjectOrClass, 'scope')) {
 			$user = $user??PermissionsModule::UserCurrentIdentity();
+			if (null === $user) return $this;
 			/** @var ActiveRecordPermissionsTrait $modelObjectOrClass */
 			return ($modelObjectOrClass::scope($this, $user));
 		}
