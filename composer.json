@@ -11,8 +11,8 @@
 	],
 	"require": {
 		"php": ">=8.0",
-		"pozitronik/yii2-traits": "dev-master",
-		"pozitronik/yii2-relations": "dev-master",
+		"pozitronik/yii2-traits": "^1.0.0",
+		"pozitronik/yii2-relations": "^1.0.0",
 		"cusodede/yii2-default-controller": "^1.0.0",
 		"yiisoft/yii2-bootstrap4": "~2.0.10",
 		"kartik-v/yii2-widget-select2": "dev-master",
