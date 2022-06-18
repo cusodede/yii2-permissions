@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace app\controllers;
 
+use cusodede\permissions\traits\ControllerPermissionsTrait;
 use Yii;
 use yii\helpers\Html;
 use yii\web\Controller;
@@ -11,6 +12,7 @@ use yii\web\Controller;
  * class SiteController
  */
 class SiteController extends Controller {
+	use ControllerPermissionsTrait;
 
 	/**
 	 * @return string
