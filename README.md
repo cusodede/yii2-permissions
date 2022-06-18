@@ -6,22 +6,13 @@
 
 # Установка
 
-Добавляем
-
-```
-{
-	"type": "vcs",
-	"url": "https://github.com/cusodede/yii2-permissions"
-}
-```
-
-В секцию `repositories` файла `composer.json`, затем запускаем
+Выполните
 
 ```
 php composer.phar require cusodede/yii2-permissions "^1.0.0"
 ```
 
-или добавляем
+или добавьте
 
 ```
 "cusodede/yii2-permissions": "^1.0.0"
