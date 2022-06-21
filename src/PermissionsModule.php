@@ -153,35 +153,51 @@ class PermissionsModule extends Module {
 			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class]);
 		}
 
-		/** @var Controller[] $foundControllers */
-		foreach ($foundControllers as $controller) {
-			$module = $module??(($controller?->module?->id === Yii::$app->id)
-					?null/*для приложения не сохраняем модуль, для удобства*/
-					:$controller?->module?->id);
-			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
-			$controllerPermissions = [];
-			foreach ($controllerActions as $action) {
-				$permission = new Permissions([
-					'name' => sprintf("%s%s:%s", null === $module?"":"{$module}:", $controller->id, $action),
-					'module' => $module,
-					'controller' => $controller->id,
-					'action' => $action,
-					'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
-				]);
-				$saved = $permission->save();
-				if (null !== $initPermissionHandler) {
-					$initPermissionHandler($permission, $saved);
-				}
-				$controllerPermissions[] = $permission;
-			}
-			$controllerPermissionsCollection = new PermissionsCollections([
-				'name' => sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", $controller->id),
-				'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),
-			]);
-			$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
-			if (null !== $initPermissionCollectionHandler) {
-				$initPermissionCollectionHandler($controllerPermissionsCollection, $controllerPermissionsCollection->save());
-			}
-		}
+        /** @var Controller[] $foundControllers */
+        foreach ($foundControllers as $controller) {
+            $module = $module ?? (($controller?->module?->id === Yii::$app->id)
+                    ? null/*для приложения не сохраняем модуль, для удобства*/
+                    : $controller?->module?->id);
+            $controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
+            $controllerPermissions = [];
+            $classReflex = new \ReflectionClass($controller);
+            $classConstants = $classReflex->getConstants();
+
+            $controllerName = $controller->id;
+            if (array_key_exists('DEFAULT_TITLE', $classConstants) && null !== $classConstants['DEFAULT_TITLE']) {
+                $controllerName = $classConstants['DEFAULT_TITLE'];
+            }
+            foreach ($controllerActions as $action) {
+                $actionName = $action;
+                if (array_key_exists('ACTION_TITLES', $classConstants)) {
+                    $uniqueActionName = array_unique($classConstants['ACTION_TITLES']);
+                    if (array_key_exists($action, $uniqueActionName)) {
+                        $actionName = $uniqueActionName[$action];
+                    }
+                }
+                $permissionConfig = [
+                    'name' => sprintf("%s%s:%s", null === $module ? "" : "{$module}:", $controllerName, $actionName),
+                    'module' => $module,
+                    'controller' => $controllerName,
+                    'action' => $actionName,
+                    'comment' => "Разрешить доступ к действию {$actionName} контроллера {$controllerName}" . (null === $module ? "" : " модуля {$module}")
+                ];
+
+                $permission = new Permissions($permissionConfig);
+                $saved = $permission->save();
+                if (null !== $initPermissionHandler) {
+                    $initPermissionHandler($permission, $saved);
+                }
+                $controllerPermissions[] = $permission;
+            }
+            $controllerPermissionsCollection = new PermissionsCollections([
+                'name' => sprintf("Доступ к контроллеру %s%s", null === $module ? '' : "{$module}:", $controllerName),
+                'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controllerName, null === $module ? '' : " модуля {$module}"),
+            ]);
+            $controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
+            if (null !== $initPermissionCollectionHandler) {
+                $initPermissionCollectionHandler($controllerPermissionsCollection, $controllerPermissionsCollection->save());
+            }
+        }
 	}
 }
