@@ -1,0 +1,94 @@
+<?php
+declare(strict_types = 1);
+
+namespace cusodede\permissions\controllers;
+
+use cusodede\permissions\models\Permissions;
+use cusodede\permissions\models\PermissionsCollections;
+use cusodede\permissions\PermissionsModule;
+use cusodede\web\default_controller\models\DefaultController as VendorDefaultController;
+use ReflectionException;
+use Throwable;
+use yii\base\InvalidConfigException;
+use yii\base\UnknownClassException;
+use yii\data\ArrayDataProvider;
+
+/**
+ * Class ServiceController
+ * Визуальная админка генераторов
+ */
+class DefaultController extends VendorDefaultController {
+
+	public const PERMISSION = 1;
+	public const PERMISSIONS_COLLECTION = 2;
+
+	protected array $disabledActions = [
+		'actionCreate',
+		'actionView',
+		'actionDelete',
+		'actionUpdate',
+		'actionEdit'
+	];
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getViewPath():string {
+		return '@vendor/cusodede/yii2-permissions/src/views/default';
+	}
+
+	/**
+	 * @return string
+	 */
+	public function actionIndex():string {
+		return $this->render('index');
+	}
+
+	/**
+	 * @return string
+	 * @throws Throwable
+	 */
+	public function actionInitConfigPermissions():string {
+		$result = [];
+		PermissionsModule::InitConfigPermissions(static function(Permissions $permission, bool $saved) use (&$result) {
+			$result[] = [
+				'saved' => $saved,
+				'item' => $permission
+			];
+		});
+		return $this->render('init-config-permissions', ['result' => new ArrayDataProvider(['allModels' => $result])]);
+	}
+
+	/**
+	 * @param string|null $path
+	 * @param string|null $moduleId
+	 * @return string
+	 * @throws Throwable
+	 * @throws ReflectionException
+	 * @throws InvalidConfigException
+	 * @throws UnknownClassException
+	 */
+	public function actionInitControllersPermissions(?string $path = null, ?string $moduleId = null):string {
+		$result = [];
+		$pathMapping = [];
+		if (is_string($path)) $pathMapping = [$path => $moduleId];
+		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
+		foreach ($pathMapping as $controller_dir => $module_id) {
+			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved) use (&$result) {
+				$result[] = [
+					'type' => self::PERMISSION,
+					'saved' => $saved,
+					'item' => $permission
+				];
+			}, static function(PermissionsCollections $permissionsCollection, bool $saved) use (&$result) {
+				$result[] = [
+					'type' => self::PERMISSIONS_COLLECTION,
+					'saved' => $saved,
+					'item' => $permissionsCollection
+				];
+			});
+		}
+		return $this->render('init-controllers-permissions', ['result' => new ArrayDataProvider(['allModels' => $result])]);
+	}
+
+}
