@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions\commands;
 
+use cusodede\permissions\helpers\CommonHelper;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\PermissionsModule;
@@ -25,7 +26,7 @@ class DefaultController extends Controller {
 		PermissionsModule::InitConfigPermissions(static function(Permissions $permission, bool $saved) {
 			Console::output(Console::renderColoredString($saved
 				?"%b{$permission->name}%g добавлено%n"
-				:"%b{$permission->name}%r пропущено: (".static::Errors2String($permission->errors).")%n"));
+				:"%b{$permission->name}%r пропущено: (".CommonHelper::Errors2String($permission->errors).")%n"));
 		});
 	}
 
@@ -46,26 +47,13 @@ class DefaultController extends Controller {
 			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved) {
 				Console::output(Console::renderColoredString($saved
 					?"%gДоступ %b{$permission->name}%g добавлен%n"
-					:"%rДоступ %b{$permission->name}%r пропущен (".static::Errors2String($permission->errors).")%n"));
+					:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
 			}, static function(PermissionsCollections $permissionsCollection, bool $saved) {
 				Console::output(Console::renderColoredString($saved
 					?"%gКоллекция %b{$permissionsCollection->name} %gдобавлена%n"
-					:"%rКоллекция %b{$permissionsCollection->name} %rпропущена (".static::Errors2String($permissionsCollection->errors).")%n"));
+					:"%rКоллекция %b{$permissionsCollection->name} %rпропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n"));
 			});
 		}
 	}
 
-	/**
-	 * @param array $errors
-	 * @param array|string $separator
-	 * @return string
-	 */
-	public static function Errors2String(array $errors, array|string $separator = "\n"):string {
-		$output = [];
-		foreach ($errors as $attribute => $attributeErrors) {
-			$error = is_array($attributeErrors)?implode($separator, $attributeErrors):$attributeErrors;
-			$output[] = "{$attribute}: {$error}";
-		}
-		return implode($separator, $output);
-	}
 }
