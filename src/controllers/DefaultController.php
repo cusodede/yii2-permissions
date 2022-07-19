@@ -22,6 +22,11 @@ class DefaultController extends VendorDefaultController {
 	public const PERMISSION = 1;
 	public const PERMISSIONS_COLLECTION = 2;
 
+	/**
+	 * Название контроллера
+	 */
+	protected const DEFAULT_TITLE = 'Сервис доступов';
+
 	protected array $disabledActions = [
 		'actionCreate',
 		'actionView',
@@ -31,7 +36,6 @@ class DefaultController extends VendorDefaultController {
 	];
 
 	protected const ACTION_TITLES = [
-		'index' => 'Сервис доступов',
 		'init-config-permissions' => 'Импорт из конфига',
 		'init-controllers-permissions' => 'Генерация доступов по контроллерам',
 	];
