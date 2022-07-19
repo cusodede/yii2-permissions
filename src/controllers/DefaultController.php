@@ -30,6 +30,11 @@ class DefaultController extends VendorDefaultController {
 		'actionEdit'
 	];
 
+	protected const ACTION_TITLES = [
+		'init-config-permissions' => 'Импорт из конфига',
+		'init-controllers-permissions' => 'Генерация доступов по контроллерам',
+	];
+
 	/**
 	 * @inheritDoc
 	 */
@@ -65,12 +70,12 @@ class DefaultController extends VendorDefaultController {
 	}
 
 	/**
-	 * @param string|null $path
-	 * @param string|null $moduleId
-	 * @return string
-	 * @throws Throwable
-	 * @throws ReflectionException
+	 * Для всех контроллеров по пути $path добавляет наборы правил доступа в БД. Если путь не указан, берётся маппинг из параметра controllerDirs конфига.
+	 * @param null|string $path Путь к каталогу с контроллерами (рекурсивный корень). Если null, берётся маппинг из параметра controllerDirs конфига.
+	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры, null для автоматического определения
 	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
 	 * @throws UnknownClassException
 	 */
 	public function actionInitControllersPermissions(?string $path = null, ?string $moduleId = null):string {

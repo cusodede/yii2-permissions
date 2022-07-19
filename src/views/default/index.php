@@ -13,7 +13,7 @@ use yii\web\View;
 
 <?= ButtonGroup::widget([
 	'buttons' => [
-		PermissionsModule::a('Add permissions from configuration file', 'default/init-config-permissions', ['class' => 'btn btn-default']),
-		PermissionsModule::a('Generate controllers permissions', 'default/init-controllers-permissions', ['class' => 'btn btn-default']),
+		PermissionsModule::a('Добавляет разрешения, описанные в файле конфигурации', 'default/init-config-permissions', ['class' => 'btn btn-default']),
+		PermissionsModule::a('Генерация доступов по контроллерам', 'default/init-controllers-permissions', ['class' => 'btn btn-default']),
 	]
 ]) ?>
