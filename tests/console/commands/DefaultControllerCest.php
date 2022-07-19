@@ -47,8 +47,8 @@ class DefaultControllerCest {
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(29, $allPermissions);
-		$I->assertCount(5, $allPermissionsCollections);
+		$I->assertCount(38, $allPermissions);
+		$I->assertCount(6, $allPermissionsCollections);
 
 		$user = $this->initUser();
 		$user->setRelatedPermissions($allPermissions);
@@ -150,8 +150,8 @@ class DefaultControllerCest {
 
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(14, $allPermissions);
-		$I->assertCount(2, $allPermissionsCollections);
+		$I->assertCount(23, $allPermissions);
+		$I->assertCount(3, $allPermissionsCollections);
 
 		$user = $this->initUser();
 		$user->setRelatedPermissions($allPermissions);
