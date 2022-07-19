@@ -7,8 +7,8 @@ declare(strict_types = 1);
  */
 
 use cusodede\permissions\commands\DefaultController;
-use kartik\grid\DataColumn;
 use yii\data\ArrayDataProvider;
+use yii\grid\DataColumn;
 use yii\grid\GridView;
 use yii\web\View;
 
