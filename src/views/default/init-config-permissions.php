@@ -6,7 +6,6 @@ declare(strict_types = 1);
  * @var ArrayDataProvider $result
  */
 
-use cusodede\permissions\controllers\DefaultController;
 use cusodede\permissions\helpers\CommonHelper;
 use yii\data\ArrayDataProvider;
 use yii\grid\DataColumn;
