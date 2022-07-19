@@ -56,7 +56,12 @@ class DefaultController extends VendorDefaultController {
 				'item' => $permission
 			];
 		});
-		return $this->render('init-config-permissions', ['result' => new ArrayDataProvider(['allModels' => $result])]);
+		return $this->render('init-config-permissions', [
+			'result' => new ArrayDataProvider([
+				'allModels' => $result,
+				'pagination' => false
+			])
+		]);
 	}
 
 	/**
@@ -88,7 +93,12 @@ class DefaultController extends VendorDefaultController {
 				];
 			});
 		}
-		return $this->render('init-controllers-permissions', ['result' => new ArrayDataProvider(['allModels' => $result])]);
+		return $this->render('init-controllers-permissions', [
+			'result' => new ArrayDataProvider([
+				'allModels' => $result,
+				'pagination' => false
+			])
+		]);
 	}
 
 }
