@@ -25,16 +25,6 @@ use yii\web\View;
 	'columns' => [
 		[
 			'class' => DataColumn::class,
-			'attribute' => 'type',
-			'label' => 'Тип',
-			'value' => static fn(array $permissionItem):string => match ($permissionItem['type']) {
-				DefaultController::PERMISSION => 'Разрешение',
-				DefaultController::PERMISSIONS_COLLECTION => 'Группа разрешений',
-
-			}
-		],
-		[
-			'class' => DataColumn::class,
 			'attribute' => 'saved',
 			'label' => 'Разрешение добавлено',
 			'format' => 'boolean',

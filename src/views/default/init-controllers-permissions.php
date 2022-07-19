@@ -6,6 +6,7 @@ declare(strict_types = 1);
  * @var ArrayDataProvider $result
  */
 
+use cusodede\permissions\controllers\DefaultController;
 use cusodede\permissions\helpers\CommonHelper;
 use yii\data\ArrayDataProvider;
 use yii\grid\DataColumn;
@@ -22,6 +23,16 @@ use yii\web\View;
 			:['class' => 'alert-warning'];
 	},
 	'columns' => [
+		[
+			'class' => DataColumn::class,
+			'attribute' => 'type',
+			'label' => 'Тип',
+			'value' => static fn(array $permissionItem):string => match ($permissionItem['type']) {
+				DefaultController::PERMISSION => 'Разрешение',
+				DefaultController::PERMISSIONS_COLLECTION => 'Группа разрешений',
+
+			}
+		],
 		[
 			'class' => DataColumn::class,
 			'attribute' => 'saved',
