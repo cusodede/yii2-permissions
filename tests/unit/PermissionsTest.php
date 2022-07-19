@@ -139,7 +139,7 @@ class PermissionsTest extends Unit {
 		$this::assertCount(0, $generatedPermissionsCollections[1]->relatedPermissions);
 
 		/*Количество пермиссий пользователя должно уменьшиться соответственно уменьшению пермиссий в коллекции*/
-		$this::assertCount(9, $user->allPermissions());
+		$this::assertCount(9, $user->allPermissions(), var_export($user->allPermissions()));
 
 	}
 
