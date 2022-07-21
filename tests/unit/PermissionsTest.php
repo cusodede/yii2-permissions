@@ -1,8 +1,6 @@
 <?php
 declare(strict_types = 1);
 
-namespace unit\modules\permissions;
-
 use app\models\Users;
 use Codeception\Test\Unit;
 use cusodede\permissions\models\Permissions;
@@ -11,8 +9,6 @@ use cusodede\permissions\PermissionsModule;
 use cusodede\permissions\traits\ControllerPermissionsTrait;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
-use ReflectionException;
-use Throwable;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
 use yii\db\Exception;
