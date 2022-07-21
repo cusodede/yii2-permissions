@@ -69,11 +69,19 @@ class Permissions extends PermissionsAR {
 	public static function GetConfigurationPermissions(?array $filter = null):array {
 		$permissionsConfig = PermissionsModule::param(self::CONFIGURATION_PERMISSIONS, []);
 		if (null !== $filter) $permissionsConfig = ArrayHelper::filter($permissionsConfig, $filter);
+		return static::GetPermissionsFromArray($permissionsConfig);
+
+	}
+
+	/**
+	 * @param string[][] $permissionsArray
+	 * @return self[]
+	 */
+	public static function GetPermissionsFromArray(array $permissionsArray):array {
 		$result = [];
-		/*convert to models*/
-		foreach ($permissionsConfig as $name => $permissionConfig) {
+		foreach ($permissionsArray as $name => $permissionConfig) {
 			$permissionConfig['name'] = $name;
-			$result[] = array_filter((new self($permissionConfig))->attributes);
+			$result[] = new static($permissionConfig);
 		}
 		return $result;
 	}

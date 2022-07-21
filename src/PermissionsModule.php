@@ -123,8 +123,7 @@ class PermissionsModule extends Module {
 	 */
 	public static function InitConfigPermissions(?callable $initHandler = null):void {
 		$configPermissions = Permissions::GetConfigurationPermissions();
-		foreach ($configPermissions as $permissionAttributes) {
-			$permission = new Permissions($permissionAttributes);
+		foreach ($configPermissions as $permission) {
 			$saved = $permission->save();
 			if (null !== $initHandler) {
 				$initHandler($permission, $saved);
