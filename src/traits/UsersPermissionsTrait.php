@@ -116,6 +116,42 @@ trait UsersPermissionsTrait {
 	}
 
 	/**
+	 * Добавить пользователю доступ по id, имени, или напрямую.
+	 * Метод не проверяет существование связи.
+	 * @param int|string|Permissions $permission
+	 * @return bool False, если доступ не существует.
+	 * @throws Throwable
+	 * @noinspection CallableParameterUseCaseInTypeContextInspection
+	 */
+	public function grantPermission(int|string|Permissions $permission):bool {
+		if (is_string($permission)) {
+			if (null === $permission = Permissions::find()->where(['name' => $permission])->one()) return false;
+		} elseif (is_int($permission)) {
+			if (null === $permission = Permissions::findModel($permission)) return false;
+		}
+		$this->setRelatedPermissions($permission);
+		return true;
+	}
+
+	/**
+	 * Убрать у пользователя доступ по id, имени, или напрямую.
+	 * Метод не проверяет существование связи.
+	 * @param int|string|Permissions $permission
+	 * @return bool False, если доступ не существует.
+	 * @throws Throwable
+	 * @noinspection CallableParameterUseCaseInTypeContextInspection
+	 */
+	public function revokePermission(int|string|Permissions $permission):bool {
+		if (is_string($permission)) {
+			if (null === $permission = Permissions::find()->where(['name' => $permission])->one()) return false;
+		} elseif (is_int($permission)) {
+			if (null === $permission = Permissions::findModel($permission)) return false;
+		}
+		RelUsersToPermissions::unlinkModel($this, $permission);
+		return true;
+	}
+
+	/**
 	 * @return ActiveQuery
 	 */
 	public function getRelatedUsersToPermissionsCollections():ActiveQuery {
