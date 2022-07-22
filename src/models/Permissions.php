@@ -9,6 +9,7 @@ use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\CacheHelper;
 use Throwable;
 use Yii;
+use yii\base\InvalidConfigException;
 use yii\caching\TagDependency;
 
 /**
@@ -60,17 +61,27 @@ class Permissions extends PermissionsAR {
 
 	/**
 	 * Вернуть список преднастроенных правил из конфига
+	 * @param array|null $filter
 	 * @return self[]
 	 * @throws Throwable
+	 * @throws InvalidConfigException
 	 */
 	public static function GetConfigurationPermissions(?array $filter = null):array {
 		$permissionsConfig = PermissionsModule::param(self::CONFIGURATION_PERMISSIONS, []);
 		if (null !== $filter) $permissionsConfig = ArrayHelper::filter($permissionsConfig, $filter);
+		return static::GetPermissionsFromArray($permissionsConfig);
+
+	}
+
+	/**
+	 * @param string[][] $permissionsArray
+	 * @return self[]
+	 */
+	public static function GetPermissionsFromArray(array $permissionsArray):array {
 		$result = [];
-		/*convert to models*/
-		foreach ($permissionsConfig as $name => $permissionConfig) {
+		foreach ($permissionsArray as $name => $permissionConfig) {
 			$permissionConfig['name'] = $name;
-			$result[] = array_filter((new self($permissionConfig))->attributes);
+			$result[] = new static($permissionConfig);
 		}
 		return $result;
 	}

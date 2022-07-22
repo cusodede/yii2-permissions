@@ -1,8 +1,6 @@
 <?php
 declare(strict_types = 1);
 
-namespace unit\modules\permissions;
-
 use app\models\Users;
 use Codeception\Test\Unit;
 use cusodede\permissions\models\Permissions;
@@ -11,8 +9,6 @@ use cusodede\permissions\PermissionsModule;
 use cusodede\permissions\traits\ControllerPermissionsTrait;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
-use ReflectionException;
-use Throwable;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
 use yii\db\Exception;
@@ -23,6 +19,33 @@ use yii\web\Controller;
  * Тесты модуля доступов
  */
 class PermissionsTest extends Unit {
+
+	/**
+	 * @return void
+	 */
+	public function testGetConfigurationPermissions():void {
+		$permissionsArray = [
+			'some-controller:some-action:post' => [
+				'controller' => 'some-controller',
+				'action' => 'some-action',
+				'verb' => 'post',
+				'comment' => 'Разрешение POST для some-action в some-controller'
+			]
+		];
+
+		$configPermissions = Permissions::GetPermissionsFromArray($permissionsArray);
+		$permission = $configPermissions[0];
+		$this::assertTrue($permission->save());
+		$user = Users::CreateUser()->saveAndReturn();
+
+		$this::assertFalse($user->hasControllerPermission('some-controller', 'some-action', 'post'));
+		$this::assertTrue($user->grantPermission('some-controller:some-action:post'));
+
+		$this::assertTrue($user->hasControllerPermission('some-controller', 'some-action', 'post'));
+
+		$this::assertTrue($user->revokePermission($permission));
+		$this::assertFalse($user->hasControllerPermission('some-controller', 'some-action', 'post'));
+	}
 
 	/**
 	 * @return void
@@ -141,7 +164,6 @@ class PermissionsTest extends Unit {
 		/*Количество пермиссий пользователя должно уменьшиться соответственно уменьшению пермиссий в коллекции*/
 		$p = $user->allPermissions();
 		$this::assertCount(9, $p, var_export($p, true));
-
 	}
 
 }
