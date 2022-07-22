@@ -24,6 +24,7 @@ use yii\web\IdentityInterface;
  * @property string|null $name Название группы доступа
  * @property string|null $comment Описание группы доступа
  * @property bool $default Флаг использования группы по умолчанию
+ * @property int $priority Приоритет использования (больше - выше)
  *
  * @property RelPermissionsCollectionsToPermissions[] $relatedPermissionsCollectionsToPermissions Связь к промежуточной таблице к правам доступа
  * @property RelPermissionsCollectionsToPermissionsCollections[] $relatedPermissionsCollectionsToPermissionsCollections Связь к промежуточной таблице к ВКЛЮЧЁННЫМ группам доступа
@@ -58,6 +59,7 @@ class PermissionsCollectionsAR extends ActiveRecord {
 			[['name'], 'unique'],
 			[['name'], 'required'],
 			[['default'], 'boolean'],
+			[['priority'], 'integer'],
 			[['relatedPermissions', 'relatedUsers', 'relatedSlavePermissionsCollections'], 'safe']
 		];
 	}
@@ -71,6 +73,7 @@ class PermissionsCollectionsAR extends ActiveRecord {
 			'name' => 'Название',
 			'comment' => 'Комментарий',
 			'default' => 'По умолчанию',
+			'priority' => 'Приоритет',
 			'relatedUsers' => 'Присвоено пользователям',
 			'relatedPermissions' => 'Доступы',
 			'relatedSlavePermissionsCollections' => 'Включённые группы доступов',

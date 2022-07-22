@@ -75,6 +75,7 @@ $id = 'permissions-collections-index-grid';
 				'format' => 'boolean'
 			],
 			'name',
+			'priority',
 			'comment',
 			[
 				'class' => DataColumn::class,
