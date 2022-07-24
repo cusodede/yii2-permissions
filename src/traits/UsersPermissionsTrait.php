@@ -32,17 +32,18 @@ use yii\web\Controller;
 trait UsersPermissionsTrait {
 
 	/**
-	 * Проверяет, имеет ли пользователь указанный набор прав с указанной логикой проверки.
+	 * Проверяет, имеет ли пользователь право или набор прав с указанной логикой проверки.
 	 * Примеры:
 	 * $user->hasPermission(['execute_order_66'])
 	 * $user->hasPermission(['rule_galaxy', 'lose_arm'], Permissions::LOGIC_AND)
 	 *
-	 * @param string[] $permissions Названия прав, к которым проверяются доступы
+	 * @param string|string[] $permissions Названия прав, к которым проверяются доступы
 	 * @param int $logic Логика проверки
 	 * @return bool
 	 * @throws Throwable
 	 */
-	public function hasPermission(array $permissions, int $logic = PermissionsModule::LOGIC_OR):bool {
+	public function hasPermission(array|string $permissions, int $logic = PermissionsModule::LOGIC_OR):bool {
+		if (is_string($permissions)) $permissions = [$permissions];
 		$cacheKey = CacheHelper::MethodSignature(__METHOD__, func_get_args(), ['id' => $this->id]);
 		return Yii::$app->cache->getOrSet($cacheKey, function() use ($permissions, $logic) {
 			$result = false;
