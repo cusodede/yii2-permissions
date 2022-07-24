@@ -153,6 +153,42 @@ trait UsersPermissionsTrait {
 	}
 
 	/**
+	 * Добавить пользователю коллекцию по id, имени, или напрямую.
+	 * Метод не проверяет существование связи.
+	 * @param int|string|PermissionsCollections $collection
+	 * @return bool False, если коллекция не существует.
+	 * @throws Throwable
+	 * @noinspection CallableParameterUseCaseInTypeContextInspection
+	 */
+	public function grantCollection(int|string|PermissionsCollections $collection):bool {
+		if (is_string($collection)) {
+			if (null === $collection = PermissionsCollections::find()->where(['name' => $collection])->one()) return false;
+		} elseif (is_int($collection)) {
+			if (null === $collection = PermissionsCollections::findModel($collection)) return false;
+		}
+		$this->setRelatedPermissionsCollections($collection);
+		return true;
+	}
+
+	/**
+	 * Убрать у пользователя коллекцию по id, имени, или напрямую.
+	 * Метод не проверяет существование связи.
+	 * @param int|string|PermissionsCollections $collection
+	 * @return bool False, если доступ не существует.
+	 * @throws Throwable
+	 * @noinspection CallableParameterUseCaseInTypeContextInspection
+	 */
+	public function revokeCollection(int|string|PermissionsCollections $collection):bool {
+		if (is_string($collection)) {
+			if (null === $collection = Permissions::find()->where(['name' => $collection])->one()) return false;
+		} elseif (is_int($collection)) {
+			if (null === $collection = Permissions::findModel($collection)) return false;
+		}
+		RelUsersToPermissionsCollections::unlinkModel($this, $collection);
+		return true;
+	}
+
+	/**
 	 * @return ActiveQuery
 	 */
 	public function getRelatedUsersToPermissionsCollections():ActiveQuery {
