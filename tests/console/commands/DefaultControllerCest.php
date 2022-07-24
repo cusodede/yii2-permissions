@@ -16,6 +16,7 @@ use yii\db\Exception;
 
 /**
  * Class DefaultControllerCest
+ * Тесты консольного генератора
  */
 class DefaultControllerCest {
 
