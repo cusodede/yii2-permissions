@@ -87,7 +87,7 @@ class DefaultController extends VendorDefaultController {
 		$result = [];
 		$pathMapping = [];
 		if (is_string($path)) $pathMapping = [$path => $moduleId];
-		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
+		if (null === $path) $pathMapping = PermissionsModule::param(PermissionsModule::CONTROLLER_DIRS);
 		foreach ($pathMapping as $controller_dir => $module_id) {
 			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved) use (&$result) {
 				$result[] = [

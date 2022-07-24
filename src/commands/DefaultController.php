@@ -42,7 +42,7 @@ class DefaultController extends Controller {
 	public function actionInitControllersPermissions(?string $path = null, ?string $moduleId = null):void {
 		$pathMapping = [];
 		if (is_string($path)) $pathMapping = [$path => $moduleId];
-		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
+		if (null === $path) $pathMapping = PermissionsModule::param(PermissionsModule::CONTROLLER_DIRS);
 		foreach ($pathMapping as $controller_dir => $module_id) {
 			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved) {
 				Console::output(Console::renderColoredString($saved

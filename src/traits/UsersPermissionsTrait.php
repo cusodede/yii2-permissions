@@ -42,7 +42,7 @@ trait UsersPermissionsTrait {
 	 * @return bool
 	 * @throws Throwable
 	 */
-	public function hasPermission(array $permissions, int $logic = Permissions::LOGIC_OR):bool {
+	public function hasPermission(array $permissions, int $logic = PermissionsModule::LOGIC_OR):bool {
 		$cacheKey = CacheHelper::MethodSignature(__METHOD__, func_get_args(), ['id' => $this->id]);
 		return Yii::$app->cache->getOrSet($cacheKey, function() use ($permissions, $logic) {
 			$result = false;
@@ -53,18 +53,18 @@ trait UsersPermissionsTrait {
 				}
 
 				switch ($logic) {
-					case Permissions::LOGIC_OR:
+					case PermissionsModule::LOGIC_OR:
 						if ($result) return true; //при первом же найденном совпадении рапортуем о удаче
 					break;
-					case Permissions::LOGIC_AND:
+					case PermissionsModule::LOGIC_AND:
 						if (!$result) return false;//при первом же не найденном совпадении рапортуем о неудаче
 					break;
-					case Permissions::LOGIC_NOT:
+					case PermissionsModule::LOGIC_NOT:
 						if ($result) return false;//при первом же найденном совпадении рапортуем о неудаче
 					break;
 				}
 			}
-			return ($logic === Permissions::LOGIC_NOT)?true:$result;
+			return ($logic === PermissionsModule::LOGIC_NOT)?true:$result;
 		}, null, new TagDependency(['tags' => [
 			CacheHelper::MethodSignature('Users::allPermissions', ['id' => $this->id]),
 			CacheHelper::MethodSignature('Users::hasPermission', ['id' => $this->id]),
@@ -227,7 +227,7 @@ trait UsersPermissionsTrait {
 	 * @throws Throwable
 	 */
 	public function isAllPermissionsGranted():bool {
-		return in_array($this->id, PermissionsModule::param(Permissions::GRANT_ALL, []), true);
+		return in_array($this->id, PermissionsModule::param(PermissionsModule::GRANT_ALL, []), true);
 	}
 
 	/**

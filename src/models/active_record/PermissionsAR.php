@@ -6,7 +6,6 @@ namespace cusodede\permissions\models\active_record;
 use cusodede\permissions\models\active_record\relations\RelPermissionsCollectionsToPermissions;
 use cusodede\permissions\models\active_record\relations\RelUsersToPermissions;
 use cusodede\permissions\models\active_record\relations\RelUsersToPermissionsCollections;
-use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\PermissionsModule;
 use pozitronik\traits\traits\ActiveRecordTrait;
@@ -57,7 +56,7 @@ class PermissionsAR extends ActiveRecord {
 			[['name'], 'required'],
 			[['controller', 'action', 'verb', 'module'], 'string', 'max' => 255],
 			[['name'], 'unique'],
-			[Permissions::ALLOWED_EMPTY_PARAMS, 'default', 'value' => null]
+			[PermissionsModule::ALLOWED_EMPTY_PARAMS, 'default', 'value' => null]
 		];
 	}
 

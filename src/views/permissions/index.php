@@ -98,7 +98,7 @@ $id = 'permissions-index-grid';
 					],
 					'inputType' => Editable::INPUT_SELECT2,
 					'options' => [
-						'data' => PermissionsModule::GetControllersList(PermissionsModule::param(Permissions::CONTROLLER_DIRS)),
+						'data' => PermissionsModule::GetControllersList(PermissionsModule::param(PermissionsModule::CONTROLLER_DIRS)),
 						'pluginOptions' => [
 							'multiple' => false,
 							'allowClear' => true,

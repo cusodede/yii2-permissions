@@ -22,27 +22,6 @@ use yii\caching\TagDependency;
  * @see Permissions::getControllerPath()
  */
 class Permissions extends PermissionsAR {
-	/*Любое из перечисленных прав*/
-	public const LOGIC_OR = 0;
-	/*Все перечисленные права*/
-	public const LOGIC_AND = 1;
-	/*Ни одно из перечисленных прав*/
-	public const LOGIC_NOT = 2;
-
-	/*Минимальный/максимальный приоритет*/
-	public const PRIORITY_MIN = 0;
-	public const PRIORITY_MAX = 100;
-
-	/*Параметры разрешения, для которых пустой фильтр приравнивается к любому значению*/
-	public const ALLOWED_EMPTY_PARAMS = ['action', 'verb'];
-
-	public const GRANT_ALL = 'grantAll';
-	public const CONTROLLER_DIRS = 'controllerDirs';
-	/*Название параметра с преднастроенными правилами доступов*/
-	public const CONFIGURATION_PERMISSIONS = 'permissions';
-	/*Перечисление назначений конфигураций через конфиги, id => ['...', '...']*/
-	public const GRANT_PERMISSIONS = 'grant';
-
 	/**
 	 * @inheritDoc
 	 */
@@ -67,10 +46,9 @@ class Permissions extends PermissionsAR {
 	 * @throws InvalidConfigException
 	 */
 	public static function GetConfigurationPermissions(?array $filter = null):array {
-		$permissionsConfig = PermissionsModule::param(self::CONFIGURATION_PERMISSIONS, []);
+		$permissionsConfig = PermissionsModule::param(PermissionsModule::CONFIGURATION_PERMISSIONS, []);
 		if (null !== $filter) $permissionsConfig = ArrayHelper::filter($permissionsConfig, $filter);
 		return static::GetPermissionsFromArray($permissionsConfig);
-
 	}
 
 	/**
@@ -128,7 +106,7 @@ class Permissions extends PermissionsAR {
 		foreach ($permissionFilters as $paramName => $paramValue) {
 			$paramValues = [$paramValue];
 			/* Для перечисленных параметров пустое значение в БД приравнивается к любому, например verb = null => доступ с любым verb */
-			if (in_array($paramName, self::ALLOWED_EMPTY_PARAMS, true)) {
+			if (in_array($paramName, PermissionsModule::ALLOWED_EMPTY_PARAMS, true)) {
 				$paramValues[] = null;
 			}
 			$query->andWhere(["q.$paramName" => $paramValues]);
@@ -145,7 +123,7 @@ class Permissions extends PermissionsAR {
 	 */
 	public static function allUserConfigurationPermissions(int $user_id /*, array $permissionFilters = [], bool $asArray = true*/ /*todo*/):array {
 		/** @var array $userConfigurationGrantedPermissions */
-		$userConfigurationGrantedPermissions = ArrayHelper::getValue(PermissionsModule::param(self::GRANT_PERMISSIONS, []), $user_id, []);
+		$userConfigurationGrantedPermissions = ArrayHelper::getValue(PermissionsModule::param(PermissionsModule::GRANT_PERMISSIONS, []), $user_id, []);
 		return self::GetConfigurationPermissions($userConfigurationGrantedPermissions);
 	}
 

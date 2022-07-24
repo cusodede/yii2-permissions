@@ -30,6 +30,29 @@ class PermissionsModule extends Module {
 
 	private static ?string $_userIdentityClass = null;
 
+	/*Любое из перечисленных прав*/
+	public const LOGIC_OR = 0;
+	/*Все перечисленные права*/
+	public const LOGIC_AND = 1;
+	/*Ни одно из перечисленных прав*/
+	public const LOGIC_NOT = 2;
+
+	/*Минимальный/максимальный приоритет*/
+	public const PRIORITY_MIN = 0;
+	public const PRIORITY_MAX = 100;
+
+	/*Параметры разрешения, для которых пустой фильтр приравнивается к любому значению*/
+	public const ALLOWED_EMPTY_PARAMS = ['action', 'verb'];
+
+	public const GRANT_ALL = 'grantAll';
+	public const CONTROLLER_DIRS = 'controllerDirs';
+	/*Название параметра с преднастроенными правилами доступов*/
+	public const CONFIGURATION_PERMISSIONS = 'permissions';
+	/*Название параметра с преднастроенными коллекциями*/
+	public const CONFIGURATION_PERMISSIONS_COLLECTIONS = 'collections';
+	/*Перечисление назначений конфигураций через конфиги, id => ['...', '...']*/
+	public const GRANT_PERMISSIONS = 'grant';
+
 	public const VERBS = [
 		'GET' => 'GET',
 		'HEAD' => 'HEAD',
