@@ -65,20 +65,6 @@ class Permissions extends PermissionsAR {
 	}
 
 	/**
-	 * Из массива конфигурации доступов возвращает объекты доступов
-	 * @param string[][] $permissionsArray
-	 * @return self[]
-	 */
-	public static function GetPermissionsFromArray(array $permissionsArray):array {
-		$result = [];
-		foreach ($permissionsArray as $name => $permissionConfig) {
-			$permissionConfig['name'] = $name;
-			$result[] = new static($permissionConfig);
-		}
-		return $result;
-	}
-
-	/**
 	 * Все доступы пользователя из БД
 	 * @param int $user_id Пользователь
 	 * @param string[] $permissionFilters Дополнительные условия выборки доступов в формате [атрибут => значение]
@@ -126,6 +112,20 @@ class Permissions extends PermissionsAR {
 			$query->andWhere(["q.$paramName" => $paramValues]);
 		}
 		return $query->asArray($asArray)->all();
+	}
+
+	/**
+	 * Из массива конфигурации доступов возвращает объекты доступов
+	 * @param string[][] $permissionsArray
+	 * @return self[]
+	 */
+	protected static function GetPermissionsFromArray(array $permissionsArray):array {
+		$result = [];
+		foreach ($permissionsArray as $name => $permissionConfig) {
+			$permissionConfig['name'] = $name;
+			$result[] = new static($permissionConfig);
+		}
+		return $result;
 	}
 
 	/**
