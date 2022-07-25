@@ -14,7 +14,7 @@ class PermissionsTest extends Unit {
 	/**
 	 * Проверяет генерацию доступов из конфигурационного массива
 	 * @return void
-	 * @see Permissions::GetPermissionsFromArray
+	 * @covers Permissions::GetPermissionsFromArray
 	 */
 	public function testGetPermissionsFromArray():void {
 		$permissionsArray = [
@@ -42,7 +42,7 @@ class PermissionsTest extends Unit {
 
 	/**
 	 * @return void
-	 * @see Permissions::allUserPermissions
+	 * @covers Permissions::allUserPermissions
 	 */
 	public function testAllUserPermissions():void {
 
@@ -50,8 +50,8 @@ class PermissionsTest extends Unit {
 
 	/**
 	 * @return void
-	 * @see Permissions::getControllerPath
-	 * @see Permissions::setControllerPath
+	 * @covers Permissions::getControllerPath
+	 * @covers Permissions::setControllerPath
 	 */
 	public function testControllerPath():void {
 		$testPermission = new Permissions();
