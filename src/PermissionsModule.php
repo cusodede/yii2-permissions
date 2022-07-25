@@ -202,8 +202,9 @@ class PermissionsModule extends Module {
 				'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),
 			]);
 			$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
+			$saved = $controllerPermissionsCollection->save();
 			if (null !== $initPermissionCollectionHandler) {
-				$initPermissionCollectionHandler($controllerPermissionsCollection, $controllerPermissionsCollection->save());
+				$initPermissionCollectionHandler($controllerPermissionsCollection, $saved);
 			}
 		}
 	}
