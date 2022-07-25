@@ -246,12 +246,12 @@ trait UsersPermissionsTrait {
 			'action' => $actionId,
 			'verb' => $verb
 		]);
-		return Yii::$app->cache->getOrSet($cacheKey, fn() => [] !== Permissions::allUserPermissions($this->id, [
+		return Yii::$app->cache->getOrSet($cacheKey, fn() => [] !== array_merge(Permissions::allUserPermissions($this->id, [
 				'module' => $moduleId,
 				'controller' => $controllerId,
 				'action' => $actionId,
 				'verb' => $verb
-			]), null, new TagDependency([
+			]), Permissions::allUserConfigurationPermissions($this->id)), null, new TagDependency([
 			'tags' => [
 				CacheHelper::MethodSignature('Users::allPermissions', ['id' => $this->id]),//сброс кеша при изменении прав пользователя
 			]
