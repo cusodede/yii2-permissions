@@ -39,7 +39,20 @@ class Permissions extends PermissionsAR {
 	}
 
 	/**
-	 * Вернуть список преднастроенных правил из конфига
+	 * Все доступы пользователя из конфига (без фильтрации, просто всё, что назначено)
+	 * @param int $user_id
+	 * @return self[]
+	 * @throws Throwable
+	 * @throws Throwable
+	 */
+	public static function allUserConfigurationPermissions(int $user_id /*, array $permissionFilters = [], bool $asArray = true*/ /*todo*/):array {
+		/** @var array $userConfigurationGrantedPermissions */
+		$userConfigurationGrantedPermissions = ArrayHelper::getValue(PermissionsModule::param(PermissionsModule::GRANT_PERMISSIONS, []), $user_id, []);
+		return self::GetConfigurationPermissions($userConfigurationGrantedPermissions);
+	}
+
+	/**
+	 * Вернуть список доступов из файла конфигурации
 	 * @param array|null $filter
 	 * @return self[]
 	 * @throws Throwable
@@ -52,6 +65,7 @@ class Permissions extends PermissionsAR {
 	}
 
 	/**
+	 * Из массива конфигурации доступов возвращает объекты доступов
 	 * @param string[][] $permissionsArray
 	 * @return self[]
 	 */
@@ -66,10 +80,10 @@ class Permissions extends PermissionsAR {
 
 	/**
 	 * Все доступы пользователя из БД
-	 * @param int $user_id
-	 * @param string[] $permissionFilters
-	 * @param bool $asArray
-	 * @return self[]
+	 * @param int $user_id Пользователь
+	 * @param string[] $permissionFilters Дополнительные условия выборки доступов в формате [атрибут => значение]
+	 * @param bool $asArray Формат возврата результата: true - массив объектов, false - массив атрибутов
+	 * @return self[]|array
 	 */
 	public static function allUserPermissions(int $user_id, array $permissionFilters = [], bool $asArray = true):array {
 		$mainQuery = self::find()
@@ -112,19 +126,6 @@ class Permissions extends PermissionsAR {
 			$query->andWhere(["q.$paramName" => $paramValues]);
 		}
 		return $query->asArray($asArray)->all();
-	}
-
-	/**
-	 * Все доступы пользователя из конфига (без фильтрации, просто всё, что назначено)
-	 * @param int $user_id
-	 * @return self[]
-	 * @throws Throwable
-	 * @throws Throwable
-	 */
-	public static function allUserConfigurationPermissions(int $user_id /*, array $permissionFilters = [], bool $asArray = true*/ /*todo*/):array {
-		/** @var array $userConfigurationGrantedPermissions */
-		$userConfigurationGrantedPermissions = ArrayHelper::getValue(PermissionsModule::param(PermissionsModule::GRANT_PERMISSIONS, []), $user_id, []);
-		return self::GetConfigurationPermissions($userConfigurationGrantedPermissions);
 	}
 
 	/**
