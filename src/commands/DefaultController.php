@@ -23,7 +23,7 @@ class DefaultController extends Controller {
 	 * Добавляет разрешения, описанные в файле конфигурации, в БД
 	 */
 	public function actionInitConfigPermissions():void {
-		PermissionsModule::InitConfigPermissions(static function(Permissions|PermissionsCollections $permission, bool $saved, int $type) {
+		PermissionsModule::ImportConfigPermissions(static function(Permissions|PermissionsCollections $permission, bool $saved, int $type) {
 			$typeName = match ($type) {
 				PermissionsModule::PERMISSIONS => 'Разрешение',
 				PermissionsModule::PERMISSIONS_COLLECTIONS => 'Коллекция'

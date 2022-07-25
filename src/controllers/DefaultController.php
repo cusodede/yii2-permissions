@@ -56,7 +56,7 @@ class DefaultController extends VendorDefaultController {
 	 */
 	public function actionInitConfigPermissions():string {
 		$result = [];
-		PermissionsModule::InitConfigPermissions(static function(Permissions|PermissionsCollections $permission, bool $saved, int $type) use (&$result) {
+		PermissionsModule::ImportConfigPermissions(static function(Permissions|PermissionsCollections $permission, bool $saved, int $type) use (&$result) {
 			$result[] = [
 				'saved' => $saved,
 				'item' => $permission,

@@ -49,9 +49,9 @@ class PermissionsModuleTest extends Unit {
 	/**
 	 * Тест переноса конфигурации доступов из файловых конфигураций в БД
 	 * @return void
-	 * @covers PermissionsModule::InitConfigPermissions
+	 * @covers PermissionsModule::ImportConfigPermissions
 	 */
-	public function testInitConfigPermissions():void {
+	public function testImportConfigPermissions():void {
 		UnitHelper::ModuleWithParams([
 			'permissions' => [
 				'test_permission_1' => [],
@@ -70,7 +70,7 @@ class PermissionsModuleTest extends Unit {
 		$this::assertEmpty(Permissions::find()->all());
 
 		/*Доступы переносятся в БД*/
-		PermissionsModule::InitConfigPermissions();
+		PermissionsModule::ImportConfigPermissions();
 
 		$this::assertCount(3, Permissions::find()->all());
 		$this::assertEquals(
@@ -82,7 +82,7 @@ class PermissionsModuleTest extends Unit {
 	/**
 	 * Тест переноса конфигурации доступов из файловых конфигураций в БД (с коллекциями)
 	 * @return void
-	 * @covers PermissionsModule::InitConfigPermissions
+	 * @covers PermissionsModule::ImportConfigPermissions
 	 */
 	public function testInitConfigPermissionsWithCollections():void {
 		UnitHelper::ModuleWithParams([
@@ -118,7 +118,7 @@ class PermissionsModuleTest extends Unit {
 		$this::assertEmpty(Permissions::find()->all());
 
 		/*Доступы переносятся в БД*/
-		PermissionsModule::InitConfigPermissions();
+		PermissionsModule::ImportConfigPermissions();
 
 		$this::assertEquals(
 			['choke_with_force', 'execute_order_66', 'new_permission', 'site:error:post'],

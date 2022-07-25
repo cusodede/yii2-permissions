@@ -153,7 +153,7 @@ class PermissionsModule extends Module {
 	 * @return void
 	 * @throws Throwable
 	 */
-	public static function InitConfigPermissions(?callable $initHandler = null, int $mode = self::PERMISSIONS + self::PERMISSIONS_COLLECTIONS + self::INCLUDES):void {
+	public static function ImportConfigPermissions(?callable $initHandler = null, int $mode = self::PERMISSIONS + self::PERMISSIONS_COLLECTIONS + self::INCLUDES):void {
 		if ($mode & self::PERMISSIONS) {
 			foreach (Permissions::GetConfigurationPermissions() as $permission) {
 				$saved = $permission->save();
