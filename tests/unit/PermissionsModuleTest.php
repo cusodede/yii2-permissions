@@ -4,6 +4,7 @@ declare(strict_types = 1);
 use Codeception\Test\Unit;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\PermissionsModule;
+use Helper\Unit as UnitHelper;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -11,19 +12,6 @@ use yii\helpers\ArrayHelper;
  * Тесты методов модуля PermissionsTests
  */
 class PermissionsModuleTest extends Unit {
-
-	/**
-	 * Перезагружает модуль с указанными параметрами
-	 * @param array $params
-	 * @return PermissionsModule
-	 */
-	private static function ModuleWithParams(array $params):PermissionsModule {
-		$module = new PermissionsModule('permissions', null, [
-			'params' => $params
-		]);
-		Yii::$app->setModule('permissions', $module);
-		return $module;
-	}
 
 	/**
 	 * @return void
@@ -63,7 +51,7 @@ class PermissionsModuleTest extends Unit {
 	 * @covers PermissionsModule::InitConfigPermissions
 	 */
 	public function testInitConfigPermissions():void {
-		static::ModuleWithParams([
+		UnitHelper::ModuleWithParams([
 			'permissions' => [
 				'test_permission_1' => [],
 				'test_permission_2' => [
