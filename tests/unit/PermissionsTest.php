@@ -4,6 +4,7 @@ declare(strict_types = 1);
 use app\models\Users;
 use Codeception\Test\Unit;
 use cusodede\permissions\models\Permissions;
+use Helper\Unit as UnitHelper;
 
 /**
  * Class PermissionsTest
@@ -15,18 +16,20 @@ class PermissionsTest extends Unit {
 	 * Проверяет генерацию доступов из конфигурационного массива
 	 * @return void
 	 * @covers Permissions::GetPermissionsFromArray
+	 * @covers Permissions::GetConfigurationPermissions
 	 */
 	public function testGetPermissionsFromArray():void {
-		$permissionsArray = [
-			'some-controller:some-action:post' => [
-				'controller' => 'some-controller',
-				'action' => 'some-action',
-				'verb' => 'post',
-				'comment' => 'Разрешение POST для some-action в some-controller'
+		UnitHelper::ModuleWithParams([
+			'permissions' => [
+				'some-controller:some-action:post' => [
+					'controller' => 'some-controller',
+					'action' => 'some-action',
+					'verb' => 'post',
+					'comment' => 'Разрешение POST для some-action в some-controller'
+				]
 			]
-		];
-
-		$configPermissions = Permissions::GetPermissionsFromArray($permissionsArray);
+		]);
+		$configPermissions = Permissions::GetConfigurationPermissions();
 		$permission = $configPermissions[0];
 		$this::assertTrue($permission->save());
 		$user = Users::CreateUser()->saveAndReturn();
