@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 use Codeception\Test\Unit;
 use cusodede\permissions\models\Permissions;
+use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\PermissionsModule;
 use Helper\Unit as UnitHelper;
 use yii\helpers\ArrayHelper;
@@ -79,11 +80,37 @@ class PermissionsModuleTest extends Unit {
 	}
 
 	/**
+	 * Тест генератора доступов к контроллерам
 	 * @return void
 	 * @covers PermissionsModule::InitControllersPermissions
 	 */
 	public function testInitControllersPermissions():void {
+		/** @var Permissions[] $generatedPermissions */
+		$generatedPermissions = [];
+		/** @var PermissionsCollections[] $generatedPermissionsCollections */
+		$generatedPermissionsCollections = [];
 
+		/**
+		 * Для теста используются контроллеры внутри модуля, потому что они
+		 * а) точно есть;
+		 * б) соответствуют всем требованиям;
+		 * в) известны все их параметры.
+		 * + к ним добавлен произвольный контроллер для некоторой энтропии.
+		 */
+		PermissionsModule::InitControllersPermissions('@app/controllers',
+			null,
+			static function(Permissions $permission, bool $saved) use (&$generatedPermissions) {
+				static::assertTrue($saved);
+				$generatedPermissions[] = $permission;
+			}, static function(PermissionsCollections $permissionsCollection, bool $saved) use (&$generatedPermissionsCollections) {
+				static::assertTrue($saved);
+				$generatedPermissionsCollections[] = $permissionsCollection;
+			});
+
+		/*Мы знаем, сколько сгенерится доступов и коллекций*/
+		$this::assertCount(15, $generatedPermissions);
+		$this::assertCount(3, $generatedPermissionsCollections);
+		$this::assertEquals(["Доступ к контроллеру permissions-collections", "Доступ к контроллеру permissions", "Доступ к контроллеру site"], ArrayHelper::getColumn($generatedPermissionsCollections, 'name'));
 	}
 
 }
