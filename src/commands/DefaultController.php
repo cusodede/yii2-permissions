@@ -23,10 +23,14 @@ class DefaultController extends Controller {
 	 * Добавляет разрешения, описанные в файле конфигурации, в БД
 	 */
 	public function actionInitConfigPermissions():void {
-		PermissionsModule::InitConfigPermissions(static function(Permissions $permission, bool $saved) {
+		PermissionsModule::InitConfigPermissions(static function(Permissions|PermissionsCollections $permission, bool $saved, int $type) {
+			$typeName = match ($type) {
+				PermissionsModule::PERMISSIONS => 'Разрешение',
+				PermissionsModule::PERMISSIONS_COLLECTIONS => 'Коллекция'
+			};
 			Console::output(Console::renderColoredString($saved
-				?"%b{$permission->name}%g добавлено%n"
-				:"%b{$permission->name}%r пропущено: (".CommonHelper::Errors2String($permission->errors).")%n"));
+				?"%b{$typeName} {$permission->name}%g добавлено%n"
+				:"%b{$typeName} {$permission->name}%r пропущено: (".CommonHelper::Errors2String($permission->errors).")%n"));
 		});
 	}
 
