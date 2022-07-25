@@ -140,7 +140,8 @@ class PermissionsModule extends Module {
 	}
 
 	/**
-	 * @param callable|null $initHandler
+	 * Загружает в БД доступы из файла конфигурации
+	 * @param callable|null $initHandler Обработчик, вызываемый после обработки конфигурации.
 	 * @return void
 	 * @throws Throwable
 	 */
@@ -206,4 +207,5 @@ class PermissionsModule extends Module {
 			}
 		}
 	}
+
 }
