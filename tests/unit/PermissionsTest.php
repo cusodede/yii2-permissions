@@ -18,7 +18,7 @@ class PermissionsTest extends Unit {
 	 * @covers Permissions::GetPermissionsFromArray
 	 * @covers Permissions::GetConfigurationPermissions
 	 */
-	public function testGetPermissionsFromArray():void {
+	public function testGetConfigurationPermissions():void {
 		UnitHelper::ModuleWithParams([
 			'permissions' => [
 				'some-controller:some-action:post' => [
