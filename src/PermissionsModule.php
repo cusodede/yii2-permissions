@@ -62,6 +62,13 @@ class PermissionsModule extends Module {
 		'DELETE' => 'DELETE'
 	];
 
+	/*Загружать из конфигурации список разрешений*/
+	public const PERMISSIONS = 0b0001;
+	/*Загружать из конфигурации список коллекций*/
+	public const PERMISSIONS_COLLECTIONS = 0b0010;
+	/*Загружать из конфигурации список вложенных конфигураций (todo)*/
+	public const INCLUDES = 0b0100;
+
 	/**
 	 * @inheritDoc
 	 */
@@ -142,16 +149,29 @@ class PermissionsModule extends Module {
 	/**
 	 * Загружает в БД доступы из файла конфигурации
 	 * @param callable|null $initHandler Обработчик, вызываемый после обработки конфигурации.
+	 *        function (Permission|PermissionCollection $permission, bool $isSaved, int $type);
 	 * @return void
 	 * @throws Throwable
 	 */
-	public static function InitConfigPermissions(?callable $initHandler = null):void {
-		$configPermissions = Permissions::GetConfigurationPermissions();
-		foreach ($configPermissions as $permission) {
-			$saved = $permission->save();
-			if (null !== $initHandler) {
-				$initHandler($permission, $saved);
+	public static function InitConfigPermissions(?callable $initHandler = null, int $mode = self::PERMISSIONS + self::PERMISSIONS_COLLECTIONS + self::INCLUDES):void {
+		if ($mode & self::PERMISSIONS) {
+			foreach (Permissions::GetConfigurationPermissions() as $permission) {
+				$saved = $permission->save();
+				if (null !== $initHandler) {
+					$initHandler($permission, $saved, self::PERMISSIONS);
+				}
 			}
+		}
+		if ($mode & self::PERMISSIONS_COLLECTIONS) {
+			foreach (PermissionsCollections::GetConfigurationPermissionsCollections() as $permissionsCollection) {
+				$saved = $permissionsCollection->save();
+				if (null !== $initHandler) {
+					$initHandler($permissionsCollection, $saved, self::PERMISSIONS);
+				}
+			}
+		}
+		if ($mode & self::INCLUDES) {
+			//todo
 		}
 	}
 
