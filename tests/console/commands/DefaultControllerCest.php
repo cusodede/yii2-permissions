@@ -8,7 +8,7 @@ use ConsoleTester;
 use cusodede\permissions\commands\DefaultController;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
-use Throwable;
+use cusodede\permissions\PermissionsModule;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\console\Controller;
@@ -59,7 +59,7 @@ class DefaultControllerCest {
 		$I->assertTrue($user->hasPermission([
 			'permissions-collections:index', 'permissions:index', 'permissions:permissions-collections:edit', 'permissions:permissions:view',
 			'permissions-collections:create', 'permissions:ajax-search', 'site:error'
-		], Permissions::LOGIC_AND));
+		], PermissionsModule::LOGIC_AND));
 
 		/*Потыкаем в доступы к контроллерам*/
 		$I->assertTrue($user->hasControllerPermission('permissions', 'index'));
@@ -108,10 +108,10 @@ class DefaultControllerCest {
 		/*Потыкаем в разные сгенеренные пермиссии*/
 		$I->assertTrue($user->hasPermission(
 			['permissions-collections:index', 'permissions:index', 'permissions-collections:create', 'permissions:ajax-search', 'site:error'],
-			Permissions::LOGIC_AND)
+			PermissionsModule::LOGIC_AND)
 		);
 
-		$I->assertFalse($user->hasPermission(['permissions:permissions-collections:edit', 'permissions:permissions:view'], Permissions::LOGIC_AND));
+		$I->assertFalse($user->hasPermission(['permissions:permissions-collections:edit', 'permissions:permissions:view'], PermissionsModule::LOGIC_AND));
 
 		/*Потыкаем в доступы к контроллерам*/
 		$I->assertTrue($user->hasControllerPermission('permissions', 'index'));
@@ -161,10 +161,10 @@ class DefaultControllerCest {
 		/*Потыкаем в разные сгенеренные пермиссии*/
 		$I->assertFalse($user->hasPermission(
 			['permissions-collections:index', 'permissions:index', 'permissions-collections:create', 'permissions:ajax-search', 'site:error'],
-			Permissions::LOGIC_AND)
+			PermissionsModule::LOGIC_AND)
 		);
 
-		$I->assertTrue($user->hasPermission(['permissions:permissions-collections:edit', 'permissions:permissions:view'], Permissions::LOGIC_AND));
+		$I->assertTrue($user->hasPermission(['permissions:permissions-collections:edit', 'permissions:permissions:view'], PermissionsModule::LOGIC_AND));
 
 		/*Потыкаем в доступы к контроллерам*/
 		$I->assertFalse($user->hasControllerPermission('permissions', 'index'));
@@ -193,28 +193,4 @@ class DefaultControllerCest {
 
 	}
 
-	/**
-	 * Проверяет присвоение и отработку назначения привилегий через конфиг
-	 * @param ConsoleTester $I
-	 * @return void
-	 * @throws Exception
-	 * @throws InvalidConfigException
-	 * @throws Throwable
-	 */
-	public function InitConfigPermissions(ConsoleTester $I) {
-		$user = $this->initUser();
-		$I->assertEquals(1, $user->id);
-		$this->initDefaultController()->actionInitConfigPermissions();
-		/*В конфиге у юзера прибит один один пермишшен*/
-		$I->assertCount(1, $user->allPermissions());
-
-		/*Доступ, которого нет*/
-		$I->assertFalse($user->hasPermission(['this_permission_does_not_exist']));
-
-		/*Доступ, который есть в конфиге, но не у юзера */
-		$I->assertFalse($user->hasPermission(['execute_order_66']));
-		/*Доступ есть в конфиге, и присвоен юзеру добавлен в конфиге*/
-		$I->assertTrue($user->hasPermission(['choke_with_force']));
-
-	}
 }
