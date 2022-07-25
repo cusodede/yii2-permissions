@@ -75,8 +75,72 @@ class PermissionsModuleTest extends Unit {
 		$this::assertCount(3, Permissions::find()->all());
 		$this::assertEquals(
 			['test_permission_2', 'test_permission_1', 'site:error:post'],
-			ArrayHelper::getColumn(Permissions::find()->select(['name'])->orderBy(['name' => SORT_DESC])->asArray(true)->all(), 'name'));
+			ArrayHelper::getColumn(Permissions::find()->select(['name'])->orderBy(['name' => SORT_DESC])->asArray(true)->all(), 'name')
+		);
+	}
 
+	/**
+	 * Тест переноса конфигурации доступов из файловых конфигураций в БД (с коллекциями)
+	 * @return void
+	 * @covers PermissionsModule::InitConfigPermissions
+	 */
+	public function testInitConfigPermissionsWithCollections():void {
+		UnitHelper::ModuleWithParams([
+			PermissionsModule::CONFIGURATION_PERMISSIONS => [
+				'choke_with_force' => [
+					'comment' => 'Разрешение душить силой'
+				],
+				'execute_order_66' => [
+					'comment' => 'Разрешение душить силой'
+				],
+				'site:error:post' => [
+					'controller' => 'site',
+					'action' => 'error',
+					'verb' => 'post',
+					'comment' => 'Разрешение POST для actionError в SiteController'
+				]
+			],
+			PermissionsModule::CONFIGURATION_PERMISSIONS_COLLECTIONS => [
+				'sith_collection' => [
+					'permissions' => ['choke_with_force', 'execute_order_66'],
+				],
+				'palpatin_collection' => [
+					'permissions' => ['execute_order_66', 'site:error:post']
+				],
+				'default_collection' => [
+					'permissions' => ['site:error:post', 'new_permission'],//<== доступ добавляется отсюда
+					'default' => true,
+					'comment' => 'Коллекция по умолчанию'
+				]
+			]
+		]);
+
+		$this::assertEmpty(Permissions::find()->all());
+
+		/*Доступы переносятся в БД*/
+		PermissionsModule::InitConfigPermissions();
+
+		$this::assertEquals(
+			['choke_with_force', 'execute_order_66', 'new_permission', 'site:error:post'],
+			ArrayHelper::getColumn(Permissions::find()->select(['name'])->orderBy(['name' => SORT_ASC])->asArray(true)->all(), 'name')
+		);
+
+		$checkAttributesOnPermission = Permissions::find()->where(['name' => 'site:error:post'])->one();
+
+		$this::assertEquals('Разрешение POST для actionError в SiteController', $checkAttributesOnPermission->comment);
+		$this::assertEquals('site', $checkAttributesOnPermission->controller);
+		$this::assertEquals('error', $checkAttributesOnPermission->action);
+		$this::assertEquals('post', $checkAttributesOnPermission->verb);
+
+		$this::assertEquals(
+			['sith_collection', 'palpatin_collection', 'default_collection'],
+			ArrayHelper::getColumn(PermissionsCollections::find()->select(['name'])->orderBy(['name' => SORT_DESC])->asArray(true)->all(), 'name')
+		);
+
+		$checkAttributesOnCollection = PermissionsCollections::find()->where(['name' => 'default_collection'])->one();
+
+		$this::assertTrue($checkAttributesOnCollection->default);
+		$this::assertEquals('Коллекция по умолчанию', $checkAttributesOnCollection->comment);
 	}
 
 	/**
