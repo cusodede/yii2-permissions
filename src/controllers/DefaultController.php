@@ -18,10 +18,6 @@ use yii\data\ArrayDataProvider;
  * Визуальная админка генераторов
  */
 class DefaultController extends VendorDefaultController {
-
-	public const PERMISSION = 1;
-	public const PERMISSIONS_COLLECTION = 2;
-
 	/**
 	 * Название контроллера
 	 */
@@ -36,7 +32,7 @@ class DefaultController extends VendorDefaultController {
 	];
 
 	protected const ACTION_TITLES = [
-		'init-config-permissions' => 'Импорт из конфига',
+		'init-config-permissions' => 'Импорт доступов из файла конфигурации',
 		'init-controllers-permissions' => 'Генерация доступов по контроллерам',
 	];
 
@@ -60,10 +56,11 @@ class DefaultController extends VendorDefaultController {
 	 */
 	public function actionInitConfigPermissions():string {
 		$result = [];
-		PermissionsModule::InitConfigPermissions(static function(Permissions $permission, bool $saved) use (&$result) {
+		PermissionsModule::InitConfigPermissions(static function(Permissions|PermissionsCollections $permission, bool $saved, int $type) use (&$result) {
 			$result[] = [
 				'saved' => $saved,
-				'item' => $permission
+				'item' => $permission,
+				'type' => $type
 			];
 		});
 		return $this->render('init-config-permissions', [
@@ -91,13 +88,13 @@ class DefaultController extends VendorDefaultController {
 		foreach ($pathMapping as $controller_dir => $module_id) {
 			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved) use (&$result) {
 				$result[] = [
-					'type' => self::PERMISSION,
+					'type' => PermissionsModule::PERMISSIONS,
 					'saved' => $saved,
 					'item' => $permission
 				];
 			}, static function(PermissionsCollections $permissionsCollection, bool $saved) use (&$result) {
 				$result[] = [
-					'type' => self::PERMISSIONS_COLLECTION,
+					'type' => PermissionsModule::PERMISSIONS_COLLECTIONS,
 					'saved' => $saved,
 					'item' => $permissionsCollection
 				];

@@ -6,8 +6,8 @@ declare(strict_types = 1);
  * @var ArrayDataProvider $result
  */
 
-use cusodede\permissions\controllers\DefaultController;
 use cusodede\permissions\helpers\CommonHelper;
+use cusodede\permissions\PermissionsModule;
 use yii\data\ArrayDataProvider;
 use yii\grid\DataColumn;
 use yii\grid\GridView;
@@ -28,15 +28,15 @@ use yii\web\View;
 			'attribute' => 'type',
 			'label' => 'Тип',
 			'value' => static fn(array $permissionItem):string => match ($permissionItem['type']) {
-				DefaultController::PERMISSION => 'Разрешение',
-				DefaultController::PERMISSIONS_COLLECTION => 'Группа разрешений',
+				PermissionsModule::PERMISSIONS => 'Доступ',
+				PermissionsModule::PERMISSIONS_COLLECTIONS => 'Коллекция',
 
 			}
 		],
 		[
 			'class' => DataColumn::class,
 			'attribute' => 'saved',
-			'label' => 'Разрешение добавлено',
+			'label' => 'Доступ добавлен',
 			'format' => 'boolean',
 		],
 		[

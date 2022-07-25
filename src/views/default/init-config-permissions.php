@@ -7,6 +7,7 @@ declare(strict_types = 1);
  */
 
 use cusodede\permissions\helpers\CommonHelper;
+use cusodede\permissions\PermissionsModule;
 use yii\data\ArrayDataProvider;
 use yii\grid\DataColumn;
 use yii\grid\GridView;
@@ -24,8 +25,18 @@ use yii\web\View;
 	'columns' => [
 		[
 			'class' => DataColumn::class,
+			'attribute' => 'type',
+			'label' => 'Тип',
+			'value' => static fn(array $permissionItem):string => match ($permissionItem['type']) {
+				PermissionsModule::PERMISSIONS => 'Доступ',
+				PermissionsModule::PERMISSIONS_COLLECTIONS => 'Коллекция',
+
+			}
+		],
+		[
+			'class' => DataColumn::class,
 			'attribute' => 'saved',
-			'label' => 'Разрешение добавлено',
+			'label' => 'Доступ добавлен',
 			'format' => 'boolean',
 		],
 		[
