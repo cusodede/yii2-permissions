@@ -70,6 +70,8 @@ class UserPermissionsTest extends Unit {
 	/**
 	 * Присвоить пользователю в конфигурации несуществующий доступ
 	 * @return void
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	public function testGrantNonExistedPermission():void {
 		UnitHelper::ModuleWithParams([
@@ -104,7 +106,9 @@ class UserPermissionsTest extends Unit {
 		$this::assertEmpty(Permissions::find()->all());
 		/*Генерируем доступы к контроллерам приложения, см PermissionsModuleTest::testInitControllersPermissions*/
 		PermissionsModule::InitControllersPermissions();
+		/** @var Permissions[] $generatedPermissions */
 		$generatedPermissions = Permissions::find()->all();
+		/** @var PermissionsCollections[] $generatedPermissionsCollections */
 		$generatedPermissionsCollections = PermissionsCollections::find()->all();
 
 		$user = Users::CreateUser()->saveAndReturn();
