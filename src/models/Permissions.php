@@ -48,7 +48,16 @@ class Permissions extends PermissionsAR {
 	public static function allUserConfigurationPermissions(int $user_id /*, array $permissionFilters = [], bool $asArray = true*/ /*todo*/):array {
 		/** @var array $userConfigurationGrantedPermissions */
 		$userConfigurationGrantedPermissions = ArrayHelper::getValue(PermissionsModule::param(PermissionsModule::GRANT_PERMISSIONS, []), $user_id, []);
-		return self::GetConfigurationPermissions($userConfigurationGrantedPermissions);
+
+		/*Доступы через granted*/
+		$configurationPermissions = self::GetConfigurationPermissions($userConfigurationGrantedPermissions);
+		/*Доступы через коллекции с флагом default*/
+		//todo: здесь возможна оптимизация, если фильтровать не созданный массив коллекций, а сначала отфильтровать массив, а по нему уже создать коллекции
+		$configurationDefaultCollections = PermissionsCollections::GetConfigurationPermissionsCollections();
+		$configurationDefaultCollections = array_filter($configurationDefaultCollections, fn($value) => true === $value->default);
+
+		$permissionsFromDefaultCollections = array_merge(...ArrayHelper::getColumn($configurationDefaultCollections, 'configurationPermissions'));
+		return array_merge($configurationPermissions, $permissionsFromDefaultCollections);
 	}
 
 	/**
