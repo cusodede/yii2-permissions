@@ -14,6 +14,10 @@ return [
 			'@app/controllers' => null,
 			'./src/controllers' => 'permissions',
 		],
+		/*каталоги, в которых будут искаться конфиги пермиссий todo*/
+		'includeDirs' => [
+
+		],
 		'grantAll' => [],
 		'grant' => [
 			1 => ['choke_with_force']
@@ -24,6 +28,25 @@ return [
 			],
 			'execute_order_66' => [
 				'comment' => 'Разрешение душить силой'
+			],
+			'site:error:post' => [
+				'controller' => 'site',
+				'action' => 'error',
+				'verb' => 'post',
+				'comment' => 'Разрешение POST для actionError в SiteController'
+			]
+		],
+		'collections' => [
+			'sith_collection' => [
+				'permissions' => ['choke_with_force', 'execute_order_66'],
+			],
+			'palpatin' => [
+				'permissions' => ['execute_order_66', 'site:error:post']
+			],
+			'default_collection' => [
+				'permissions' => ['site:error:post', 'new_permission'],
+				'default' => true,
+				'comment' => 'Коллекция по умолчанию'
 			]
 		]
 	]
