@@ -14,8 +14,10 @@ use yii\caching\TagDependency;
 
 /**
  * Class PermissionsCollections
+ * @property-read Permissions[] $configurationPermissions Входящие в группу доступа права доступа, указанные в конфигурации.
  */
 class PermissionsCollections extends PermissionsCollectionsAR {
+
 	/**
 	 * При изменении группы, нужно удалить кеши прав всем пользователям, у которых:
 	 *    - право есть в группе прав, назначенной пользователю
@@ -56,13 +58,27 @@ class PermissionsCollections extends PermissionsCollectionsAR {
 		foreach ($collectionsArray as $name => $collectionConfig) {
 			$collection = new static(['name' => $name]);
 			$collection->loadArray(array_intersect_key($collectionConfig, $collection->attributes));
-			$permissions = [];
-			foreach (ArrayHelper::getValue($collectionConfig, PermissionsModule::CONFIGURATION_PERMISSIONS) as $permissionName) {
-				$permissions[] = Permissions::Upsert(['name' => $permissionName]);
-			}
-			$collection->relatedPermissions = $permissions;
+			$collection->relatedPermissions = $collection->configurationPermissions;
 			$result[] = $collection;
 		}
 		return $result;
+	}
+
+	/**
+	 * Входящие в группу доступа права доступа, указанные в конфигурации. Права могут храниться как в БД, так и в конфигурации.
+	 * @return Permissions[]
+	 */
+	public function getConfigurationPermissions():array {
+		$permissions = [];
+		$collectionConfig = PermissionsModule::param(PermissionsModule::CONFIGURATION_PERMISSIONS_COLLECTIONS.'.'.$this->name, []);
+		foreach (ArrayHelper::getValue($collectionConfig, PermissionsModule::CONFIGURATION_PERMISSIONS) as $permissionName) {
+			if (null === $permission = Permissions::find()->where(['name' => $permissionName])->one()) {
+				if (null === $permission = ArrayHelper::getValue(Permissions::GetConfigurationPermissions(['name' => $permissionName]), 0)) {
+					$permission = new Permissions(['name' => $permissionName]);
+				}
+			}
+			$permissions[] = $permission;
+		}
+		return $permissions;
 	}
 }
