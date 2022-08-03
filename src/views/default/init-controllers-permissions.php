@@ -28,7 +28,7 @@ use yii\web\View;
 			'attribute' => 'type',
 			'label' => 'Тип',
 			'value' => static fn(array $permissionItem):string => match ($permissionItem['type']) {
-				PermissionsModule::PERMISSIONS => 'Доступ',
+				PermissionsModule::PERMISSIONS => 'Разрешение',
 				PermissionsModule::PERMISSIONS_COLLECTIONS => 'Коллекция',
 
 			}
@@ -36,7 +36,7 @@ use yii\web\View;
 		[
 			'class' => DataColumn::class,
 			'attribute' => 'saved',
-			'label' => 'Доступ добавлен',
+			'label' => 'Разрешение добавлено',
 			'format' => 'boolean',
 		],
 		[

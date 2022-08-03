@@ -147,7 +147,7 @@ class PermissionsModule extends Module {
 	}
 
 	/**
-	 * Загружает в БД доступы из файла конфигурации
+	 * Загружает в БД разрешения из файла конфигурации
 	 * @param callable|null $initHandler Обработчик, вызываемый после обработки конфигурации.
 	 *        function (Permission|PermissionCollection $permission, bool $isSaved, int $type);
 	 * @return void

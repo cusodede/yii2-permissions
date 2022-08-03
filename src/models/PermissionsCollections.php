@@ -14,7 +14,7 @@ use yii\caching\TagDependency;
 
 /**
  * Class PermissionsCollections
- * @property-read Permissions[] $configurationPermissions Входящие в группу доступа права доступа, указанные в конфигурации.
+ * @property-read Permissions[] $configurationPermissions Входящие в коллекцию разрешения, указанные в конфигурации.
  */
 class PermissionsCollections extends PermissionsCollectionsAR {
 
@@ -48,7 +48,7 @@ class PermissionsCollections extends PermissionsCollectionsAR {
 
 	/**
 	 * Из конфигурации коллекций создаёт коллекции.
-	 * Если доступы, указанные в конфигурации, не существуют, то они будут созданы.
+	 * Если разрешения, указанные в конфигурации, не существуют, то они будут созданы.
 	 * @param string[][] $collectionsArray
 	 * @return self[]
 	 * @throws Throwable
@@ -65,7 +65,7 @@ class PermissionsCollections extends PermissionsCollectionsAR {
 	}
 
 	/**
-	 * Входящие в группу доступа права доступа, указанные в конфигурации. Права могут храниться как в БД, так и в конфигурации.
+	 * Входящие в коллекцию разрешения, указанные в конфигурации. Права могут храниться как в БД, так и в конфигурации.
 	 * @return Permissions[]
 	 */
 	public function getConfigurationPermissions():array {

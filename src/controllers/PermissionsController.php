@@ -44,7 +44,7 @@ class PermissionsController extends DefaultController {
 	 * @return string
 	 */
 	public static function Title():string {
-		return 'Доступы';
+		return 'Разрешения';
 	}
 
 	/**

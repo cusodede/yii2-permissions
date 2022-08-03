@@ -39,7 +39,7 @@ class Permissions extends PermissionsAR {
 	}
 
 	/**
-	 * Все доступы пользователя из конфига (без фильтрации, просто всё, что назначено)
+	 * Все разрешения пользователя из конфига (без фильтрации, просто всё, что назначено)
 	 * @param int $user_id
 	 * @return self[]
 	 * @throws Throwable
@@ -49,9 +49,9 @@ class Permissions extends PermissionsAR {
 		/** @var array $userConfigurationGrantedPermissions */
 		$userConfigurationGrantedPermissions = ArrayHelper::getValue(PermissionsModule::param(PermissionsModule::GRANT_PERMISSIONS, []), $user_id, []);
 
-		/*Доступы через granted*/
+		/*Разрешения через granted*/
 		$configurationPermissions = self::GetConfigurationPermissions($userConfigurationGrantedPermissions);
-		/*Доступы через коллекции с флагом default*/
+		/*Разрешения через коллекции с флагом default*/
 		//todo: здесь возможна оптимизация, если фильтровать не созданный массив коллекций, а сначала отфильтровать массив, а по нему уже создать коллекции
 		$configurationDefaultCollections = PermissionsCollections::GetConfigurationPermissionsCollections();
 		$configurationDefaultCollections = array_filter($configurationDefaultCollections, fn($value) => true === $value->default);
@@ -61,7 +61,7 @@ class Permissions extends PermissionsAR {
 	}
 
 	/**
-	 * Вернуть список доступов из файла конфигурации
+	 * Вернуть список разрешений из файла конфигурации
 	 * @param array|null $filter
 	 * @return self[]
 	 * @throws Throwable
@@ -74,9 +74,9 @@ class Permissions extends PermissionsAR {
 	}
 
 	/**
-	 * Все доступы пользователя из БД
+	 * Все разрешения пользователя из БД
 	 * @param int $user_id Пользователь
-	 * @param string[] $permissionFilters Дополнительные условия выборки доступов в формате [атрибут => значение]
+	 * @param string[] $permissionFilters Дополнительные условия выборки разрешений в формате [атрибут => значение]
 	 * @param bool $asArray Формат возврата результата: true - массив объектов, false - массив атрибутов
 	 * @return self[]|array
 	 */
@@ -124,7 +124,7 @@ class Permissions extends PermissionsAR {
 	}
 
 	/**
-	 * Из массива конфигурации доступов возвращает объекты доступов
+	 * Из массива конфигурации разрешений возвращает объекты разрешений
 	 * @param string[][] $permissionsArray
 	 * @return self[]
 	 */

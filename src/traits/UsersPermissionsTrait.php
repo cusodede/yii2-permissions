@@ -24,20 +24,20 @@ use yii\web\Controller;
  * Управление правами доступа
  * @property int $id Model primary key attribute name
  *
- * @property RelUsersToPermissions[] $relatedUsersToPermissions Связь к промежуточной таблице пользовательских доступов
- * @property RelUsersToPermissionsCollections[] $relatedUsersToPermissionsCollections Связь к промежуточной таблице наборов пользовательских доступов
- * @property Permissions[] $relatedPermissions Назначенные напрямую доступы
+ * @property RelUsersToPermissions[] $relatedUsersToPermissions Связь к промежуточной таблице пользовательских разрешений
+ * @property RelUsersToPermissionsCollections[] $relatedUsersToPermissionsCollections Связь к промежуточной таблице пользовательских коллекций
+ * @property Permissions[] $relatedPermissions Назначенные напрямую разрешения
  * @property PermissionsCollections[] $relatedPermissionsCollections Назначенные коллекции разрешений
  */
 trait UsersPermissionsTrait {
 
 	/**
-	 * Проверяет, имеет ли пользователь право или набор прав с указанной логикой проверки.
+	 * Проверяет, имеет ли пользователь разрешение или набор разрешений с указанной логикой проверки.
 	 * Примеры:
 	 * $user->hasPermission(['execute_order_66'])
 	 * $user->hasPermission(['rule_galaxy', 'lose_arm'], Permissions::LOGIC_AND)
 	 *
-	 * @param string|string[] $permissions Названия прав, к которым проверяются доступы
+	 * @param string|string[] $permissions Названия проверяемых разрешений
 	 * @param int $logic Логика проверки
 	 * @return bool
 	 * @throws Throwable
@@ -74,9 +74,9 @@ trait UsersPermissionsTrait {
 	}
 
 	/**
-	 * Все доступы пользователя, отсортированные по приоритету от большего к меньшему
-	 * Учитываются доступы групп пользователя + прямые доступы, без разделения
-	 * @param bool $force false (default): получить кешированный набор прав; true: получить актуальный набор прав с обновлением кеша
+	 * Все разрешения пользователя, отсортированные по приоритету от большего к меньшему
+	 * Учитываются разрешения коллекций пользователя + прямые разрешения, без разделения
+	 * @param bool $force false (default): получить кешированный набор разрешений; true: получить актуальный набор разрешений с обновлением кеша
 	 * @return self[]
 	 * @throws Throwable
 	 */
@@ -117,10 +117,10 @@ trait UsersPermissionsTrait {
 	}
 
 	/**
-	 * Добавить пользователю доступ по id, имени, или напрямую.
+	 * Добавить пользователю разрешение по id, имени, или напрямую.
 	 * Метод не проверяет существование связи.
 	 * @param int|string|Permissions $permission
-	 * @return bool False, если доступ не существует.
+	 * @return bool False, если разрешение не существует.
 	 * @throws Throwable
 	 * @noinspection CallableParameterUseCaseInTypeContextInspection
 	 */
@@ -135,10 +135,10 @@ trait UsersPermissionsTrait {
 	}
 
 	/**
-	 * Убрать у пользователя доступ по id, имени, или напрямую.
+	 * Убрать у пользователя разрешение по id, имени, или напрямую.
 	 * Метод не проверяет существование связи.
 	 * @param int|string|Permissions $permission
-	 * @return bool False, если доступ не существует.
+	 * @return bool False, если разрешение не существует.
 	 * @throws Throwable
 	 * @noinspection CallableParameterUseCaseInTypeContextInspection
 	 */
@@ -174,7 +174,7 @@ trait UsersPermissionsTrait {
 	 * Убрать у пользователя коллекцию по id, имени, или напрямую.
 	 * Метод не проверяет существование связи.
 	 * @param int|string|PermissionsCollections $collection
-	 * @return bool False, если доступ не существует.
+	 * @return bool False, если разрешение не существует.
 	 * @throws Throwable
 	 * @noinspection CallableParameterUseCaseInTypeContextInspection
 	 */

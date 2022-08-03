@@ -32,8 +32,8 @@ class DefaultController extends VendorDefaultController {
 	];
 
 	protected const ACTION_TITLES = [
-		'init-config-permissions' => 'Импорт доступов из файла конфигурации',
-		'init-controllers-permissions' => 'Генерация доступов по контроллерам',
+		'init-config-permissions' => 'Импорт разрешений из файла конфигурации',
+		'init-controllers-permissions' => 'Генерация разрешений по контроллерам',
 	];
 
 	/**

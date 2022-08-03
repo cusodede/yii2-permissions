@@ -13,11 +13,11 @@ use yii\db\ActiveRecord;
  * This is the model class for table "sys_relation_permissions_collections_to_permissions".
  *
  * @property int $id
- * @property int $collection_id Ключ коллекции доступа
+ * @property int $collection_id Ключ коллекции
  * @property int $permission_id Ключ разрешения
  *
- * @property null|PermissionsCollections $relatedPermissionsCollections Связанная группа доступов
- * @property null|Permissions $relatedPermissions Связанный доступ
+ * @property null|PermissionsCollections $relatedPermissionsCollections Связанная коллекция
+ * @property null|Permissions $relatedPermissions Связанное разрешение
  */
 class RelPermissionsCollectionsToPermissions extends ActiveRecord {
 	use RelationsTrait;

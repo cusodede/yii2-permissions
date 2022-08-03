@@ -19,20 +19,20 @@ use yii\web\IdentityInterface;
  * This is the model class for table "sys_permissions".
  *
  * @property int $id
- * @property string|null $name Название доступа
+ * @property string|null $name Название разрешения
  * @property string|null $controller Контроллер, к которому устанавливается доступ, null для внутреннего доступа
  * @property string|null $action Действие, для которого устанавливается доступ, null для всех действий контроллера
  * @property string|null $verb REST-метод, для которого устанавливается доступ
  * @property string|null $module Модуль, к которому устанавливается доступ, null, если проверяется контроллер приложения. Проверяется только вместе с контроллером.
- * @property string|null $comment Описание доступа
+ * @property string|null $comment Описание разрешения
  * @property int $priority Приоритет использования (больше - выше) {unused}
  *
- * @property RelUsersToPermissions[] $relatedUsersToPermissions Связь к промежуточной таблице к правам доступа
- * @property RelUsersToPermissionsCollections[] $relatedUsersToPermissionsCollections Связь к таблице к группам прав доступа через промежуточную таблицу
+ * @property RelUsersToPermissions[] $relatedUsersToPermissions Связь к промежуточной таблице к пользователям
+ * @property RelUsersToPermissionsCollections[] $relatedUsersToPermissionsCollections Связь к таблице к коллекциям пользователя через промежуточную таблицу
  * @property RelPermissionsCollectionsToPermissions[] $relatedPermissionsCollectionsToPermissions Связь к промежуточной таблице прав доступа из групп прав доступа
  * @property-read IdentityInterface[] $relatedUsers Связь к пользователям, имеющим этот доступ напрямую
- * @property-read PermissionsCollections[] $relatedPermissionsCollections Связь к группам прав доступа, в которые входит доступ
- * @property-read IdentityInterface[] $relatedUsersViaPermissionsCollections Связь к пользователям, имеющим этот доступ через группу доступов
+ * @property-read PermissionsCollections[] $relatedPermissionsCollections Связь к коллекциям, в которые входит разрешение
+ * @property-read IdentityInterface[] $relatedUsersViaPermissionsCollections Связь к пользователям, имеющим это разрешение через коллекцию
  */
 class PermissionsAR extends ActiveRecord {
 	use ActiveRecordTrait;
@@ -73,7 +73,7 @@ class PermissionsAR extends ActiveRecord {
 			'module' => 'Модуль',
 			'comment' => 'Комментарий',
 			'priority' => 'Приоритет',
-			'relatedUsersToPermissionsCollections' => 'Входит в наборы',
+			'relatedUsersToPermissionsCollections' => 'Входит в коллекции',
 			'relatedUsers' => 'Назначено пользователям'
 		];
 	}

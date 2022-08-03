@@ -16,11 +16,11 @@ use yii\web\IdentityInterface;
  * This is the model class for table "sys_relation_users_to_permissions_collections".
  *
  * @property int $id
- * @property int $user_id Ключ объекта доступа
- * @property int $collection_id Ключ коллекции доступа
+ * @property int $user_id Ключ объекта разрешения
+ * @property int $collection_id Ключ коллекции
  *
  * @property null|IdentityInterface $relatedUsers Связанная модель пользователя
- * @property null|PermissionsCollections $relatedPermissionsCollections Связанная группа доступа
+ * @property null|PermissionsCollections $relatedPermissionsCollections Связанная коллекция
  */
 class RelUsersToPermissionsCollections extends ActiveRecord {
 	use RelationsTrait;

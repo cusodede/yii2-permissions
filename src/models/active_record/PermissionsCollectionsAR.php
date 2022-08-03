@@ -26,18 +26,17 @@ use yii\web\IdentityInterface;
  * @property bool $default Флаг использования коллекции по умолчанию
  * @property int $priority Приоритет использования (больше - выше)
  *
- * @property RelPermissionsCollectionsToPermissions[] $relatedPermissionsCollectionsToPermissions Связь к промежуточной таблице к правам доступа
- * @property RelPermissionsCollectionsToPermissionsCollections[] $relatedPermissionsCollectionsToPermissionsCollections Связь к промежуточной таблице к ВКЛЮЧЁННЫМ группам доступа
- * @property RelPermissionsCollectionsToPermissionsCollections[] $relatedMasterPermissionsCollectionsToPermissionsCollections Связь к промежуточной таблице к РОДИТЕЛЬСКИМ группам доступа
- * @property PermissionsCollections[] $relatedSlavePermissionsCollections ВКЛЮЧЁННЫЕ коллекции доступа
- * (родительские нам не нужны ни для чего)
+ * @property RelPermissionsCollectionsToPermissions[] $relatedPermissionsCollectionsToPermissions Связь к промежуточной таблице к разрешениям
+ * @property RelPermissionsCollectionsToPermissionsCollections[] $relatedPermissionsCollectionsToPermissionsCollections Связь к промежуточной таблице к ВКЛЮЧЁННЫМ коллекциям
+ * @property RelPermissionsCollectionsToPermissionsCollections[] $relatedMasterPermissionsCollectionsToPermissionsCollections Связь к промежуточной таблице к РОДИТЕЛЬСКИМ коллекциям
+ * @property PermissionsCollections[] $relatedSlavePermissionsCollections ВКЛЮЧЁННЫЕ коллекции доступа (родительские нам не нужны ни для чего)
  * @property RelUsersToPermissionsCollections[] $relatedUsersToPermissionsCollections Связь к промежуточной таблице к пользователям
- * @property Permissions[] $relatedPermissions Входящие в группу доступа права доступа
- * @property IdentityInterface[] $relatedUsers Все пользователи, у которых есть эта группа доступа
+ * @property Permissions[] $relatedPermissions Входящие в коллекцию разрешения
+ * @property IdentityInterface[] $relatedUsers Все пользователи, у которых есть эта коллекция
  * @property IdentityInterface[] $relatedUsersRecursively Все пользователи, с учетом вложенности групп
- * @property-read Permissions[] $unrelatedPermissions Права доступа, которые не включены в набор
- * @property RelPermissionsCollectionsToPermissions[] $relatedSlavePermissionsCollectionsToPermissions Связь к промежуточной таблице к правам доступа для всех ВКЛЮЧЁННЫХ групп
- * @property-read Permissions[] $relatedPermissionsViaSlaveGroups Права доступа, попавшие в группу из дочерних групп
+ * @property-read Permissions[] $unrelatedPermissions Разрешения, которые не включены в коллекцию
+ * @property RelPermissionsCollectionsToPermissions[] $relatedSlavePermissionsCollectionsToPermissions Связь к промежуточной таблице к разрешениям для всех ВКЛЮЧЁННЫХ коллекций
+ * @property-read Permissions[] $relatedPermissionsViaSlaveGroups Разрешения, попавшие в коллекцию из дочерних коллекций
  */
 class PermissionsCollectionsAR extends ActiveRecord {
 	use ActiveRecordTrait;
@@ -75,9 +74,9 @@ class PermissionsCollectionsAR extends ActiveRecord {
 			'default' => 'По умолчанию',
 			'priority' => 'Приоритет',
 			'relatedUsers' => 'Присвоено пользователям',
-			'relatedPermissions' => 'Доступы',
-			'relatedSlavePermissionsCollections' => 'Включённые коллекции доступов',
-			'relatedPermissionsViaSlaveGroups' => 'Доступы из включённых коллекций'
+			'relatedPermissions' => 'Разрешения',
+			'relatedSlavePermissionsCollections' => 'Включённые коллекции',
+			'relatedPermissionsViaSlaveGroups' => 'Разрешения из включённых коллекций'
 		];
 	}
 

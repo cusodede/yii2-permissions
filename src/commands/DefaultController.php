@@ -50,8 +50,8 @@ class DefaultController extends Controller {
 		foreach ($pathMapping as $controller_dir => $module_id) {
 			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved) {
 				Console::output(Console::renderColoredString($saved
-					?"%gДоступ %b{$permission->name}%g добавлен%n"
-					:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
+					?"%gРазрешение %b{$permission->name}%g добавлено%n"
+					:"%rРазрешение %b{$permission->name}%r пропущено (".CommonHelper::Errors2String($permission->errors).")%n"));
 			}, static function(PermissionsCollections $permissionsCollection, bool $saved) {
 				Console::output(Console::renderColoredString($saved
 					?"%gКоллекция %b{$permissionsCollection->name} %gдобавлена%n"
