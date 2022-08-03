@@ -17,7 +17,7 @@ use yii\web\IdentityInterface;
  *
  * @property int $id
  * @property int $user_id Ключ объекта доступа
- * @property int $collection_id Ключ группы доступа
+ * @property int $collection_id Ключ коллекции доступа
  *
  * @property null|IdentityInterface $relatedUsers Связанная модель пользователя
  * @property null|PermissionsCollections $relatedPermissionsCollections Связанная группа доступа

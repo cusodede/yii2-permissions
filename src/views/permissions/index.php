@@ -41,9 +41,9 @@ $id = 'permissions-index-grid';
 		],
 		'replaceTags' => [
 			'{totalCount}' => ($dataProvider->totalCount > 0)?Utils::pluralForm($dataProvider->totalCount, ['разрешение', 'разрешения', 'разрешений']):"Нет разрешений",
-			'{newRecord}' => Html::a('Новая запись', PermissionsModule::to('permissions/create'), ['class' => 'btn btn-success']),
+			'{newRecord}' => Html::a('Новое разрешение', PermissionsModule::to('permissions/create'), ['class' => 'btn btn-success']),
 			'{filterBtn}' => Html::button("<i class='fa fa-filter'></i>", ['onclick' => new JsExpression('setFakeGridFilter("#'.$id.'")'), 'class' => 'btn btn-info']),
-			'{collectionsLink}' => Html::a('Редактор групп', PermissionsModule::to('permissions-collections/index'), ['class' => 'btn btn-info'])
+			'{collectionsLink}' => Html::a('Редактор коллекций', PermissionsModule::to('permissions-collections/index'), ['class' => 'btn btn-info'])
 		],
 		'toolbar' => [
 			'{filterBtn}'
@@ -62,14 +62,14 @@ $id = 'permissions-index-grid';
 				'buttons' => [
 					'edit' => static fn(string $url) => Html::a('<i class="fa fa-edit"></i>', $url, [
 							'class' => 'btn btn-sm btn-outline-primary',
-							'data' => ['trigger' => 'hover', 'toggle' => 'tooltip', 'placement' => 'top', 'original-title' => 'Редактирование']
+							'data' => ['trigger' => 'hover', 'toggle' => 'tooltip', 'placement' => 'top', 'original-title' => 'Редактирование разрешения']
 						]
 					),
 					'delete' => static fn(string $url) => Html::a('<i class="fa fa-trash"></i>', $url, [
 						'class' => ['btn btn-sm btn-outline-primary'],
 						'data' => [
 							'method' => "post",
-							'confirm' => 'Вы уверены, что хотите удалить этот элемент?',
+							'confirm' => 'Вы уверены, что хотите удалить это разрешение?',
 							'trigger' => 'hover',
 							'toggle' => 'tooltip',
 							'placement' => 'top',
@@ -177,7 +177,7 @@ $id = 'permissions-index-grid';
 			[
 				'class' => DataColumn::class,
 				'attribute' => 'collection',
-				'label' => 'Входит в группы',
+				'label' => 'Входит в коллекции',
 				'value' => static fn(Permissions $permission) => BadgeWidget::widget([
 					'items' => $permission->relatedPermissionsCollections,
 					'subItem' => 'name',

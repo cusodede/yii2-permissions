@@ -42,8 +42,8 @@ $id = 'permissions-collections-index-grid';
 			'heading' => false,
 		],
 		'replaceTags' => [
-			'{totalCount}' => ($dataProvider->totalCount > 0)?Utils::pluralForm($dataProvider->totalCount, ['разрешение', 'разрешения', 'разрешений']):"Нет разрешений",
-			'{newRecord}' => Html::a('Новая запись', PermissionsModule::to('permissions-collections/create'), ['class' => 'btn btn-success']),
+			'{totalCount}' => ($dataProvider->totalCount > 0)?Utils::pluralForm($dataProvider->totalCount, ['коллекция', 'коллекции', 'коллекций']):"Нет коллекций",
+			'{newRecord}' => Html::a('Новая коллекция', PermissionsModule::to('permissions-collections/create'), ['class' => 'btn btn-success']),
 			'{filterBtn}' => Html::button("<i class='fa fa-filter'></i>", ['onclick' => new JsExpression('setFakeGridFilter("#'.$id.'")'), 'class' => 'btn btn-info']),
 			'{collectionsLink}' => Html::a("Редактор разрешений", PermissionsModule::to('permissions/index'), ['class' => 'btn btn-info'])
 		],
@@ -51,7 +51,7 @@ $id = 'permissions-collections-index-grid';
 			'{filterBtn}'
 		],
 		'panelBeforeTemplate' => '{options}{newRecord}{collectionsLink}{toolbarContainer}{before}<div class="clearfix"></div>',
-		'emptyText' => Html::a('Новая группа', PermissionsCollectionsController::to('create'), ['class' => 'btn btn-success']),
+		'emptyText' => Html::a('Новая коллекция', PermissionsCollectionsController::to('create'), ['class' => 'btn btn-success']),
 		'export' => false,
 		'resizableColumns' => true,
 		'responsive' => true,
@@ -63,7 +63,7 @@ $id = 'permissions-collections-index-grid';
 				'buttons' => [
 					'edit' => static fn(string $url) => Html::a('<i class="fa fa-edit"></i>', $url, [
 							'class' => 'btn btn-sm btn-outline-primary',
-							'data' => ['trigger' => 'hover', 'toggle' => 'tooltip', 'placement' => 'top', 'original-title' => 'Редактирование']
+							'data' => ['trigger' => 'hover', 'toggle' => 'tooltip', 'placement' => 'top', 'original-title' => 'Редактировать коллекцию']
 						]
 					),
 				],
@@ -80,15 +80,12 @@ $id = 'permissions-collections-index-grid';
 			[
 				'class' => DataColumn::class,
 				'attribute' => 'permission',
-				'label' => 'Включённые доступы',
-				'value' => //прямые
-				//вдобавок к модалке оставляем ссылку для прямого перехода
-				//через группы
-					static fn(PermissionsCollections $collections) => BadgeWidget::widget([//прямые
+				'label' => 'Включённые разрешения',
+				'value' => static fn(PermissionsCollections $collections) => BadgeWidget::widget([//прямые
 							'items' => $collections->relatedPermissions,
 							'subItem' => 'name',
 							'urlScheme' => [PermissionsController::to('edit'), 'id' => 'id']//вдобавок к модалке оставляем ссылку для прямого перехода
-						]).BadgeWidget::widget([//через группы
+						]).BadgeWidget::widget([//через коллекции
 							'items' => $collections->relatedPermissionsViaSlaveGroups,
 							'subItem' => 'name',
 							'urlScheme' => [PermissionsController::to('edit'), 'id' => 'id']

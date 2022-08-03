@@ -9,14 +9,14 @@ use yii\db\ActiveQuery;
 use yii\db\ActiveRecord;
 
 /**
- * Группы доступов, включённые в другие группы доступов.
+ * Коллекции доступов, включённые в другие коллекции доступов.
  *
  * @property int $id
- * @property int $master_id Ключ базовой группы доступа
- * @property int $slave_id Ключ включаемой группы доступа
+ * @property int $master_id Ключ базовой коллекции доступа
+ * @property int $slave_id Ключ включаемой коллекции доступа
  *
- * @property null|PermissionsCollections $relatedMasterPermissionsCollections Связанная базовая группа доступов
- * @property null|PermissionsCollections $relatedSlavePermissionsCollections Связанная включённая группа доступов
+ * @property null|PermissionsCollections $relatedMasterPermissionsCollections Связанная базовая коллекции доступов
+ * @property null|PermissionsCollections $relatedSlavePermissionsCollections Связанная включённая коллекции доступов
  */
 class RelPermissionsCollectionsToPermissionsCollections extends ActiveRecord {
 	use RelationsTrait;

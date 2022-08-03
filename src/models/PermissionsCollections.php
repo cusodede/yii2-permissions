@@ -19,7 +19,7 @@ use yii\caching\TagDependency;
 class PermissionsCollections extends PermissionsCollectionsAR {
 
 	/**
-	 * При изменении группы, нужно удалить кеши прав всем пользователям, у которых:
+	 * При изменении коллекции, нужно удалить кеши прав всем пользователям, у которых:
 	 *    - право есть в группе прав, назначенной пользователю
 	 * @inheritDoc
 	 */

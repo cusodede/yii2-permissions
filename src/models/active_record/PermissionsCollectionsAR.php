@@ -21,15 +21,15 @@ use yii\web\IdentityInterface;
  * This is the model class for table "sys_permissions_collections".
  *
  * @property int $id
- * @property string|null $name Название группы доступа
- * @property string|null $comment Описание группы доступа
- * @property bool $default Флаг использования группы по умолчанию
+ * @property string|null $name Название коллекции доступа
+ * @property string|null $comment Описание коллекции доступа
+ * @property bool $default Флаг использования коллекции по умолчанию
  * @property int $priority Приоритет использования (больше - выше)
  *
  * @property RelPermissionsCollectionsToPermissions[] $relatedPermissionsCollectionsToPermissions Связь к промежуточной таблице к правам доступа
  * @property RelPermissionsCollectionsToPermissionsCollections[] $relatedPermissionsCollectionsToPermissionsCollections Связь к промежуточной таблице к ВКЛЮЧЁННЫМ группам доступа
  * @property RelPermissionsCollectionsToPermissionsCollections[] $relatedMasterPermissionsCollectionsToPermissionsCollections Связь к промежуточной таблице к РОДИТЕЛЬСКИМ группам доступа
- * @property PermissionsCollections[] $relatedSlavePermissionsCollections ВКЛЮЧЁННЫЕ группы доступа
+ * @property PermissionsCollections[] $relatedSlavePermissionsCollections ВКЛЮЧЁННЫЕ коллекции доступа
  * (родительские нам не нужны ни для чего)
  * @property RelUsersToPermissionsCollections[] $relatedUsersToPermissionsCollections Связь к промежуточной таблице к пользователям
  * @property Permissions[] $relatedPermissions Входящие в группу доступа права доступа
@@ -76,8 +76,8 @@ class PermissionsCollectionsAR extends ActiveRecord {
 			'priority' => 'Приоритет',
 			'relatedUsers' => 'Присвоено пользователям',
 			'relatedPermissions' => 'Доступы',
-			'relatedSlavePermissionsCollections' => 'Включённые группы доступов',
-			'relatedPermissionsViaSlaveGroups' => 'Доступы из включённых групп'
+			'relatedSlavePermissionsCollections' => 'Включённые коллекции доступов',
+			'relatedPermissionsViaSlaveGroups' => 'Доступы из включённых коллекций'
 		];
 	}
 
@@ -132,7 +132,7 @@ class PermissionsCollectionsAR extends ActiveRecord {
 
 	/**
 	 * Проблематично построить связь для join'а при использовании CTE, поэтому только live-получение.
-	 * CTE нужен, чтобы рекурсивно вычислять группы, включённые в группы.
+	 * CTE нужен, чтобы рекурсивно вычислять коллекции, включённые в коллекции.
 	 * Выборка не проверялась в поисковых моделях, но должно будет работать.
 	 * @return IdentityInterface[]
 	 * @throws Throwable

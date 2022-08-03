@@ -27,7 +27,7 @@ use yii\web\Controller;
  * @property RelUsersToPermissions[] $relatedUsersToPermissions Связь к промежуточной таблице пользовательских доступов
  * @property RelUsersToPermissionsCollections[] $relatedUsersToPermissionsCollections Связь к промежуточной таблице наборов пользовательских доступов
  * @property Permissions[] $relatedPermissions Назначенные напрямую доступы
- * @property PermissionsCollections[] $relatedPermissionsCollections Назначенные группы разрешений
+ * @property PermissionsCollections[] $relatedPermissionsCollections Назначенные коллекции разрешений
  */
 trait UsersPermissionsTrait {
 

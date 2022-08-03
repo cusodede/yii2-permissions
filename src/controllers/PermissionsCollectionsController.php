@@ -42,7 +42,7 @@ class PermissionsCollectionsController extends DefaultController {
 	 * @return string
 	 */
 	public static function Title():string {
-		return 'Группы разрешений';
+		return 'Коллекции разрешений';
 	}
 
 }

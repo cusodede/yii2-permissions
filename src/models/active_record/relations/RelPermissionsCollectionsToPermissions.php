@@ -13,8 +13,8 @@ use yii\db\ActiveRecord;
  * This is the model class for table "sys_relation_permissions_collections_to_permissions".
  *
  * @property int $id
- * @property int $collection_id Ключ группы доступа
- * @property int $permission_id Ключ правила доступа
+ * @property int $collection_id Ключ коллекции доступа
+ * @property int $permission_id Ключ разрешения
  *
  * @property null|PermissionsCollections $relatedPermissionsCollections Связанная группа доступов
  * @property null|Permissions $relatedPermissions Связанный доступ
