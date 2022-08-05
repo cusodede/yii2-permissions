@@ -1,0 +1,19 @@
+<?php
+declare(strict_types = 1);
+
+namespace app\modules\test\controllers;
+
+use yii\web\Controller;
+
+/**
+ * Class DefaultController
+ */
+class DefaultController extends Controller {
+
+	/**
+	 * @return string
+	 */
+	public function actionIndex():string {
+		return 'index-test';
+	}
+}

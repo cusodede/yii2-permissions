@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 
 use app\models\Users;
+use app\modules\test\TestModule;
 use kartik\grid\Module as GridModule;
 use pozitronik\grid_config\GridConfigModule;
 use yii\log\FileTarget;
@@ -28,6 +29,9 @@ $config = [
 		],
 		'gridconfig' => [
 			'class' => GridConfigModule::class
+		],
+		'test' => [
+			'class' => TestModule::class
 		],
 	],
 	'components' => [
