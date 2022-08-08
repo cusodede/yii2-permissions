@@ -87,6 +87,7 @@ class PermissionsTest extends Unit {
 	 * @throws InvalidConfigException
 	 * @throws UnknownClassException
 	 * @throws Exception
+	 * @skip issue #22
 	 */
 	public function testUserControllerPermissions():void {
 		$user = Users::CreateUser()->saveAndReturn();
