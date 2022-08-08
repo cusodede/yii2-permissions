@@ -43,7 +43,12 @@ class DefaultControllerCest {
 	 * @throws InvalidConfigException
 	 */
 	public function InitControllerPermissionsFromConfig(ConsoleTester $I):void {
-		/*Генерирует доступы для всех контроллеров в конфиге: три контроллера в tests/_app/controllers и два - в /src/controllers */
+		/**
+		 * Генерирует доступы для всех контроллеров в конфиге:
+		 * три контроллера в tests/_app/controllers
+		 * два - в /src/controllers
+		 * один в @app/modules/test/controllers
+		 */
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
