@@ -45,6 +45,15 @@ class PermissionsTest extends Unit {
 
 	/**
 	 * @return void
+	 */
+	public function testWithCacheGetConfigurationPermissions():void {
+		UnitHelper::useCache();
+		$this->testGetConfigurationPermissions();
+		UnitHelper::useCache(false);
+	}
+
+	/**
+	 * @return void
 	 * @covers Permissions::allUserPermissions
 	 */
 	public function testAllUserPermissions():void {

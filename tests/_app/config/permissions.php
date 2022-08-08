@@ -13,6 +13,7 @@ return [
 		'controllerDirs' => [
 			'@app/controllers' => null,
 			'./src/controllers' => 'permissions',
+			'@app/modules/test/controllers' => '@api'
 		],
 		/*каталоги, в которых будут искаться конфиги пермиссий todo*/
 		'includeDirs' => [
