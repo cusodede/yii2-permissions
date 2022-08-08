@@ -7,6 +7,7 @@ use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\PermissionsModule;
 use cusodede\permissions\traits\ControllerPermissionsTrait;
+use Helper\Unit as UnitHelper;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
 use yii\base\InvalidConfigException;
@@ -45,6 +46,15 @@ class PermissionsTest extends Unit {
 
 		$this::assertTrue($user->revokePermission($permission));
 		$this::assertFalse($user->hasControllerPermission('some-controller', 'some-action', 'post'));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testWithCacheGetConfigurationPermissions():void {
+		UnitHelper::useCache();
+		$this->testGetConfigurationPermissions();
+		UnitHelper::useCache(false);
 	}
 
 	/**
