@@ -8,11 +8,13 @@ use ConsoleTester;
 use cusodede\permissions\commands\DefaultController;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
+use cusodede\permissions\PermissionsModule;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\console\Controller;
 use yii\db\Exception;
+use yii\helpers\Console;
 
 /**
  * Class DefaultControllerCest
@@ -43,12 +45,17 @@ class DefaultControllerCest {
 	 * @throws InvalidConfigException
 	 */
 	public function InitControllerPermissionsFromConfig(ConsoleTester $I):void {
-		/*Генерирует доступы для всех контроллеров в конфиге: три контроллера в tests/_app/controllers и два - в /src/controllers */
+		/**
+		 * Генерирует доступы для всех контроллеров в конфиге:
+		 * три контроллера в tests/_app/controllers
+		 * два - в /src/controllers
+		 * один в @app/modules/test/controllers
+		 */
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(38, $allPermissions);
-		$I->assertCount(6, $allPermissionsCollections);
+		$I->assertCount(39, $allPermissions);
+		$I->assertCount(7, $allPermissionsCollections);
 
 		$user = $this->initUser();
 		$user->setRelatedPermissions($allPermissions);
@@ -57,7 +64,7 @@ class DefaultControllerCest {
 		/*Потыкаем в разные сгенеренные пермиссии*/
 		$I->assertTrue($user->hasPermission([
 			'permissions-collections:index', 'permissions:index', 'permissions:permissions-collections:edit', 'permissions:permissions:view',
-			'permissions-collections:create', 'permissions:ajax-search', 'site:error'
+			'permissions-collections:create', 'permissions:ajax-search', 'site:error', 'api:default:index'
 		], Permissions::LOGIC_AND));
 
 		/*Потыкаем в доступы к контроллерам*/
@@ -84,6 +91,46 @@ class DefaultControllerCest {
 		$I->assertTrue($user->hasControllerPermission('permissions-collections', 'create', null, 'permissions'));
 		$I->assertTrue($user->hasControllerPermission('permissions', 'ajax-search', 'POST', 'permissions'));
 		$I->assertTrue($user->hasControllerPermission('permissions-collections', 'edit', 'GET', 'permissions'));
+	}
+
+	/**
+	 * Проверяет корректность добавления нового контроллера в конфигурации
+	 * @param ConsoleTester $I
+	 * @return void
+	 * @throws InvalidConfigException
+	 */
+	public function InitControllerPermissionsFromConfigUpdate(ConsoleTester $I):void {
+		Yii::$app->setModule('permissions', [
+			'class' => PermissionsModule::class,
+			'params' => [
+				'controllerDirs' => [
+					'@app/controllers' => null,
+					'./src/controllers' => 'permissions',
+				],
+			]
+		]);
+		$this->initDefaultController()->actionInitControllersPermissions();
+		$allPermissions = Permissions::find()->all();
+		$allPermissionsCollections = PermissionsCollections::find()->all();
+		$I->assertCount(38, $allPermissions);
+		$I->assertCount(6, $allPermissionsCollections);
+		Console::output(Console::renderColoredString('%b------------------------%n'));
+
+		Yii::$app->setModule('permissions', [
+			'class' => PermissionsModule::class,
+			'params' => [
+				'controllerDirs' => [
+					'@app/controllers' => null,
+					'./src/controllers' => 'permissions',
+					'@app/modules/test/controllers' => '@api'
+				],
+			]
+		]);
+		$this->initDefaultController()->actionInitControllersPermissions();
+		$allPermissions = Permissions::find()->all();
+		$allPermissionsCollections = PermissionsCollections::find()->all();
+		$I->assertCount(39, $allPermissions);
+		$I->assertCount(7, $allPermissionsCollections);
 	}
 
 	/**
