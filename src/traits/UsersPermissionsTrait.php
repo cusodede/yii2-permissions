@@ -130,6 +130,7 @@ trait UsersPermissionsTrait {
 			if (null === $permission = Permissions::findModel($permission)) return false;
 		}
 		$this->setRelatedPermissions($permission);
+		$this->invalidateUserTag('Users::allPermissions');
 		return true;
 	}
 
@@ -148,6 +149,7 @@ trait UsersPermissionsTrait {
 			if (null === $permission = Permissions::findModel($permission)) return false;
 		}
 		RelUsersToPermissions::unlinkModel($this, $permission);
+		$this->invalidateUserTag('Users::allPermissions');
 		return true;
 	}
 
