@@ -51,7 +51,7 @@ $id = 'permissions-collections-index-grid';
 			'{filterBtn}'
 		],
 		'panelBeforeTemplate' => '{options}{newRecord}{collectionsLink}{toolbarContainer}{before}<div class="clearfix"></div>',
-		'emptyText' => Html::a('Новая группа', PermissionsCollectionsController::to('create'), ['class' => 'btn btn-success']),
+		'emptyText' => Html::a('Новая группа', PermissionsModule::to('permissions-collections/create'), ['class' => 'btn btn-success']),
 		'export' => false,
 		'resizableColumns' => true,
 		'responsive' => true,
