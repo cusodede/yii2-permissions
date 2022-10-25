@@ -54,8 +54,8 @@ class DefaultControllerCest {
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(39, $allPermissions);
-		$I->assertCount(7, $allPermissionsCollections);
+		$I->assertCount(41, $allPermissions);
+		$I->assertCount(9, $allPermissionsCollections);
 
 		$user = $this->initUser();
 		$user->setRelatedPermissions($allPermissions);
@@ -64,7 +64,8 @@ class DefaultControllerCest {
 		/*Потыкаем в разные сгенеренные пермиссии*/
 		$I->assertTrue($user->hasPermission([
 			'permissions-collections:index', 'permissions:index', 'permissions:permissions-collections:edit', 'permissions:permissions:view',
-			'permissions-collections:create', 'permissions:ajax-search', 'site:error', 'api:default:index'
+			'permissions-collections:create', 'permissions:ajax-search', 'site:error', 'api:default:index',
+			'api:default-ajax:index', 'api:ajax/default-ajax:index'
 		], Permissions::LOGIC_AND));
 
 		/*Потыкаем в доступы к контроллерам*/
@@ -129,8 +130,8 @@ class DefaultControllerCest {
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(39, $allPermissions);
-		$I->assertCount(7, $allPermissionsCollections);
+		$I->assertCount(41, $allPermissions);
+		$I->assertCount(9, $allPermissionsCollections);
 	}
 
 	/**
