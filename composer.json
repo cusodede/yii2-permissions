@@ -2,7 +2,7 @@
 	"name": "cusodede/yii2-permissions",
 	"description": "Permissions support module for Yii2",
 	"minimum-stability": "dev",
-	"license": "proprietary",
+	"license": "LGPL-3.0-or-later",
 	"authors": [
 		{
 			"name": "Pavel Dubrovsky",
