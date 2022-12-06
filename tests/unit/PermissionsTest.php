@@ -87,7 +87,6 @@ class PermissionsTest extends Unit {
 	 * @throws InvalidConfigException
 	 * @throws UnknownClassException
 	 * @throws Exception
-	 * @skip issue #22
 	 */
 	public function testUserControllerPermissions():void {
 		if ('github' === getenv('CI')) $this->markTestSkipped("This test doesn't run in github CI");//temporary!
