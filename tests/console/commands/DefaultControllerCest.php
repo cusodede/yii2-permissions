@@ -12,7 +12,6 @@ use cusodede\permissions\PermissionsModule;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\console\Controller;
 use yii\db\Exception;
 use yii\helpers\Console;
 
@@ -22,10 +21,10 @@ use yii\helpers\Console;
 class DefaultControllerCest {
 
 	/**
-	 * @return Controller
+	 * @return DefaultController
 	 * @throws InvalidConfigException
 	 */
-	private function initDefaultController():Controller {
+	private function initDefaultController():DefaultController {
 		/*Я не могу создать контроллер через методы createController*, т.к. они полагаются на совпадение неймспейсов с путями, а это условие в тестах не выполняется*/
 		return Yii::createObject(DefaultController::class);
 	}
