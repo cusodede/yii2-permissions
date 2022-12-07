@@ -56,6 +56,10 @@ return [
                      * '@vendor/cusodede/yii2-permissions/src/controllers' => '@permissions', # если id модуля указан через @, то модуль не будет загружаться при инициализации контроллеров (для получения списка действий)
                     */
                 ],
+                'ignorePaths' => [//поддерживаются файловые маски, например:
+                    '@app/controllers/ignored_dir/*',//ignore by directory path
+                    '@app/controllers/IgnoredController.php',//ignore by file path
+                ],
                 'grantAll' => [1],/* id пользователей, которые будут получать все привилегии */
                 'grant' => [/* перечисление прямых назначений привилегий в формате user_id => [список получаемых привилегий]. Пример ниже. */
                     /*
@@ -80,11 +84,14 @@ return [
 ```
 
 # Команды модуля
+
 TBD
 
 # Использование (модели, трейты, etc)
+
 TBD
 
 # Запуск локальных тестов
 
-Скопируйте `tests/.env.example` в `tests/.env`, и измените конфигурацию соответственно вашему локальному окружению. Затем выполните команду `php vendor/bin/codecept run`.
+Скопируйте `tests/.env.example` в `tests/.env`, и измените конфигурацию соответственно вашему локальному окружению. Затем выполните
+команду `php vendor/bin/codecept run`.

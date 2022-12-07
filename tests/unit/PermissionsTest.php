@@ -23,6 +23,8 @@ class PermissionsTest extends Unit {
 
 	/**
 	 * @return void
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	public function testGetConfigurationPermissions():void {
 		$permissionsArray = [
@@ -50,6 +52,8 @@ class PermissionsTest extends Unit {
 
 	/**
 	 * @return void
+	 * @throws Exception
+	 * @throws Throwable
 	 */
 	public function testWithCacheGetConfigurationPermissions():void {
 		UnitHelper::useCache();
@@ -175,6 +179,40 @@ class PermissionsTest extends Unit {
 		/*Количество пермиссий пользователя должно уменьшиться соответственно уменьшению пермиссий в коллекции*/
 		$p = $user->allPermissions();
 		$this::assertCount(9, $p, var_export($p, true));
+	}
+
+	/**
+	 * @return void
+	 * @throws Exception
+	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 */
+	public function testUserControllerPermissionsExcluded():void {
+//		if ('github' === getenv('CI')) static::markTestSkipped("This test doesn't run in github CI");//temporary!
+		$user = Users::CreateUser()->saveAndReturn();
+		$this::assertFalse($user->hasControllerPermission('index'));
+		/*Прямо*/
+		$this::assertEmpty($user->relatedPermissions);
+
+		/** @var Permissions[] $generatedPermissions */
+		$generatedPermissions = [];
+		/** @var PermissionsCollections[] $generatedPermissionsCollections */
+		$generatedPermissionsCollections = [];
+		/*Для теста используются контроллеры внутри модуля, потому что они а) точно есть; б) соответствуют всем требованиям; в) известны все их параметры*/
+		PermissionsModule::InitControllersPermissions('@app/test_controllers',
+			null,
+			static function(Permissions $permission, bool $saved) use (&$generatedPermissions) {
+				static::assertTrue($saved);
+				$generatedPermissions[] = $permission;
+			}, static function(PermissionsCollections $permissionsCollection, bool $saved) use (&$generatedPermissionsCollections) {
+				static::assertTrue($saved);
+				$generatedPermissionsCollections[] = $permissionsCollection;
+			});
+		/*Мы знаем, сколько сгенерится доступов и коллекций*/
+		$this::assertCount(15, $generatedPermissions);
+		$this::assertCount(3, $generatedPermissionsCollections);
 	}
 
 }
