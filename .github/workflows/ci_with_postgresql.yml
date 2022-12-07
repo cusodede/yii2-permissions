@@ -3,11 +3,6 @@ on:
   pull_request:
     branches: [ master ]
 
-#env:
-#  PERM_DB_DSN: "pgsql:host=127.0.0.1;port=5432;dbname=yii2-permissions-tests"
-#  PERM_DB_USER: "postgres"
-#  PERM_DB_PASS: "postgres"
-
 jobs:
   build:
     name: PHP ${{ matrix.php }} - ${{ matrix.os }}
