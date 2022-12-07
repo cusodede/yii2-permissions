@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions;
 
+use cusodede\permissions\helpers\CommonHelper;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\traits\UsersPermissionsTrait;
@@ -145,12 +146,13 @@ class PermissionsModule extends Module {
 	public static function InitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
 		$module = null;
 		if ('' === $moduleId) $moduleId = null;//для совместимости со старым вариантом конфига
+		$ignoredFilesList = static::param('ignorePaths');
 		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
 		if (null !== $moduleId && '@' === $moduleId[0]) {
-			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class]);
+			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class], $ignoredFilesList);
 			$module = substr($moduleId, 1);
 		} else {
-			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class]);
+			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class], $ignoredFilesList);
 		}
 
 		/** @var Controller[] $foundControllers */
