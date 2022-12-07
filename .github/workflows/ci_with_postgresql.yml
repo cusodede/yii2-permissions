@@ -24,11 +24,11 @@ jobs:
 
     services:
       postgres:
-        image: postgres:13.4
+        image: postgres:13.6
         env:
-          POSTGRES_DB: yii2-permissions
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: yii2-permissions-test
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: password
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
