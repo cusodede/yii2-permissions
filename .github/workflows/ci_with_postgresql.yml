@@ -3,10 +3,10 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  PERM_DB_DSN: "pgsql:host=127.0.0.1;port=5432;dbname=yii2-permissions"
-  PERM_DB_USER: "postgres"
-  PERM_DB_PASS: "postgres"
+#env:
+#  PERM_DB_DSN: "pgsql:host=127.0.0.1;port=5432;dbname=yii2-permissions-tests"
+#  PERM_DB_USER: "postgres"
+#  PERM_DB_PASS: "postgres"
 
 jobs:
   build:
@@ -26,7 +26,7 @@ jobs:
       postgres:
         image: postgres:13.6
         env:
-          POSTGRES_DB: yii2-permissions-test
+          POSTGRES_DB: yii2-permissions-tests
           POSTGRES_USER: root
           POSTGRES_PASSWORD: password
         options: >-
@@ -69,7 +69,7 @@ jobs:
         run: composer install
 
       - name: Prepare test
-        run: cp tests/.env.example tests/.env
+        run: cp tests/.env.ci tests/.env
 
       - name: Run tests
         run: vendor/bin/codecept run
