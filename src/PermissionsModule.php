@@ -146,7 +146,7 @@ class PermissionsModule extends Module {
 	public static function InitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
 		$module = null;
 		if ('' === $moduleId) $moduleId = null;//для совместимости со старым вариантом конфига
-		$ignoredFilesList = static::param('ignorePaths');
+		$ignoredFilesList = static::param('ignorePaths', []);
 		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
 		if (null !== $moduleId && '@' === $moduleId[0]) {
 			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class], $ignoredFilesList);
