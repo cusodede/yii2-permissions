@@ -4,6 +4,8 @@ declare(strict_types = 1);
 namespace cusodede\permissions\models;
 
 use cusodede\permissions\models\active_record\PermissionsCollectionsAR;
+use cusodede\permissions\models\active_record\relations\RelPermissionsCollectionsToPermissionsCollections;
+use cusodede\permissions\models\active_record\relations\RelUsersToPermissionsCollections;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\CacheHelper;
 use Yii;
@@ -26,5 +28,15 @@ class PermissionsCollections extends PermissionsCollectionsAR {
 			}
 		}
 		parent::afterSave($insert, $changedAttributes);
+	}
+
+	/**
+	 * Удаляем связи перед удалением записи
+	 * @inheritDoc
+	 */
+	public function delete():bool {
+		RelPermissionsCollectionsToPermissionsCollections::deleteAll(['slave_id' => $this->id]);
+		RelUsersToPermissionsCollections::deleteAll(['collection_id' => $this->id]);
+		return parent::delete();
 	}
 }
