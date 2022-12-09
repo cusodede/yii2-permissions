@@ -9,10 +9,11 @@ use cusodede\permissions\commands\DefaultController;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\PermissionsModule;
+use ReflectionException;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
-use yii\console\Controller;
+use yii\base\UnknownClassException;
 use yii\db\Exception;
 use yii\helpers\Console;
 
@@ -22,10 +23,10 @@ use yii\helpers\Console;
 class DefaultControllerCest {
 
 	/**
-	 * @return Controller
+	 * @return DefaultController
 	 * @throws InvalidConfigException
 	 */
-	private function initDefaultController():Controller {
+	private function initDefaultController():DefaultController {
 		/*Я не могу создать контроллер через методы createController*, т.к. они полагаются на совпадение неймспейсов с путями, а это условие в тестах не выполняется*/
 		return Yii::createObject(DefaultController::class);
 	}
@@ -262,6 +263,47 @@ class DefaultControllerCest {
 		$I->assertFalse($user->hasPermission(['execute_order_66']));
 		/*Доступ есть в конфиге, и присвоен юзеру добавлен в конфиге*/
 		$I->assertTrue($user->hasPermission(['choke_with_force']));
+	}
+
+	/**
+	 * @param ConsoleTester $I
+	 * @return void
+	 * @throws InvalidConfigException
+	 * @throws Throwable
+	 * @throws ReflectionException
+	 * @throws UnknownClassException
+	 */
+	public function DropControllerPermissions(ConsoleTester $I):void {
+		$appDir = Yii::getAlias('@app');
+		$this->initDefaultController()->actionInitControllersPermissions("{$appDir}/controllers_test");
+
+		$allPermissions = Permissions::find()->all();
+		$allPermissionsCollections = PermissionsCollections::find()->all();
+		$I->assertCount(15, $allPermissions);
+		$I->assertCount(3, $allPermissionsCollections);
+
+		//rename tests controllers dir, to look, what will happen
+
+		rename("{$appDir}/controllers_test", "{$appDir}/controllers_test_in_progress");
+
+		$this->initDefaultController()->actionDropControllersPermissions("{$appDir}/controllers_test");
+		//rename it back
+		rename("{$appDir}/controllers_test_in_progress", "{$appDir}/controllers_test");
+
+		$allPermissions = Permissions::find()->all();
+		$allPermissionsCollections = PermissionsCollections::find()->all();
+		$I->assertCount(0, $allPermissions);
+		$I->assertCount(0, $allPermissionsCollections);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function _failed(ConsoleTester $I):void {
+		$appDir = Yii::getAlias('@app');
+		if (file_exists("{$appDir}/controllers_test_in_progress")) {
+			rename("{$appDir}/controllers_test_in_progress", "{$appDir}/controllers_test");
+		}
 
 	}
 }
