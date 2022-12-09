@@ -34,7 +34,7 @@ class PermissionsCollections extends PermissionsCollectionsAR {
 	 * Удаляем связи перед удалением записи
 	 * @inheritDoc
 	 */
-	public function delete():bool {
+	public function delete():false|int {
 		RelPermissionsCollectionsToPermissionsCollections::deleteAll(['slave_id' => $this->id]);
 		RelUsersToPermissionsCollections::deleteAll(['collection_id' => $this->id]);
 		return parent::delete();

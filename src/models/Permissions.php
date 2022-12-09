@@ -197,7 +197,7 @@ class Permissions extends PermissionsAR {
 	 * Удаляем связи перед удалением записи
 	 * @inheritDoc
 	 */
-	public function delete():bool {
+	public function delete():false|int {
 		RelPermissionsCollectionsToPermissions::deleteAll(['permission_id' => $this->id]);
 		RelUsersToPermissions::deleteAll(['permission_id' => $this->id]);
 		return parent::delete();
