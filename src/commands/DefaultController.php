@@ -50,8 +50,35 @@ class DefaultController extends Controller {
 					:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
 			}, static function(PermissionsCollections $permissionsCollection, bool $saved) {
 				Console::output(Console::renderColoredString($saved
-					?"%gКоллекция %b{$permissionsCollection->name} %gдобавлена%n"
-					:"%rКоллекция %b{$permissionsCollection->name} %rпропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n"));
+					?"%gКоллекция %b{$permissionsCollection->name}%g добавлена%n"
+					:"%rКоллекция %b{$permissionsCollection->name}%r пропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n"));
+			});
+		}
+	}
+
+	/**
+	 * Для всех контроллеров по пути $path удаляет неиспользуемые наборы правил доступа в БД. Если путь не указан, берётся маппинг из параметра controllerDirs конфига.
+	 * @param string|null $path
+	 * @param string|null $moduleId
+	 * @return void
+	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 */
+	public function actionDropControllersPermissions(?string $path = null, ?string $moduleId = null):void {
+		$pathMapping = [];
+		if (is_string($path)) $pathMapping = [$path => $moduleId];
+		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
+		foreach ($pathMapping as $controller_dir => $module_id) {
+			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $deleted) {
+				Console::output(Console::renderColoredString($deleted
+					?"%gДоступ %b{$permission->name}%g удалён%n"
+					:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
+			}, static function(PermissionsCollections $permissionsCollection, bool $delete) {
+				Console::output(Console::renderColoredString($delete
+					?"%gКоллекция %b{$permissionsCollection->name}%g удалён%n"
+					:"%rКоллекция %b{$permissionsCollection->name}%r пропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n"));
 			});
 		}
 	}

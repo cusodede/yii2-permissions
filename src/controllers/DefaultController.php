@@ -12,6 +12,7 @@ use Throwable;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
 use yii\data\ArrayDataProvider;
+use yii\db\StaleObjectException;
 
 /**
  * Class ServiceController
@@ -111,4 +112,42 @@ class DefaultController extends VendorDefaultController {
 		]);
 	}
 
+	/**
+	 * Для всех контроллеров по пути $path удаляет неиспользуемые наборы правил доступа в БД. Если путь не указан, берётся маппинг из параметра controllerDirs конфига.
+	 * @param string|null $path
+	 * @param string|null $moduleId
+	 * @return string
+	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 * @throws StaleObjectException
+	 */
+	public function actionDropUnusedControllersPermissions(?string $path = null, ?string $moduleId = null):string {
+		$result = [];
+		$pathMapping = [];
+		if (is_string($path)) $pathMapping = [$path => $moduleId];
+		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
+		foreach ($pathMapping as $controller_dir => $module_id) {
+			PermissionsModule::DropUnusedControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $deleted) use (&$result) {
+				$result[] = [
+					'type' => self::PERMISSION,
+					'deleted' => $deleted,
+					'item' => $permission
+				];
+			}, static function(PermissionsCollections $permissionsCollection, bool $deleted) use (&$result) {
+				$result[] = [
+					'type' => self::PERMISSIONS_COLLECTION,
+					'saved' => $deleted,
+					'item' => $permissionsCollection
+				];
+			});
+		}
+		return $this->render('delete-controllers-permissions', [
+			'result' => new ArrayDataProvider([
+				'allModels' => $result,
+				'pagination' => false
+			])
+		]);
+	}
 }
