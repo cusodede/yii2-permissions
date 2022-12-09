@@ -71,7 +71,7 @@ class DefaultController extends Controller {
 		if (is_string($path)) $pathMapping = [$path => $moduleId];
 		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
 		foreach ($pathMapping as $controller_dir => $module_id) {
-			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $deleted) {
+			PermissionsModule::DropUnusedControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $deleted) {
 				Console::output(Console::renderColoredString($deleted
 					?"%gДоступ %b{$permission->name}%g удалён%n"
 					:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
