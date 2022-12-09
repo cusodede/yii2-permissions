@@ -296,14 +296,21 @@ class DefaultControllerCest {
 		$I->assertCount(0, $allPermissionsCollections);
 	}
 
+	public function _before(ConsoleTester $I):void {
+		$appDir = Yii::getAlias('@app');
+		if (file_exists("{$appDir}/controllers_test_in_progress")) {
+			rename("{$appDir}/controllers_test_in_progress", "{$appDir}/controllers_test");
+		}
+	}
+
 	/**
-	 * @inheritDoc
+	 * @param ConsoleTester $I
+	 * @return void
 	 */
 	public function _failed(ConsoleTester $I):void {
 		$appDir = Yii::getAlias('@app');
 		if (file_exists("{$appDir}/controllers_test_in_progress")) {
 			rename("{$appDir}/controllers_test_in_progress", "{$appDir}/controllers_test");
 		}
-
 	}
 }
