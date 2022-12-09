@@ -17,6 +17,7 @@ use yii\base\Module;
 use yii\base\UnknownClassException;
 use yii\console\Application as ConsoleApplication;
 use yii\db\ActiveRecordInterface;
+use yii\db\StaleObjectException;
 use yii\web\Controller;
 use yii\web\IdentityInterface;
 
@@ -30,14 +31,7 @@ class PermissionsModule extends Module {
 
 	private static ?string $_userIdentityClass = null;
 
-	public const VERBS = [
-		'GET' => 'GET',
-		'HEAD' => 'HEAD',
-		'POST' => 'POST',
-		'PUT' => 'PUT',
-		'PATCH' => 'PATCH',
-		'DELETE' => 'DELETE'
-	];
+	public const VERBS = ['GET' => 'GET', 'HEAD' => 'HEAD', 'POST' => 'POST', 'PUT' => 'PUT', 'PATCH' => 'PATCH', 'DELETE' => 'DELETE'];
 
 	/**
 	 * @inheritDoc
@@ -58,9 +52,7 @@ class PermissionsModule extends Module {
 	public static function UserIdentityClass():string|ActiveRecordInterface {
 		if (null === static::$_userIdentityClass) {
 			$identity = static::param('userIdentityClass', Yii::$app->user->identityClass);
-			static::$_userIdentityClass = (is_callable($identity))
-				?$identity()
-				:$identity;
+			static::$_userIdentityClass = (is_callable($identity))?$identity():$identity;
 		}
 		return static::$_userIdentityClass;
 	}
@@ -73,9 +65,7 @@ class PermissionsModule extends Module {
 	 */
 	public static function UserCurrentIdentity():?IdentityInterface {
 		$identity = static::param('userCurrentIdentity', Yii::$app->user->identity);
-		return (is_callable($identity))
-			?$identity()
-			:$identity;
+		return (is_callable($identity))?$identity():$identity;
 	}
 
 	/**
@@ -86,9 +76,7 @@ class PermissionsModule extends Module {
 	 * @noinspection PhpDocSignatureInspection
 	 */
 	public static function FindIdentityById(mixed $id):?IdentityInterface {
-		return (null === $id)
-			?static::UserCurrentIdentity()
-			:static::UserIdentityClass()::findOne($id);
+		return (null === $id)?static::UserCurrentIdentity():static::UserIdentityClass()::findOne($id);
 	}
 
 	/**
@@ -144,7 +132,8 @@ class PermissionsModule extends Module {
 	 */
 	public static function InitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
 		$module = null;
-		if ('' === $moduleId) $moduleId = null;//для совместимости со старым вариантом конфига
+		if ('' === $moduleId)
+			$moduleId = null;//для совместимости со старым вариантом конфига
 		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
 		if (null !== $moduleId && '@' === $moduleId[0]) {
 			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class]);
@@ -155,33 +144,77 @@ class PermissionsModule extends Module {
 
 		/** @var Controller[] $foundControllers */
 		foreach ($foundControllers as $controller) {
-			$module = $module??(($controller?->module?->id === Yii::$app->id)
-					?null/*для приложения не сохраняем модуль, для удобства*/
-					:$controller?->module?->id);
+			$module = $module??(($controller?->module?->id === Yii::$app->id)?null/*для приложения не сохраняем модуль, для удобства*/:$controller?->module?->id);
 			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
 			$controllerPermissions = [];
 			foreach ($controllerActions as $action) {
-				$permission = new Permissions([
-					'name' => sprintf("%s%s:%s", null === $module?"":"{$module}:", $controller->id, $action),
-					'module' => $module,
-					'controller' => $controller->id,
-					'action' => $action,
-					'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
-				]);
+				$permission = new Permissions(['name' => sprintf("%s%s:%s", null === $module?"":"{$module}:", $controller->id, $action), 'module' => $module, 'controller' => $controller->id, 'action' => $action, 'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")]);
 				$saved = $permission->save();
 				if (null !== $initPermissionHandler) {
 					$initPermissionHandler($permission, $saved);
 				}
 				$controllerPermissions[] = $permission;
 			}
-			$controllerPermissionsCollection = new PermissionsCollections([
-				'name' => sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", $controller->id),
-				'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),
-			]);
+			$controllerPermissionsCollection = new PermissionsCollections(['name' => sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", $controller->id), 'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),]);
 			$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
 			if (null !== $initPermissionCollectionHandler) {
 				$initPermissionCollectionHandler($controllerPermissionsCollection, $controllerPermissionsCollection->save());
 			}
+		}
+	}
+
+	/**
+	 * Удаляет все ранее сгенерированные ненужные пермиссии.
+	 * @param string $path Путь к каталогу с контроллерами (рекурсивный корень).
+	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры (null для контроллеров приложения)
+	 * @param callable|null $deletePermissionHandler Опциональный обработчик удаления доступа
+	 * @param callable|null $deletePermissionCollectionHandler Опциональный обработчик удаления коллекции
+	 * @return void
+	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 * @throws StaleObjectException
+	 */
+	public static function DropUnusedControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $deletePermissionHandler = null, ?callable $deletePermissionCollectionHandler = null):void {
+		$currentPermissionNames = [];
+		$currentPermissionsCollectionsNames = [];
+
+		$module = null;
+		if ('' === $moduleId)
+			$moduleId = null;//для совместимости со старым вариантом конфига
+		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
+		if (null !== $moduleId && '@' === $moduleId[0]) {
+			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class]);
+			$module = substr($moduleId, 1);
+		} else {
+			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class]);
+		}
+
+		/** @var Controller[] $foundControllers */
+		foreach ($foundControllers as $controller) {
+			$module = $module??(($controller?->module?->id === Yii::$app->id)?null/*для приложения не сохраняем модуль, для удобства*/:$controller?->module?->id);
+			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
+			foreach ($controllerActions as $action) {
+				$currentPermissionNames[] = sprintf("%s%s:%s", null === $module?"":"{$module}:", $controller->id, $action);//todo: вынести в генератор
+			}
+			$currentPermissionsCollectionsNames[] = sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", $controller->id);
+		}
+
+		if (null !== $deletePermissionHandler) {
+			foreach (Permissions::find()->where(['not', 'name' => $currentPermissionNames])->all() as $unusedPermission) {
+				$deletePermissionHandler($unusedPermission, $unusedPermission->delete());//todo: удаление пермиссии удаляет её из коллекции и связей
+			}
+		} else {
+			Permissions::deleteAll(['not', 'name' => $currentPermissionNames]);
+		}
+
+		if (null !== $deletePermissionCollectionHandler) {
+			foreach (PermissionsCollections::find()->where(['not', 'name' => $currentPermissionsCollectionsNames])->all() as $unusedCollection) {
+				$deletePermissionCollectionHandler($unusedCollection, $unusedCollection->delete());//todo: удаление коллекции удаляет все связи
+			}
+		} else {
+			PermissionsCollections::deleteAll(['not', 'name' => $currentPermissionsCollectionsNames]);
 		}
 	}
 }
