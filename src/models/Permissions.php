@@ -4,6 +4,8 @@ declare(strict_types = 1);
 namespace cusodede\permissions\models;
 
 use cusodede\permissions\models\active_record\PermissionsAR;
+use cusodede\permissions\models\active_record\relations\RelPermissionsCollectionsToPermissions;
+use cusodede\permissions\models\active_record\relations\RelUsersToPermissions;
 use cusodede\permissions\PermissionsModule;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\CacheHelper;
@@ -189,5 +191,15 @@ class Permissions extends PermissionsAR {
 			$this->module = '@' === $this->module[0]?substr($this->module, 1):$this->module;//strip @ if presents
 			$this->controller = $path[1];
 		}
+	}
+
+	/**
+	 * Удаляем связи перед удалением записи
+	 * @inheritDoc
+	 */
+	public function delete():bool {
+		RelPermissionsCollectionsToPermissions::deleteAll(['permission_id' => $this->id]);
+		RelUsersToPermissions::deleteAll(['permission_id' => $this->id]);
+		return parent::delete();
 	}
 }

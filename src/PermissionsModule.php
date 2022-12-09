@@ -203,7 +203,8 @@ class PermissionsModule extends Module {
 
 		if (null !== $deletePermissionHandler) {
 			foreach (Permissions::find()->where(['not', 'name' => $currentPermissionNames])->all() as $unusedPermission) {
-				$deletePermissionHandler($unusedPermission, $unusedPermission->delete());//todo: удаление пермиссии удаляет её из коллекции и связей
+				/** @var Permissions $unusedPermission */
+				$deletePermissionHandler($unusedPermission, $unusedPermission->delete());
 			}
 		} else {
 			Permissions::deleteAll(['not', 'name' => $currentPermissionNames]);
