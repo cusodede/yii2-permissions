@@ -122,22 +122,22 @@ class PermissionsModule extends Module {
 	/**
 	 * Generates a permission name for module-controller-action
 	 * @param string|null $module
-	 * @param Controller $controller
+	 * @param Controller|string $controller
 	 * @param string $actionName
 	 * @return string
 	 */
-	protected static function GetControllerActionPermissionName(?string $module, Controller $controller, string $actionName):string {
-		return sprintf("%s%s:%s", null === $module?"":"{$module}:", $controller->id, $actionName);
+	protected static function GetControllerActionPermissionName(?string $module, Controller|string $controller, string $actionName):string {
+		return sprintf("%s%s:%s", null === $module?"":"{$module}:", is_string($controller)?$controller:$controller->id, $actionName);
 	}
 
 	/**
 	 * Generates a permission collection name for module-controller pair
 	 * @param string|null $module
-	 * @param Controller $controller
+	 * @param Controller|string $controller
 	 * @return string
 	 */
-	protected static function GetControllerPermissionCollectionName(?string $module, Controller $controller):string {
-		return sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", $controller->id);
+	protected static function GetControllerPermissionCollectionName(?string $module, Controller|string $controller):string {
+		return sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", is_string($controller)?$controller:$controller->id);
 	}
 
 	/**
@@ -227,12 +227,13 @@ class PermissionsModule extends Module {
 			foreach ($controllerActions as $action) {
 				$currentPermissionNames[] = static::GetControllerActionPermissionName($module, $controller, $action);
 			}
-			$currentPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($module, $controller);
 		}
 
+		/** @var Permissions[] $allUnusedPermissions */
 		$allUnusedPermissions = Permissions::find()->where(['not', ['name' => $currentPermissionNames]])->andWhere(['module' => $moduleId])->all();
 		foreach ($allUnusedPermissions as $unusedPermission) {
 			$deleted = $unusedPermission->delete();
+			$currentPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($unusedPermission->module, $unusedPermission->controller);
 			if (null !== $deletePermissionHandler) {
 				/** @var Permissions $unusedPermission */
 				if (null !== $deletePermissionHandler) $deletePermissionHandler($unusedPermission, false !== $deleted);
