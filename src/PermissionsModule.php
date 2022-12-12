@@ -12,6 +12,7 @@ use pozitronik\traits\traits\ModuleTrait;
 use ReflectionException;
 use Throwable;
 use Yii;
+use yii\base\Action;
 use yii\base\InvalidConfigException;
 use yii\base\Module;
 use yii\base\UnknownClassException;
@@ -120,6 +121,27 @@ class PermissionsModule extends Module {
 	}
 
 	/**
+	 * Generates a permission name for module-controller-action
+	 * @param string|null $module
+	 * @param Controller $controller
+	 * @param string $actionName
+	 * @return string
+	 */
+	protected static function GetControllerActionPermissionName(?string $module, Controller $controller, string $actionName):string {
+		return sprintf("%s%s:%s", null === $module?"":"{$module}:", $controller->id, $actionName);
+	}
+
+	/**
+	 * Generates a permission collection name for module-controller pair
+	 * @param string|null $module
+	 * @param Controller $controller
+	 * @return string
+	 */
+	protected static function GetControllerPermissionCollectionName(?string $module, Controller $controller):string {
+		return sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", $controller->id);
+	}
+
+	/**
 	 * @param string $path Путь к каталогу с контроллерами (рекурсивный корень).
 	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры (null для контроллеров приложения)
 	 * @param callable|null $initPermissionHandler
@@ -148,14 +170,22 @@ class PermissionsModule extends Module {
 			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
 			$controllerPermissions = [];
 			foreach ($controllerActions as $action) {
-				$permission = new Permissions(['name' => sprintf("%s%s:%s", null === $module?"":"{$module}:", $controller->id, $action), 'module' => $module, 'controller' => $controller->id, 'action' => $action, 'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")]);
+				$permission = new Permissions([
+					'name' => static::GetControllerActionPermissionName($module, $controller, $action),
+					'module' => $module,
+					'controller' => $controller->id,
+					'action' => $action,
+					'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
+				]);
 				$saved = $permission->save();
 				if (null !== $initPermissionHandler) {
 					$initPermissionHandler($permission, $saved);
 				}
 				$controllerPermissions[] = $permission;
 			}
-			$controllerPermissionsCollection = new PermissionsCollections(['name' => sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", $controller->id), 'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),]);
+			$controllerPermissionsCollection = new PermissionsCollections([
+				'name' => static::GetControllerPermissionCollectionName($module, $controller),
+				'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),]);
 			$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
 			if (null !== $initPermissionCollectionHandler) {
 				$initPermissionCollectionHandler($controllerPermissionsCollection, $controllerPermissionsCollection->save());
@@ -196,9 +226,9 @@ class PermissionsModule extends Module {
 			$module = $module??(($controller?->module?->id === Yii::$app->id)?null/*для приложения не сохраняем модуль, для удобства*/:$controller?->module?->id);
 			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
 			foreach ($controllerActions as $action) {
-				$currentPermissionNames[] = sprintf("%s%s:%s", null === $module?"":"{$module}:", $controller->id, $action);//todo: вынести в генератор
+				$currentPermissionNames[] = static::GetControllerActionPermissionName($module, $controller, $action);
 			}
-			$currentPermissionsCollectionsNames[] = sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", $controller->id);
+			$currentPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($module, $controller);
 		}
 
 		if (null !== $deletePermissionHandler) {
