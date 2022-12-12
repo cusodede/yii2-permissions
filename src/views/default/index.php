@@ -15,6 +15,6 @@ use yii\web\View;
 	'buttons' => [
 		PermissionsModule::a('Добавляет разрешения, описанные в файле конфигурации', 'default/init-config-permissions', ['class' => 'btn btn-default']),
 		PermissionsModule::a('Генерация доступов по контроллерам', 'default/init-controllers-permissions', ['class' => 'btn btn-default']),
-		PermissionsModule::a('Генерация доступов по контроллерам', 'default/drop-controllers-permissions', ['class' => 'btn btn-warning']),
+		PermissionsModule::a('Удаление неиспользуемых контроллеров', 'default/drop-controllers-permissions', ['class' => 'btn btn-warning']),
 	]
 ]) ?>
