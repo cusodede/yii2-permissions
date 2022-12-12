@@ -40,7 +40,7 @@ class CommonHelper {
 		if (null === $controllerId) return null;
 		if (null !== $moduleId && !Yii::$app->hasModule($moduleId)) return false;
 		/** @var Controller|null $controller */
-		if (null === $controller = ControllerHelper::GetControllerByControllerId($controllerId, $actionId)) return false;
+		if (null === $controller = ControllerHelper::GetControllerByControllerId($controllerId, $moduleId)) return false;
 		if (null === $controller->createAction($actionId)) return false;
 		return true;
 	}
