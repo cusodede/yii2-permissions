@@ -154,7 +154,7 @@ $id = 'permissions-index-grid';
 			],
 			[
 				'class' => DataColumn::class,
-				'attribute' => 'usageStatus',
+				'attribute' => 'usageFlags',
 				'format' => 'raw',
 			],
 			[
