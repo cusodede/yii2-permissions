@@ -8,7 +8,6 @@ declare(strict_types = 1);
  */
 
 use cusodede\permissions\assets\PermissionsCollectionsAsset;
-use cusodede\permissions\controllers\PermissionsCollectionsController;
 use cusodede\permissions\controllers\PermissionsController;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\models\PermissionsCollectionsSearch;

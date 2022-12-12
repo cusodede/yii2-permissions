@@ -12,7 +12,6 @@ use pozitronik\traits\traits\ModuleTrait;
 use ReflectionException;
 use Throwable;
 use Yii;
-use yii\base\Action;
 use yii\base\InvalidConfigException;
 use yii\base\Module;
 use yii\base\UnknownClassException;
