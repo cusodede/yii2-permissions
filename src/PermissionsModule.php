@@ -230,25 +230,22 @@ class PermissionsModule extends Module {
 			$currentPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($module, $controller);
 		}
 
-		if (null !== $deletePermissionHandler) {
-			foreach (Permissions::find()->where(['not', ['name' => $currentPermissionNames]])->andWhere(['module' => $moduleId])->all() as $unusedPermission) {
+		$allUnusedPermissions = Permissions::find()->where(['not', ['name' => $currentPermissionNames]])->andWhere(['module' => $moduleId])->all();
+		foreach ($allUnusedPermissions as $unusedPermission) {
+			$deleted = $unusedPermission->delete();
+			if (null !== $deletePermissionHandler) {
 				/** @var Permissions $unusedPermission */
-				$deletePermissionHandler($unusedPermission, false !== $unusedPermission->delete());
+				if (null !== $deletePermissionHandler) $deletePermissionHandler($unusedPermission, false !== $deleted);
 			}
-		} else {
-			Permissions::deleteAll(['not', ['name' => $currentPermissionNames]]);
 		}
 
-		if (null !== $deletePermissionCollectionHandler) {
-			foreach (PermissionsCollections::find()->where(['name' => $currentPermissionsCollectionsNames])->all() as $unusedCollection) {
-				/** @var PermissionsCollections $unusedCollection */
-				if ([] === $unusedCollection->relatedPermissions) {//Нельзя удалять коллекции по имени, нужно удалять те, в которых не осталось правил
-					$deletePermissionCollectionHandler($unusedCollection, false !== $unusedCollection->delete());
-				}
-
+		$allUnusedPermissionsCollections = PermissionsCollections::find()->where(['name' => $currentPermissionsCollectionsNames])->all();
+		foreach ($allUnusedPermissionsCollections as $unusedCollection) {
+			/** @var PermissionsCollections $unusedCollection */
+			if ([] === $unusedCollection->relatedPermissions) {//Нельзя удалять коллекции по имени, нужно удалять те, в которых не осталось правил
+				$deleted = $unusedCollection->delete();
+				if (null !== $deletePermissionCollectionHandler) $deletePermissionCollectionHandler($unusedCollection, false !== $deleted);
 			}
-		} else {
-			PermissionsCollections::deleteAll(['not', ['name' => $currentPermissionsCollectionsNames]]);
 		}
 	}
 }
