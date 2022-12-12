@@ -4,7 +4,6 @@ declare(strict_types = 1);
 /**
  * @var View $this
  */
-
 use cusodede\permissions\PermissionsModule;
 use yii\bootstrap4\ButtonGroup;
 use yii\web\View;
