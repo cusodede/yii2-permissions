@@ -240,7 +240,7 @@ class PermissionsModule extends Module {
 		}
 
 		if (null !== $deletePermissionCollectionHandler) {
-			foreach (PermissionsCollections::find()->where(['not', ['name' => $currentPermissionsCollectionsNames]])->all() as $unusedCollection) {
+			foreach (PermissionsCollections::find()->where(['name' => $currentPermissionsCollectionsNames])->all() as $unusedCollection) {
 				/** @var PermissionsCollections $unusedCollection */
 				if ([] === $unusedCollection->relatedPermissions) {//Нельзя удалять коллекции по имени, нужно удалять те, в которых не осталось правил
 					$deletePermissionCollectionHandler($unusedCollection, false !== $unusedCollection->delete());
