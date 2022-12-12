@@ -156,6 +156,16 @@ $id = 'permissions-index-grid';
 				'class' => DataColumn::class,
 				'attribute' => 'usageFlags',
 				'format' => 'raw',
+				'value' => static function(Permissions $permission):string {
+					$flags = $permission->usageFlags;
+					if (Permissions::USAGE_NONE === $flags) return '<i class="fa fa-empty-set" title="Не используется"></i>';
+					$icons = [];
+					if ($flags & Permissions::USAGE_BY_CONTROLLER) $icons[] = '<i class="fa fa-code" title="Доступ контроллера"></i>';
+					if ($flags & Permissions::USAGE_BY_COLLECTION) $icons[] = '<i class="fa fa-rectangle-code" title="Входит в коллекцию"></i>';
+					if ($flags & Permissions::USAGE_BY_USERS) $icons[] = '<i class="fa fa-users" title="Назначено пользователю напрямую"></i>';
+					if ($flags & Permissions::USAGE_BY_USERS_COLLECTION) $icons[] = '<i class="fa fa-users-rectangle" title="Назначено пользователю через коллекцию"></i>';
+					return implode('', $icons);
+				}
 			],
 			[
 				'class' => DataColumn::class,
