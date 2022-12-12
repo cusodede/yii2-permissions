@@ -121,23 +121,23 @@ class PermissionsModule extends Module {
 
 	/**
 	 * Generates a permission name for module-controller-action
-	 * @param string|null $module
-	 * @param Controller|string $controller
-	 * @param string $actionName
+	 * @param string|null $moduleId
+	 * @param string $controllerId
+	 * @param string $actionId
 	 * @return string
 	 */
-	protected static function GetControllerActionPermissionName(?string $module, Controller|string $controller, string $actionName):string {
-		return sprintf("%s%s:%s", null === $module?"":"{$module}:", is_string($controller)?$controller:$controller->id, $actionName);
+	protected static function GetControllerActionPermissionName(?string $moduleId, string $controllerId, string $actionId):string {
+		return sprintf("%s%s:%s", null === $moduleId?"":"{$moduleId}:", $controllerId, $actionId);
 	}
 
 	/**
 	 * Generates a permission collection name for module-controller pair
-	 * @param string|null $module
-	 * @param Controller|string $controller
+	 * @param string|null $moduleId
+	 * @param string $controllerId
 	 * @return string
 	 */
-	protected static function GetControllerPermissionCollectionName(?string $module, Controller|string $controller):string {
-		return sprintf("Доступ к контроллеру %s%s", null === $module?'':"{$module}:", is_string($controller)?$controller:$controller->id);
+	protected static function GetControllerPermissionCollectionName(?string $moduleId, string $controllerId):string {
+		return sprintf("Доступ к контроллеру %s%s", null === $moduleId?'':"{$moduleId}:", $controllerId);
 	}
 
 	/**
@@ -170,7 +170,7 @@ class PermissionsModule extends Module {
 			$controllerPermissions = [];
 			foreach ($controllerActions as $action) {
 				$permission = new Permissions([
-					'name' => static::GetControllerActionPermissionName($module, $controller, $action),
+					'name' => static::GetControllerActionPermissionName($module, $controller->id, $action),
 					'module' => $module,
 					'controller' => $controller->id,
 					'action' => $action,
@@ -183,7 +183,7 @@ class PermissionsModule extends Module {
 				$controllerPermissions[] = $permission;
 			}
 			$controllerPermissionsCollection = new PermissionsCollections([
-				'name' => static::GetControllerPermissionCollectionName($module, $controller),
+				'name' => static::GetControllerPermissionCollectionName($module, $controller->id),
 				'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),]);
 			$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
 			if (null !== $initPermissionCollectionHandler) {
@@ -225,7 +225,7 @@ class PermissionsModule extends Module {
 			$module = $module??(($controller?->module?->id === Yii::$app->id)?null/*для приложения не сохраняем модуль, для удобства*/:$controller?->module?->id);
 			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
 			foreach ($controllerActions as $action) {
-				$currentPermissionNames[] = static::GetControllerActionPermissionName($module, $controller, $action);
+				$currentPermissionNames[] = static::GetControllerActionPermissionName($module, $controller->id, $action);
 			}
 		}
 
