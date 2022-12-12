@@ -154,6 +154,11 @@ $id = 'permissions-index-grid';
 			],
 			[
 				'class' => DataColumn::class,
+				'attribute' => 'usageStatus',
+				'format' => 'raw',
+			],
+			[
+				'class' => DataColumn::class,
 				'attribute' => 'module',
 				'format' => 'raw',
 				'value' => static fn(Permissions $permission):string => $permission->module??''
