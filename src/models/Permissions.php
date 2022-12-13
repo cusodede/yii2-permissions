@@ -220,7 +220,7 @@ class Permissions extends PermissionsAR {
 		$result = 0;
 		/*check if it is a permission controller, and its path still actual*/
 		if (false === CommonHelper::IsControllerPathExits($this->module, $this->controller, $this->action)) $result += static::WARN_NO_PATH;
-		if ([] !== $this->relatedUsers && [] !== $this->relatedUsersViaPermissionsCollections) $result += static::WARN_NOT_USED;
+		if ([] === $this->relatedUsers && [] === $this->relatedUsersViaPermissionsCollections) $result += static::WARN_NOT_USED;
 		return $result;
 	}
 }
