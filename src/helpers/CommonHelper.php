@@ -58,9 +58,10 @@ class CommonHelper {
 	 * @throws UnknownClassException
 	 */
 	public static function GetControllerActions(Controller $controller, bool $asRequestName = true):array {
-		$actionsNames = array_merge(
-			preg_filter('/^action([A-Z])(\w+?)/', '$1$2', ArrayHelper::getColumn(ReflectionHelper::GetMethods($controller::class), 'name')),
-			array_keys($controller->actions())
+		$actionsNames = preg_filter('/^action([A-Z])(\w+?)/', '$1$2', array_merge(
+				ArrayHelper::getColumn(ReflectionHelper::GetMethods($controller::class), 'name'),
+				array_keys($controller->actions())
+			)
 		);
 		foreach ($actionsNames as &$actionName) {
 			if (null === $controller->createAction(ControllerHelper::GetActionRequestName($actionName))) {
