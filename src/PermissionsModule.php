@@ -238,10 +238,8 @@ class PermissionsModule extends Module {
 		foreach ($allUnusedPermissions as $unusedPermission) {
 			$deleted = $unusedPermission->delete();
 			$checkedPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($unusedPermission->module, $unusedPermission->controller);
-			if (null !== $deletePermissionHandler) {
-				/** @var Permissions $unusedPermission */
-				if (null !== $deletePermissionHandler) $deletePermissionHandler($unusedPermission, false !== $deleted);
-			}
+			/** @var Permissions $unusedPermission */
+			if (null !== $deletePermissionHandler) $deletePermissionHandler($unusedPermission, false !== $deleted);
 		}
 
 		$allUnusedPermissionsCollections = PermissionsCollections::find()
