@@ -197,7 +197,7 @@ $id = 'permissions-index-grid';
 				'attribute' => 'user',
 				'label' => 'Назначено пользователям',
 				'value' => static fn(Permissions $permission) => BadgeWidget::widget([
-					'items' => $permission->relatedUsers,
+					'items' => array_merge($permission->relatedUsers, $permission->relatedUsersViaPermissionsCollections),
 					'subItem' => 'username',
 				]),
 				'format' => 'raw'
