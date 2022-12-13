@@ -87,8 +87,15 @@ $id = 'permissions-index-grid';
 					],
 					'inputType' => Editable::INPUT_TEXT
 				],
+				'value' => static function(Permissions $permission):string {
+					$flags = $permission->warningFlags;
+					$labels = [];
+					if ($flags & Permissions::WARN_NO_PATH) $labels[] = '<i class="fa fa-exclamation" style="color:Tomato" title="Нет маршрута"></i>';
+					if ($flags & Permissions::WARN_NOT_USED) $labels[] = '<i class="fa fa-question" style="color:Orange" title="Не используется"></i>';
+					return implode('<br />', $labels).$permission->name;
+				},
 				'attribute' => 'name',
-				'format' => 'text'
+				'format' => 'raw'
 			],
 			[
 				'class' => EditableColumn::class,
@@ -151,18 +158,6 @@ $id = 'permissions-index-grid';
 				]),
 				'attribute' => 'verb',
 				'format' => 'text'
-			],
-			[
-				'class' => DataColumn::class,
-				'attribute' => 'warnFlags',
-				'format' => 'raw',
-				'value' => static function(Permissions $permission):string {
-					$flags = $permission->warningFlags;
-					$labels = [];
-					if ($flags & Permissions::WARN_NO_PATH) $labels[] = '<i class="fa fa-exclamation" style="color:Tomato" title="Нет маршрута"></i>';
-					if ($flags & Permissions::WARN_NOT_USED) $labels[] = '<i class="fa fa-question" style="color:Orange" title="Не используется"></i>';
-					return implode('<br />', $labels);
-				}
 			],
 			[
 				'class' => DataColumn::class,
