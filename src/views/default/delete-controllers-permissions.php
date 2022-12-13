@@ -30,7 +30,6 @@ use yii\web\View;
 			'value' => static fn(array $permissionItem):string => match ($permissionItem['type']) {
 				DefaultController::PERMISSION => 'Разрешение',
 				DefaultController::PERMISSIONS_COLLECTION => 'Группа разрешений',
-
 			}
 		],
 		[
