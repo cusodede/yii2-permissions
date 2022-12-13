@@ -49,7 +49,7 @@ class Permissions extends PermissionsAR {
 	public const GRANT_PERMISSIONS = 'grant';
 
 	/*Флаги возможных проблем доступа */
-	public const WARN_NO_CONTROLLER = 0x1;//пермиссия отвечает за доступ к несуществующему контроллеру
+	public const WARN_NO_PATH = 0x1;//пермиссия отвечает за доступ к несуществующему контроллеру
 	public const WARN_NOT_USED = 0x2;//пермиссия не используется (ни напрямую, ни на коллекцию)
 
 	/**
@@ -219,7 +219,7 @@ class Permissions extends PermissionsAR {
 	public function getWarningFlags():int {
 		$result = 0;
 		/*check if it is a permission controller, and its path still actual*/
-		if (false === CommonHelper::IsControllerPathExits($this->module, $this->controller, $this->action)) $result += static::WARN_NO_CONTROLLER;
+		if (false === CommonHelper::IsControllerPathExits($this->module, $this->controller, $this->action)) $result += static::WARN_NO_PATH;
 		if ([] !== $this->relatedUsers && [] !== $this->relatedUsersViaPermissionsCollections) $result += static::WARN_NOT_USED;
 		return $result;
 	}

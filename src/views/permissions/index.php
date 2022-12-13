@@ -159,8 +159,8 @@ $id = 'permissions-index-grid';
 				'value' => static function(Permissions $permission):string {
 					$flags = $permission->warningFlags;
 					$labels = [];
-					if (!($flags & Permissions::WARN_NO_CONTROLLER)) $labels[] = '<i class="fa fa-exclamation" style="color:Tomato"></i>Нет маршрута';
-					if ($flags & Permissions::WARN_NOT_USED) $labels[] = '<i class="fa fa-question" style="color:Orange"></i>Не используется';
+					if ($flags & Permissions::WARN_NO_PATH) $labels[] = '<i class="fa fa-exclamation" style="color:Tomato" title="Нет маршрута"></i>';
+					if ($flags & Permissions::WARN_NOT_USED) $labels[] = '<i class="fa fa-question" style="color:Orange" title="Не используется"></i>';
 					return implode('<br />', $labels);
 				}
 			],
