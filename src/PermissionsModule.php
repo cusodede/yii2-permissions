@@ -207,7 +207,7 @@ class PermissionsModule extends Module {
 	 */
 	public static function DropUnusedControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $deletePermissionHandler = null, ?callable $deletePermissionCollectionHandler = null):void {
 		$currentPermissionNames = [];
-		$currentPermissionsCollectionsNames = [];
+		$checkedPermissionsCollectionsNames = [];//коллекции, в которых были удалены пермиссии, для проверки
 
 		$module = null;
 		if ('' === $moduleId)
@@ -230,23 +230,28 @@ class PermissionsModule extends Module {
 		}
 
 		/** @var Permissions[] $allUnusedPermissions */
-		$allUnusedPermissions = Permissions::find()->where(['not', ['name' => $currentPermissionNames]])->andWhere(['module' => $moduleId])->all();
+		$allUnusedPermissions = Permissions::find()
+			->where(['not', ['name' => $currentPermissionNames]])
+			->andWhere(['module' => $moduleId])
+			->andWhere(['not', ['controller' => null]])
+			->all();
 		foreach ($allUnusedPermissions as $unusedPermission) {
 			$deleted = $unusedPermission->delete();
-			$currentPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($unusedPermission->module, $unusedPermission->controller);
+			$checkedPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($unusedPermission->module, $unusedPermission->controller);
 			if (null !== $deletePermissionHandler) {
 				/** @var Permissions $unusedPermission */
 				if (null !== $deletePermissionHandler) $deletePermissionHandler($unusedPermission, false !== $deleted);
 			}
 		}
 
-		$allUnusedPermissionsCollections = PermissionsCollections::find()->where(['name' => $currentPermissionsCollectionsNames])->all();
+		$allUnusedPermissionsCollections = PermissionsCollections::find()
+			->where(['name' => $checkedPermissionsCollectionsNames])
+			->andFilterWhereRelation(['id' => null], 'relatedPermissions')//Нельзя удалять коллекции по имени, нужно удалять те, в которых не осталось правил
+			->all();
 		foreach ($allUnusedPermissionsCollections as $unusedCollection) {
 			/** @var PermissionsCollections $unusedCollection */
-			if ([] === $unusedCollection->relatedPermissions) {//Нельзя удалять коллекции по имени, нужно удалять те, в которых не осталось правил
-				$deleted = $unusedCollection->delete();
-				if (null !== $deletePermissionCollectionHandler) $deletePermissionCollectionHandler($unusedCollection, false !== $deleted);
-			}
+			$deleted = $unusedCollection->delete();
+			if (null !== $deletePermissionCollectionHandler) $deletePermissionCollectionHandler($unusedCollection, false !== $deleted);
 		}
 	}
 }
