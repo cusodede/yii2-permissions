@@ -24,7 +24,7 @@ use yii\caching\TagDependency;
  * @see Permissions::setControllerPath()
  * @see Permissions::getControllerPath()
  *
- * @property-read int $usageFlags Флаги использования пермиссии, см USAGE_*
+ * @property-read int $warningFlags Флаги возможных проблем доступа, см WARN_*
  */
 class Permissions extends PermissionsAR {
 	/*Любое из перечисленных прав*/
@@ -48,12 +48,9 @@ class Permissions extends PermissionsAR {
 	/*Перечисление назначений конфигураций через конфиги, id => ['...', '...']*/
 	public const GRANT_PERMISSIONS = 'grant';
 
-	/*Флаги использования пермиссии, по увеличению «важности». Смысли в обнаружении наименее важных для последующего удаления */
-	public const USAGE_NONE = 0x0;//пермиссия не используется
-	public const USAGE_BY_CONTROLLER = 0x1;//пермиссия отвечает за доступ к существующему контроллеру
-	public const USAGE_BY_COLLECTION = 0x2;//пермиссия используется коллекцией (без учёта использования самой коллекции)
-	public const USAGE_BY_USERS = 0x4;//пермиссия используется напрямую пользователем
-	public const USAGE_BY_USERS_COLLECTION = 0x8;//пермиссия используется пользователем через коллекцию
+	/*Флаги возможных проблем доступа */
+	public const WARN_NO_CONTROLLER = 0x1;//пермиссия отвечает за доступ к несуществующему контроллеру
+	public const WARN_NOT_USED = 0x2;//пермиссия не используется (ни напрямую, ни на коллекцию)
 
 	/**
 	 * @inheritDoc
@@ -68,7 +65,7 @@ class Permissions extends PermissionsAR {
 	public function attributeLabels():array {
 		return parent::attributeLabels() + [
 				'controllerPath' => 'Маршрут контроллера',
-				'usageFlags' => 'Использование'
+				'warnFlags' => 'Проблемы'
 			];
 	}
 
@@ -219,13 +216,11 @@ class Permissions extends PermissionsAR {
 	 * @throws InvalidConfigException
 	 * @throws Throwable
 	 */
-	public function getUsageFlags():int {
+	public function getWarningFlags():int {
 		$result = 0;
 		/*check if it is a permission controller, and its path still actual*/
-		if (true === CommonHelper::IsControllerPathExits($this->module, $this->controller, $this->action)) $result += static::USAGE_BY_CONTROLLER;
-		if ([] !== $this->relatedPermissionsCollections) $result += static::USAGE_BY_COLLECTION;
-		if ([] !== $this->relatedUsers) $result += static::USAGE_BY_USERS;
-		if ([] !== $this->relatedUsersViaPermissionsCollections) $result += static::USAGE_BY_USERS_COLLECTION;
+		if (false === CommonHelper::IsControllerPathExits($this->module, $this->controller, $this->action)) $result += static::WARN_NO_CONTROLLER;
+		if ([] !== $this->relatedUsers && [] !== $this->relatedUsersViaPermissionsCollections) $result += static::WARN_NOT_USED;
 		return $result;
 	}
 }

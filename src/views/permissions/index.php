@@ -154,16 +154,13 @@ $id = 'permissions-index-grid';
 			],
 			[
 				'class' => DataColumn::class,
-				'attribute' => 'usageFlags',
+				'attribute' => 'warnFlags',
 				'format' => 'raw',
-				'value' => static function(Permissions $permission):string {//todo: более очевидное отображение и фильтрация по нему
-					$flags = $permission->usageFlags;
-					if (Permissions::USAGE_NONE === $flags) return '<i class="fa fa-exclamation" style="color:Tomato" title="Не используется"></i>';
+				'value' => static function(Permissions $permission):string {
+					$flags = $permission->warningFlags;
 					$labels = [];
-					if (!($flags & Permissions::USAGE_BY_CONTROLLER)) $labels[] = '<i class="fa fa-exclamation" style="color:Tomato"></i>Несуществующий доступ';
-					if ($flags & Permissions::USAGE_BY_COLLECTION) $labels[] = 'Входит в коллекцию';
-					if ($flags & Permissions::USAGE_BY_USERS) $labels[] = 'Назначено напрямую';
-					if ($flags & Permissions::USAGE_BY_USERS_COLLECTION) $labels[] = 'Назначено через коллекцию';
+					if (!($flags & Permissions::WARN_NO_CONTROLLER)) $labels[] = '<i class="fa fa-exclamation" style="color:Tomato"></i>Нет маршрута';
+					if ($flags & Permissions::WARN_NOT_USED) $labels[] = '<i class="fa fa-question" style="color:Orange"></i>Не используется';
 					return implode('<br />', $labels);
 				}
 			],
