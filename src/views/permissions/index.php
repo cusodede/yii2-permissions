@@ -156,7 +156,7 @@ $id = 'permissions-index-grid';
 				'class' => DataColumn::class,
 				'attribute' => 'usageFlags',
 				'format' => 'raw',
-				'value' => static function(Permissions $permission):string {
+				'value' => static function(Permissions $permission):string {//todo: более очевидное отображение и фильтрация по нему
 					$flags = $permission->usageFlags;
 					if (Permissions::USAGE_NONE === $flags) return '<i class="fa fa-exclamation" style="color:Tomato" title="Не используется"></i>';
 					$labels = [];
