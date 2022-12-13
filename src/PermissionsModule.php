@@ -195,8 +195,6 @@ class PermissionsModule extends Module {
 
 	/**
 	 * Удаляет все ранее сгенерированные ненужные пермиссии.
-	 * @param string $path Путь к каталогу с контроллерами (рекурсивный корень).
-	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры (null для контроллеров приложения)
 	 * @param callable|null $deletePermissionHandler Опциональный обработчик удаления доступа
 	 * @param callable|null $deletePermissionCollectionHandler Опциональный обработчик удаления коллекции
 	 * @param bool $doDelete true: удалить разрешения, false: передать в обработчик без удаления. При false коллекции не обрабатываются.
@@ -207,44 +205,20 @@ class PermissionsModule extends Module {
 	 * @throws Throwable
 	 * @throws UnknownClassException
 	 * @throws NotSupportedException
-	 * todo: доступы могут храниться и для путей вне конфига, поэтому нужно проверять все, где есть контроллеры
 	 */
-	public static function DropUnusedControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $deletePermissionHandler = null, ?callable $deletePermissionCollectionHandler = null, bool $doDelete = true):void {
-		$currentPermissionNames = [];
-		$checkedPermissionsCollectionsNames = [];//коллекции, в которых были удалены пермиссии, для проверки
-
-		$module = null;
-		if ('' === $moduleId)
-			$moduleId = null;//для совместимости со старым вариантом конфига
-		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
-		if (null !== $moduleId && '@' === $moduleId[0]) {
-			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class]);
-			$module = substr($moduleId, 1);
-		} else {
-			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class]);
-		}
-
-		/** @var Controller[] $foundControllers */
-		foreach ($foundControllers as $controller) {
-			$module = $module??(($controller?->module?->id === Yii::$app->id)?null/*для приложения не сохраняем модуль, для удобства*/:$controller?->module?->id);
-			$controllerActions = ControllerHelper::GetControllerActions(get_class($controller));
-			foreach ($controllerActions as $action) {
-				$currentPermissionNames[] = static::GetControllerActionPermissionName($module, $controller->id, $action);
+	public static function DropUnusedControllersPermissions(bool $doDelete = true, ?callable $deletePermissionHandler = null, ?callable $deletePermissionCollectionHandler = null):void {
+		$checkedPermissionsCollectionsNames = [];
+		/** @var Permissions[] $allControllersPermissions */
+		$allControllersPermissions = Permissions::find()->where(['not', ['controller' => null]])->all();
+		foreach ($allControllersPermissions as $permission) {
+			if ($permission->warningFlags & Permissions::WARN_NO_PATH) {
+				$deleted = $doDelete && $permission->delete();
+				$checkedPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($permission->module, $permission->controller);
+				/** @var Permissions $unusedPermission */
+				if (null !== $deletePermissionHandler) $deletePermissionHandler($permission, false !== $deleted);
 			}
 		}
 
-		/** @var Permissions[] $allUnusedPermissions */
-		$allUnusedPermissions = Permissions::find()
-			->where(['not', ['name' => $currentPermissionNames]])
-			->andWhere(['module' => $moduleId])
-			->andWhere(['not', ['controller' => null]])
-			->all();
-		foreach ($allUnusedPermissions as $unusedPermission) {
-			$deleted = $doDelete && $unusedPermission->delete();
-			$checkedPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($unusedPermission->module, $unusedPermission->controller);
-			/** @var Permissions $unusedPermission */
-			if (null !== $deletePermissionHandler) $deletePermissionHandler($unusedPermission, false !== $deleted);
-		}
 		if ($doDelete) {
 			$allUnusedPermissionsCollections = PermissionsCollections::find()
 				->where(['name' => $checkedPermissionsCollectionsNames])

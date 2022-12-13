@@ -57,30 +57,23 @@ class DefaultController extends Controller {
 	}
 
 	/**
-	 * Для всех контроллеров по пути $path удаляет неиспользуемые наборы правил доступа в БД. Если путь не указан, берётся маппинг из параметра controllerDirs конфига.
-	 * @param string|null $path
-	 * @param string|null $moduleId
+	 * Удаляет все неиспользуемые наборы правил доступа в БД.
 	 * @return void
 	 * @throws InvalidConfigException
 	 * @throws ReflectionException
 	 * @throws Throwable
 	 * @throws UnknownClassException
 	 */
-	public function actionDropControllersPermissions(?string $path = null, ?string $moduleId = null):void {
-		$pathMapping = [];
-		if (is_string($path)) $pathMapping = [$path => $moduleId];
-		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
-		foreach ($pathMapping as $controller_dir => $module_id) {
-			PermissionsModule::DropUnusedControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $deleted) {
-				Console::output(Console::renderColoredString($deleted
-					?"%gДоступ %b{$permission->name}%g удалён%n"
-					:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
-			}, static function(PermissionsCollections $permissionsCollection, bool $delete) {
-				Console::output(Console::renderColoredString($delete
-					?"%gКоллекция %b{$permissionsCollection->name}%g удалён%n"
-					:"%rКоллекция %b{$permissionsCollection->name}%r пропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n"));
-			});
-		}
+	public function actionDropControllersPermissions():void {
+		PermissionsModule::DropUnusedControllersPermissions(true, static function(Permissions $permission, bool $deleted) {
+			Console::output(Console::renderColoredString($deleted
+				?"%gДоступ %b{$permission->name}%g удалён%n"
+				:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
+		}, static function(PermissionsCollections $permissionsCollection, bool $delete) {
+			Console::output(Console::renderColoredString($delete
+				?"%gКоллекция %b{$permissionsCollection->name}%g удалён%n"
+				:"%rКоллекция %b{$permissionsCollection->name}%r пропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n"));
+		});
 	}
 
 }

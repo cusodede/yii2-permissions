@@ -10,6 +10,7 @@ use cusodede\web\default_controller\models\DefaultController as VendorDefaultCon
 use ReflectionException;
 use Throwable;
 use yii\base\InvalidConfigException;
+use yii\base\NotSupportedException;
 use yii\base\UnknownClassException;
 use yii\data\ArrayDataProvider;
 use yii\db\StaleObjectException;
@@ -113,36 +114,31 @@ class DefaultController extends VendorDefaultController {
 	}
 
 	/**
-	 * Для всех контроллеров по пути $path удаляет неиспользуемые наборы правил доступа в БД. Если путь не указан, берётся маппинг из параметра controllerDirs конфига.
-	 * @param string|null $path
-	 * @param string|null $moduleId
+	 * Удаляет все неиспользуемые наборы правил доступа в БД
+	 * @param bool $confirm
 	 * @return string
 	 * @throws InvalidConfigException
 	 * @throws ReflectionException
+	 * @throws StaleObjectException
 	 * @throws Throwable
 	 * @throws UnknownClassException
-	 * @throws StaleObjectException
+	 * @throws NotSupportedException
 	 */
-	public function actionDropUnusedControllersPermissions(?string $path = null, ?string $moduleId = null, bool $confirm = false):string {
+	public function actionDropUnusedControllersPermissions(bool $confirm = false):string {
 		$result = [];
-		$pathMapping = [];
-		if (is_string($path)) $pathMapping = [$path => $moduleId];
-		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
-		foreach ($pathMapping as $controller_dir => $module_id) {
-			PermissionsModule::DropUnusedControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $deleted) use (&$result) {
-				$result[] = [
-					'type' => self::PERMISSION,
-					'deleted' => $deleted,
-					'item' => $permission
-				];
-			}, static function(PermissionsCollections $permissionsCollection, bool $deleted) use (&$result) {
-				$result[] = [
-					'type' => self::PERMISSIONS_COLLECTION,
-					'deleted' => $deleted,
-					'item' => $permissionsCollection
-				];
-			}, $confirm);
-		}
+		PermissionsModule::DropUnusedControllersPermissions($confirm, static function(Permissions $permission, bool $deleted) use (&$result) {
+			$result[] = [
+				'type' => self::PERMISSION,
+				'deleted' => $deleted,
+				'item' => $permission
+			];
+		}, static function(PermissionsCollections $permissionsCollection, bool $deleted) use (&$result) {
+			$result[] = [
+				'type' => self::PERMISSIONS_COLLECTION,
+				'deleted' => $deleted,
+				'item' => $permissionsCollection
+			];
+		});
 		return $this->render('delete-controllers-permissions', [
 			'result' => new ArrayDataProvider([
 				'allModels' => $result,
