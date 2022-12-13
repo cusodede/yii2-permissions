@@ -212,15 +212,16 @@ class Permissions extends PermissionsAR {
 	}
 
 	/**
+	 * @param int $flags Optional: what flags require to check
 	 * @return int
 	 * @throws InvalidConfigException
 	 * @throws Throwable
 	 */
-	public function getWarningFlags():int {
+	public function getWarningFlags(int $flags = self::WARN_NO_PATH + self::WARN_NOT_USED):int {
 		$result = 0;
 		/*check if it is a permission controller, and its path still actual*/
-		if (false === CommonHelper::IsControllerPathExits($this->module, $this->controller, $this->action)) $result += static::WARN_NO_PATH;
-		if ([] === $this->relatedUsers && [] === $this->relatedUsersViaPermissionsCollections) $result += static::WARN_NOT_USED;
+		if ($flags & static::WARN_NO_PATH && false === CommonHelper::IsControllerPathExits($this->module, $this->controller, $this->action)) $result += static::WARN_NO_PATH;
+		if ($flags & static::WARN_NOT_USED && [] === $this->relatedUsers && [] === $this->relatedUsersViaPermissionsCollections) $result += static::WARN_NOT_USED;
 		return $result;
 	}
 }

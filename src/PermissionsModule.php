@@ -212,7 +212,7 @@ class PermissionsModule extends Module {
 		/** @var Permissions[] $allControllersPermissions */
 		$allControllersPermissions = Permissions::find()->where(['not', ['controller' => null]])->all();
 		foreach ($allControllersPermissions as $permission) {
-			if ($permission->warningFlags & Permissions::WARN_NO_PATH) {
+			if ($permission->getWarningFlags(Permissions::WARN_NO_PATH) & Permissions::WARN_NO_PATH) {
 				$deleted = $doDelete && $permission->delete();
 				$checkedPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($permission->module, $permission->controller);
 				/** @var Permissions $unusedPermission */
