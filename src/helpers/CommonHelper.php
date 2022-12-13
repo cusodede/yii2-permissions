@@ -50,27 +50,22 @@ class CommonHelper {
 	}
 
 	/**
-	 * Returns all controller actions
-	 * @param string $controller_class
+	 * Returns all loadable controller actions
+	 * @param Controller $controller
 	 * @param bool $asRequestName Cast action name to request name
 	 * @return string[]
 	 * @throws ReflectionException
 	 * @throws UnknownClassException
 	 */
-	public static function GetControllerActions(string $controller_class, bool $asRequestName = true, bool $checkActionExists = true):array {
-		$names = ArrayHelper::getColumn(ReflectionHelper::GetMethods($controller_class), 'name');
-		$names = preg_filter('/^action([A-Z])(\w+?)/', '$1$2', $names);
-		if ($asRequestName) {
-			foreach ($names as &$name) {
-				if ($checkActionExists) {
-					if (null !== ReflectionHelper::LoadClassByName($controller_class)?->createAction($name)) {
-						$name = ControllerHelper::GetActionRequestName($name);
-					}
-				} else {
-					$name = ControllerHelper::GetActionRequestName($name);
-				}
+	public static function GetControllerActions(Controller $controller, bool $asRequestName = true):array {
+		$actionsNames = preg_filter('/^action([A-Z])(\w+?)/', '$1$2', ArrayHelper::getColumn(ReflectionHelper::GetMethods($controller::class), 'name'));
+		foreach ($actionsNames as &$actionName) {
+			if (null !== $controller->createAction($actionName)) {
+				$actionName = $asRequestName?ControllerHelper::GetActionRequestName($actionName):$actionName;
+			} else {
+				$actionName = null;
 			}
 		}
-		return $names;
+		return array_filter($actionsNames);
 	}
 }

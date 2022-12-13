@@ -168,9 +168,9 @@ class PermissionsModule extends Module {
 		/** @var Controller[] $foundControllers */
 		foreach ($foundControllers as $controller) {
 			$module = $module??(($controller?->module?->id === Yii::$app->id)?null/*для приложения не сохраняем модуль, для удобства*/:$controller?->module?->id);
-			$controllerActions = CommonHelper::GetControllerActions(get_class($controller));
+			$controllerActionsNames = CommonHelper::GetControllerActions($controller);
 			$controllerPermissions = [];
-			foreach ($controllerActions as $action) {
+			foreach ($controllerActionsNames as $action) {
 				$permission = new Permissions([
 					'name' => static::GetControllerActionPermissionName($module, $controller->id, $action),
 					'module' => $module,
