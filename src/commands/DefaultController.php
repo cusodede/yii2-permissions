@@ -10,8 +10,10 @@ use cusodede\permissions\PermissionsModule;
 use ReflectionException;
 use Throwable;
 use yii\base\InvalidConfigException;
+use yii\base\NotSupportedException;
 use yii\base\UnknownClassException;
 use yii\console\Controller;
+use yii\db\StaleObjectException;
 use yii\helpers\Console;
 
 /**
@@ -58,14 +60,17 @@ class DefaultController extends Controller {
 
 	/**
 	 * Удаляет все неиспользуемые наборы правил доступа в БД.
+	 * @param bool $show Показать доступы без удаления
 	 * @return void
 	 * @throws InvalidConfigException
 	 * @throws ReflectionException
 	 * @throws Throwable
 	 * @throws UnknownClassException
+	 * @throws NotSupportedException
+	 * @throws StaleObjectException
 	 */
-	public function actionDropControllersPermissions():void {
-		PermissionsModule::DropUnusedControllersPermissions(true, static function(Permissions $permission, bool $deleted) {
+	public function actionDropControllersPermissions(bool $show = false):void {
+		PermissionsModule::DropUnusedControllersPermissions(!$show, static function(Permissions $permission, bool $deleted) {
 			Console::output(Console::renderColoredString($deleted
 				?"%gДоступ %b{$permission->name}%g удалён%n"
 				:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
