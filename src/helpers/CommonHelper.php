@@ -3,11 +3,15 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions\helpers;
 
+use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
+use pozitronik\helpers\ReflectionHelper;
+use ReflectionException;
 use Throwable;
 use Yii;
 use yii\base\Controller;
 use yii\base\InvalidConfigException;
+use yii\base\UnknownClassException;
 
 /**
  * Class CommonHelper
@@ -43,5 +47,30 @@ class CommonHelper {
 		if (null === $controller = ControllerHelper::GetControllerByControllerId($controllerId, $moduleId)) return false;
 		if (null === $controller->createAction($actionId)) return false;
 		return true;
+	}
+
+	/**
+	 * Returns all controller actions
+	 * @param string $controller_class
+	 * @param bool $asRequestName Cast action name to request name
+	 * @return string[]
+	 * @throws ReflectionException
+	 * @throws UnknownClassException
+	 */
+	public static function GetControllerActions(string $controller_class, bool $asRequestName = true, bool $checkActionExists = true):array {
+		$names = ArrayHelper::getColumn(ReflectionHelper::GetMethods($controller_class), 'name');
+		$names = preg_filter('/^action([A-Z])(\w+?)/', '$1$2', $names);
+		if ($asRequestName) {
+			foreach ($names as &$name) {
+				if ($checkActionExists) {
+					if (null !== ReflectionHelper::LoadClassByName($controller_class)?->createAction($name)) {
+						$name = ControllerHelper::GetActionRequestName($name);
+					}
+				} else {
+					$name = ControllerHelper::GetActionRequestName($name);
+				}
+			}
+		}
+		return $names;
 	}
 }
