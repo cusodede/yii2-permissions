@@ -92,7 +92,7 @@ $id = 'permissions-index-grid';
 					$labels = [];
 					if ($flags & Permissions::WARN_NO_PATH) $labels[] = '<i class="fa fa-exclamation" style="color:Tomato" title="Нет маршрута"></i>';
 					if ($flags & Permissions::WARN_NOT_USED) $labels[] = '<i class="fa fa-question" style="color:Orange" title="Не используется"></i>';
-					return implode('<br />', $labels).$permission->name;
+					return implode('', $labels).$permission->name;
 				},
 				'attribute' => 'name',
 				'format' => 'raw'
