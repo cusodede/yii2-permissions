@@ -207,6 +207,7 @@ class PermissionsModule extends Module {
 	 * @throws Throwable
 	 * @throws UnknownClassException
 	 * @throws NotSupportedException
+	 * todo: доступы могут храниться и для путей вне конфига, поэтому нужно проверять все, где есть контроллеры
 	 */
 	public static function DropUnusedControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $deletePermissionHandler = null, ?callable $deletePermissionCollectionHandler = null, bool $doDelete = true):void {
 		$currentPermissionNames = [];
