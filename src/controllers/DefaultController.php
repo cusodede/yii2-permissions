@@ -123,7 +123,7 @@ class DefaultController extends VendorDefaultController {
 	 * @throws UnknownClassException
 	 * @throws StaleObjectException
 	 */
-	public function actionDropUnusedControllersPermissions(?string $path = null, ?string $moduleId = null):string {
+	public function actionDropUnusedControllersPermissions(?string $path = null, ?string $moduleId = null, bool $confirm = false):string {
 		$result = [];
 		$pathMapping = [];
 		if (is_string($path)) $pathMapping = [$path => $moduleId];
@@ -141,13 +141,14 @@ class DefaultController extends VendorDefaultController {
 					'deleted' => $deleted,
 					'item' => $permissionsCollection
 				];
-			});
+			}, $confirm);
 		}
 		return $this->render('delete-controllers-permissions', [
 			'result' => new ArrayDataProvider([
 				'allModels' => $result,
 				'pagination' => false
-			])
+			]),
+			'confirm' => $confirm
 		]);
 	}
 }

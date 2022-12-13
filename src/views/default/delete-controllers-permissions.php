@@ -4,16 +4,22 @@ declare(strict_types = 1);
 /**
  * @var View $this
  * @var ArrayDataProvider $result
+ * @var bool $confirm
  */
 
 use cusodede\permissions\controllers\DefaultController;
 use cusodede\permissions\helpers\CommonHelper;
+use cusodede\permissions\PermissionsModule;
 use yii\data\ArrayDataProvider;
 use yii\grid\DataColumn;
 use yii\grid\GridView;
 use yii\web\View;
 
 ?>
+
+<?php if (!$confirm): ?>
+	<?= PermissionsModule::a('Подтвердить удаление', ['default/drop-unused-controllers-permissions', 'confirm' => true], ['class' => 'btn btn-warning']) ?>
+<?php endif; ?>
 
 <?= GridView::widget([
 	'dataProvider' => $result,

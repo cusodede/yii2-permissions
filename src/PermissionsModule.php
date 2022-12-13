@@ -14,6 +14,7 @@ use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\base\Module;
+use yii\base\NotSupportedException;
 use yii\base\UnknownClassException;
 use yii\console\Application as ConsoleApplication;
 use yii\db\ActiveRecordInterface;
@@ -198,14 +199,16 @@ class PermissionsModule extends Module {
 	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры (null для контроллеров приложения)
 	 * @param callable|null $deletePermissionHandler Опциональный обработчик удаления доступа
 	 * @param callable|null $deletePermissionCollectionHandler Опциональный обработчик удаления коллекции
+	 * @param bool $doDelete true: удалить разрешения, false: передать в обработчик без удаления. При false коллекции не обрабатываются.
 	 * @return void
 	 * @throws InvalidConfigException
 	 * @throws ReflectionException
+	 * @throws StaleObjectException
 	 * @throws Throwable
 	 * @throws UnknownClassException
-	 * @throws StaleObjectException
+	 * @throws NotSupportedException
 	 */
-	public static function DropUnusedControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $deletePermissionHandler = null, ?callable $deletePermissionCollectionHandler = null):void {
+	public static function DropUnusedControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $deletePermissionHandler = null, ?callable $deletePermissionCollectionHandler = null, bool $doDelete = true):void {
 		$currentPermissionNames = [];
 		$checkedPermissionsCollectionsNames = [];//коллекции, в которых были удалены пермиссии, для проверки
 
@@ -236,20 +239,21 @@ class PermissionsModule extends Module {
 			->andWhere(['not', ['controller' => null]])
 			->all();
 		foreach ($allUnusedPermissions as $unusedPermission) {
-			$deleted = $unusedPermission->delete();
+			$deleted = $doDelete && $unusedPermission->delete();
 			$checkedPermissionsCollectionsNames[] = static::GetControllerPermissionCollectionName($unusedPermission->module, $unusedPermission->controller);
 			/** @var Permissions $unusedPermission */
 			if (null !== $deletePermissionHandler) $deletePermissionHandler($unusedPermission, false !== $deleted);
 		}
-
-		$allUnusedPermissionsCollections = PermissionsCollections::find()
-			->where(['name' => $checkedPermissionsCollectionsNames])
-			->andFilterWhereRelation(['id' => null], 'relatedPermissions')//Нельзя удалять коллекции по имени, нужно удалять те, в которых не осталось правил
-			->all();
-		foreach ($allUnusedPermissionsCollections as $unusedCollection) {
-			/** @var PermissionsCollections $unusedCollection */
-			$deleted = $unusedCollection->delete();
-			if (null !== $deletePermissionCollectionHandler) $deletePermissionCollectionHandler($unusedCollection, false !== $deleted);
+		if ($doDelete) {
+			$allUnusedPermissionsCollections = PermissionsCollections::find()
+				->where(['name' => $checkedPermissionsCollectionsNames])
+				->andFilterWhereRelation(['id' => null], 'relatedPermissions')//Нельзя удалять коллекции по имени, нужно удалять те, в которых не осталось правил
+				->all();
+			foreach ($allUnusedPermissionsCollections as $unusedCollection) {
+				/** @var PermissionsCollections $unusedCollection */
+				$deleted = $unusedCollection->delete();
+				if (null !== $deletePermissionCollectionHandler) $deletePermissionCollectionHandler($unusedCollection, false !== $deleted);
+			}
 		}
 	}
 }
