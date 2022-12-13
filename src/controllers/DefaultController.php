@@ -138,7 +138,7 @@ class DefaultController extends VendorDefaultController {
 			}, static function(PermissionsCollections $permissionsCollection, bool $deleted) use (&$result) {
 				$result[] = [
 					'type' => self::PERMISSIONS_COLLECTION,
-					'saved' => $deleted,
+					'deleted' => $deleted,
 					'item' => $permissionsCollection
 				];
 			});
