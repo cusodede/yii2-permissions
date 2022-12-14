@@ -58,27 +58,4 @@ class DefaultController extends Controller {
 		}
 	}
 
-	/**
-	 * Удаляет все неиспользуемые наборы правил доступа в БД.
-	 * @param bool $show Показать доступы без удаления
-	 * @return void
-	 * @throws InvalidConfigException
-	 * @throws ReflectionException
-	 * @throws Throwable
-	 * @throws UnknownClassException
-	 * @throws NotSupportedException
-	 * @throws StaleObjectException
-	 */
-	public function actionDropControllersPermissions(bool $show = false):void {
-		PermissionsModule::DropUnusedControllersPermissions(!$show, static function(Permissions $permission, bool $deleted) {
-			Console::output(Console::renderColoredString($deleted
-				?"%gДоступ %b{$permission->name}%g удалён%n"
-				:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
-		}, static function(PermissionsCollections $permissionsCollection, bool $delete) {
-			Console::output(Console::renderColoredString($delete
-				?"%gКоллекция %b{$permissionsCollection->name}%g удалён%n"
-				:"%rКоллекция %b{$permissionsCollection->name}%r пропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n"));
-		});
-	}
-
 }
