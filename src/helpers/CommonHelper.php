@@ -40,7 +40,7 @@ class CommonHelper {
 	 * @throws Throwable
 	 * @throws InvalidConfigException
 	 */
-	public static function IsControllerPathExits(?string $moduleId, ?string $controllerId, ?string $actionId):?bool {
+	public static function IsControllerPathExists(?string $moduleId, ?string $controllerId, ?string $actionId):?bool {
 		if (null === $controllerId) return null;
 		if (null !== $moduleId && !Yii::$app->hasModule($moduleId)) return false;
 		/** @var Controller|null $controller */
