@@ -46,7 +46,7 @@ class DefaultController extends VendorDefaultController {
 	 * @inheritDoc
 	 */
 	public function getViewPath():string {
-		return '@vendor/cusodede/yii2-permissions/src/views/default';
+		return PermissionsModule::param('viewPath.default', '@vendor/cusodede/yii2-permissions/src/views/default');
 	}
 
 	/**
