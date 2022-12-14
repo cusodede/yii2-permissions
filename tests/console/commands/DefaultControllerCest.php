@@ -59,7 +59,7 @@ class DefaultControllerCest {
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(42, $allPermissions);
+		$I->assertCount(37, $allPermissions);
 		$I->assertCount(9, $allPermissionsCollections);
 
 		$user = $this->initUser();
@@ -121,7 +121,7 @@ class DefaultControllerCest {
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(39, $allPermissions);
+		$I->assertCount(34, $allPermissions);
 		$I->assertCount(6, $allPermissionsCollections);
 		Console::output(Console::renderColoredString('%b------------------------%n'));
 
@@ -138,7 +138,7 @@ class DefaultControllerCest {
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(42, $allPermissions);
+		$I->assertCount(37, $allPermissions);
 		$I->assertCount(9, $allPermissionsCollections);
 	}
 
@@ -214,7 +214,7 @@ class DefaultControllerCest {
 
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(24, $allPermissions);
+		$I->assertCount(19, $allPermissions);
 		$I->assertCount(3, $allPermissionsCollections);
 
 		$user = $this->initUser();
