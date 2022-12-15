@@ -46,7 +46,7 @@ class DefaultControllerCest {
 
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(15, $allPermissions);
+		$I->assertCount(14, $allPermissions);
 		$I->assertCount(2, $allPermissionsCollections);
 
 		//rename tests controllers dir, to look, what will happen

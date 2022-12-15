@@ -7,6 +7,7 @@ use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\helpers\ReflectionHelper;
 use ReflectionException;
+use ReflectionMethod;
 use Throwable;
 use Yii;
 use yii\base\Controller;
@@ -56,20 +57,52 @@ class CommonHelper {
 	 * @return string[]
 	 * @throws ReflectionException
 	 * @throws UnknownClassException
+	 * @throws Throwable
 	 */
 	public static function GetControllerActions(Controller $controller, bool $asRequestName = true):array {
-		$actionsNames = preg_filter('/^action([A-Z])(\w+?)/', '$1$2', array_merge(
+		$actionsNames = preg_filter('/^action([A-Z])(\w+?)$/', '$1$2', array_merge(
 				ArrayHelper::getColumn(ReflectionHelper::GetMethods($controller::class), 'name'),
 				array_keys($controller->actions())
 			)
 		);
 		foreach ($actionsNames as &$actionName) {
-			if (null === $controller->createAction(ControllerHelper::GetActionRequestName($actionName))) {
-				$actionName = null;
-			} else {
-				$actionName = $asRequestName?ControllerHelper::GetActionRequestName($actionName):$actionName;
+			$actionName = static::IsControllerHasAction($controller, ControllerHelper::GetActionRequestName($actionName))
+				?$actionName
+				:null;
+		}
+		unset ($actionName);
+		$actionsNames = array_filter($actionsNames);
+		if ($asRequestName) $actionsNames = array_map(static fn($actionName):string => ControllerHelper::GetActionRequestName($actionName), $actionsNames);
+
+		return $actionsNames;
+	}
+
+	/**
+	 * Checks if controller has a loadable action method (without creation of a Action object itself)
+	 * @param Controller $controller
+	 * @param string $actionName
+	 * @return bool
+	 * @throws Throwable
+	 */
+	public static function IsControllerHasAction(Controller $controller, string $actionName):bool {
+		return null !== ArrayHelper::getValue($controller->actions(), $actionName) || static::IsControllerHasActionMethod($controller, $actionName);
+	}
+
+	/**
+	 * @param Controller $controller
+	 * @param string $actionName
+	 * @return bool
+	 * @throws ReflectionException
+	 * @throws UnknownClassException
+	 */
+	public static function IsControllerHasActionMethod(Controller $controller, string $actionName):bool {
+		if (preg_match('/^(?:[a-z\d_]+-)*[a-z\d_]+$/', $actionName)) {
+			$actionName = 'action'.str_replace(' ', '', ucwords(str_replace('-', ' ', $actionName)));
+			if (method_exists($controller, $actionName) && (!property_exists($controller, 'disabledActions') || !in_array($actionName, ReflectionHelper::getValue($controller, 'disabledActions', $controller), true))) {
+				$method = new ReflectionMethod($controller, $actionName);
+				if ($method->isPublic() && $method->getName() === $actionName) return true;
 			}
 		}
-		return array_filter($actionsNames);
+		return false;
 	}
 }

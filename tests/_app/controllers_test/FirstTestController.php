@@ -10,4 +10,5 @@ use cusodede\permissions\controllers\PermissionsCollectionsController as ModuleP
  */
 class FirstTestController extends ModulePermissionsCollectionsController {
 
+	protected array $disabledActions = ['actionDelete'];
 }
