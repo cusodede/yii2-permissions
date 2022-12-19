@@ -14,6 +14,7 @@ use yii\base\NotSupportedException;
 use yii\base\UnknownClassException;
 use yii\data\ArrayDataProvider;
 use yii\db\StaleObjectException;
+use yii\web\Response;
 
 /**
  * Class ServiceController
@@ -139,6 +140,8 @@ class DefaultController extends VendorDefaultController {
 				'item' => $permissionsCollection
 			];
 		});
+		/*Controllers-related methods requires controllers to instantiate, so they can change response format in current context*/
+		$this->response->format = Response::FORMAT_HTML;
 		return $this->render('delete-controllers-permissions', [
 			'result' => new ArrayDataProvider([
 				'allModels' => $result,
