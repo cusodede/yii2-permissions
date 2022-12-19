@@ -2,6 +2,9 @@ name: CI with PostgreSQL
 on:
   pull_request:
     branches: [ master ]
+  push:
+    branches:
+      - 'master'
 
 env:
   PERM_DB_DSN: "pgsql:host=127.0.0.1;port=5432;dbname=yii2-permissions"

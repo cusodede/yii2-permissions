@@ -2,7 +2,7 @@
 
 Управление пользовательскими разрешениями для Yii2
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cusodede/yii2-permissions/CI%20with%20PostgreSQL)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/cusodede/yii2-permissions/ci_with_postgresql.yml?branch=master)
 
 # Установка
 
