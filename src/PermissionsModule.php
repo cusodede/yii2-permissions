@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions;
 
-use cusodede\permissions\helpers\CommonHelper;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\traits\UsersPermissionsTrait;
@@ -168,7 +167,7 @@ class PermissionsModule extends Module {
 		/** @var Controller[] $foundControllers */
 		foreach ($foundControllers as $controller) {
 			$module = $module??(($controller?->module?->id === Yii::$app->id)?null/*для приложения не сохраняем модуль, для удобства*/:$controller?->module?->id);
-			$controllerActionsNames = CommonHelper::GetControllerActions($controller);
+			$controllerActionsNames = ControllerHelper::GetControllerActions($controller);
 			$controllerPermissions = [];
 			foreach ($controllerActionsNames as $action) {
 				$permission = new Permissions([

@@ -10,10 +10,8 @@ use cusodede\permissions\PermissionsModule;
 use ReflectionException;
 use Throwable;
 use yii\base\InvalidConfigException;
-use yii\base\NotSupportedException;
 use yii\base\UnknownClassException;
 use yii\console\Controller;
-use yii\db\StaleObjectException;
 use yii\helpers\Console;
 
 /**
