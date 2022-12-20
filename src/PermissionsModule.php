@@ -8,10 +8,12 @@ use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\traits\UsersPermissionsTrait;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
+use pozitronik\helpers\Utils;
 use pozitronik\traits\traits\ModuleTrait;
 use ReflectionException;
 use Throwable;
 use Yii;
+use yii\base\Exception;
 use yii\base\InvalidConfigException;
 use yii\base\Module;
 use yii\base\NotSupportedException;
@@ -177,7 +179,9 @@ class PermissionsModule extends Module {
 					'action' => $action,
 					'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
 				]);
-				$saved = $permission->save();
+				if (false === $saved = $permission->save()) {
+					throw new Exception("Permission save error: ".Utils::Errors2String($permission->errors));
+				}
 				if (null !== $initPermissionHandler) {
 					$initPermissionHandler($permission, $saved);
 				}
