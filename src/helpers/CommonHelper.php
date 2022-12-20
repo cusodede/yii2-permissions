@@ -47,7 +47,6 @@ class CommonHelper {
 		return ControllerHelper::IsControllerHasAction($controller, $actionId);
 	}
 
-
 	/**
 	 * Выгружает список контроллеров в указанном неймспейсе
 	 * @param string $path
@@ -81,7 +80,7 @@ class CommonHelper {
 	 */
 	public static function isControllerIgnored(string $filePath, array $ignoredFilesList):bool {
 		foreach ($ignoredFilesList as $ignoredFile) {
-			if (fnmatch(FileHelper::normalizePath(Yii::getAlias($ignoredFile)), $filePath)) {
+			if (fnmatch(FileHelper::normalizePath(Yii::getAlias($ignoredFile)), FileHelper::normalizePath($filePath), FNM_NOESCAPE)) {
 				return true;
 			}
 		}
