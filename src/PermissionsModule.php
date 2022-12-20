@@ -179,13 +179,10 @@ class PermissionsModule extends Module {
 					'action' => $action,
 					'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
 				]);
-				if (false === $saved = $permission->save()) {
-					throw new Exception("Permission save error: ".Utils::Errors2String($permission->errors));
-				}
+				if (true === $saved = $permission->save()) $controllerPermissions[] = $permission;
 				if (null !== $initPermissionHandler) {
 					$initPermissionHandler($permission, $saved);
 				}
-				$controllerPermissions[] = $permission;
 			}
 			$controllerPermissionsCollection = new PermissionsCollections([
 				'name' => static::GetControllerPermissionCollectionName($module, $controller->id),
