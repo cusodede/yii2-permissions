@@ -56,7 +56,7 @@ class PermissionsController extends DefaultController {
 			/**
 			 * Можно назначить один экшен на все поля, которым не требуется специализированный обработчик,
 			 * данные всё равно грузятся так, будто постится полная форма.
-			 * @see \kartik\grid\EditableColumnAction::validateEditable()
+			 * @see EditableColumnAction::validateEditable
 			 */
 			'editDefault' => [
 				'class' => EditableColumnAction::class,
