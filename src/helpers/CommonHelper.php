@@ -8,14 +8,8 @@ use Throwable;
 use Yii;
 use yii\base\Controller;
 use yii\base\InvalidConfigException;
-
-use pozitronik\helpers\ControllerHelper;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use Throwable;
-use Yii;
-use yii\base\Controller;
-use yii\base\InvalidConfigException;
 
 /**
  * Class CommonHelper
