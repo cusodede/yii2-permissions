@@ -10,8 +10,11 @@ use cusodede\web\default_controller\models\DefaultController as VendorDefaultCon
 use ReflectionException;
 use Throwable;
 use yii\base\InvalidConfigException;
+use yii\base\NotSupportedException;
 use yii\base\UnknownClassException;
 use yii\data\ArrayDataProvider;
+use yii\db\StaleObjectException;
+use yii\web\Response;
 
 /**
  * Class ServiceController
@@ -44,7 +47,7 @@ class DefaultController extends VendorDefaultController {
 	 * @inheritDoc
 	 */
 	public function getViewPath():string {
-		return '@vendor/cusodede/yii2-permissions/src/views/default';
+		return PermissionsModule::param('viewPath.default', '@vendor/cusodede/yii2-permissions/src/views/default');
 	}
 
 	/**
@@ -111,4 +114,40 @@ class DefaultController extends VendorDefaultController {
 		]);
 	}
 
+	/**
+	 * Удаляет все неиспользуемые наборы правил доступа в БД
+	 * @param bool $confirm
+	 * @return string
+	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws StaleObjectException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 * @throws NotSupportedException
+	 */
+	public function actionDropUnusedControllersPermissions(bool $confirm = false):string {
+		$result = [];
+		PermissionsModule::DropUnusedControllersPermissions($confirm, static function(Permissions $permission, bool $deleted) use (&$result) {
+			$result[] = [
+				'type' => self::PERMISSION,
+				'deleted' => $deleted,
+				'item' => $permission
+			];
+		}, static function(PermissionsCollections $permissionsCollection, bool $deleted) use (&$result) {
+			$result[] = [
+				'type' => self::PERMISSIONS_COLLECTION,
+				'deleted' => $deleted,
+				'item' => $permissionsCollection
+			];
+		});
+		/*Controllers-related methods requires controllers to instantiate, so they can change response format in current context*/
+		$this->response->format = Response::FORMAT_HTML;
+		return $this->render('delete-controllers-permissions', [
+			'result' => new ArrayDataProvider([
+				'allModels' => $result,
+				'pagination' => false
+			]),
+			'confirm' => $confirm
+		]);
+	}
 }

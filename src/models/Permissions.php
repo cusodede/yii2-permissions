@@ -3,7 +3,10 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions\models;
 
+use cusodede\permissions\helpers\CommonHelper;
 use cusodede\permissions\models\active_record\PermissionsAR;
+use cusodede\permissions\models\active_record\relations\RelPermissionsCollectionsToPermissions;
+use cusodede\permissions\models\active_record\relations\RelUsersToPermissions;
 use cusodede\permissions\PermissionsModule;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\CacheHelper;
@@ -20,6 +23,8 @@ use yii\caching\TagDependency;
  * @property string $controllerPath "Виртуальный" путь к контроллеру, учитывающий, при необходимости, модуль.
  * @see Permissions::setControllerPath()
  * @see Permissions::getControllerPath()
+ *
+ * @property-read int $warningFlags Флаги возможных проблем доступа, см WARN_*
  */
 class Permissions extends PermissionsAR {
 	/*Любое из перечисленных прав*/
@@ -43,6 +48,10 @@ class Permissions extends PermissionsAR {
 	/*Перечисление назначений конфигураций через конфиги, id => ['...', '...']*/
 	public const GRANT_PERMISSIONS = 'grant';
 
+	/*Флаги возможных проблем доступа */
+	public const WARN_NO_PATH = 0x1;//пермиссия отвечает за доступ к несуществующему контроллеру
+	public const WARN_NOT_USED = 0x2;//пермиссия не используется (ни напрямую, ни на коллекцию)
+
 	/**
 	 * @inheritDoc
 	 */
@@ -55,7 +64,8 @@ class Permissions extends PermissionsAR {
 	 */
 	public function attributeLabels():array {
 		return parent::attributeLabels() + [
-				'controllerPath' => 'Маршрут контроллера'
+				'controllerPath' => 'Маршрут контроллера',
+				'warnFlags' => 'Проблемы'
 			];
 	}
 
@@ -189,5 +199,29 @@ class Permissions extends PermissionsAR {
 			$this->module = '@' === $this->module[0]?substr($this->module, 1):$this->module;//strip @ if presents
 			$this->controller = $path[1];
 		}
+	}
+
+	/**
+	 * Удаляем связи перед удалением записи
+	 * @inheritDoc
+	 */
+	public function delete():false|int {
+		RelPermissionsCollectionsToPermissions::deleteAll(['permission_id' => $this->id]);
+		RelUsersToPermissions::deleteAll(['permission_id' => $this->id]);
+		return parent::delete();
+	}
+
+	/**
+	 * @param int $flags Optional: what flags require to check
+	 * @return int
+	 * @throws InvalidConfigException
+	 * @throws Throwable
+	 */
+	public function getWarningFlags(int $flags = self::WARN_NO_PATH + self::WARN_NOT_USED):int {
+		$result = 0;
+		/*check if it is a permission controller, and its path still actual*/
+		if ($flags & static::WARN_NO_PATH && false === CommonHelper::IsControllerPathExists($this->module, $this->controller, $this->action)) $result += static::WARN_NO_PATH;
+		if ($flags & static::WARN_NOT_USED && [] === $this->relatedUsers && [] === $this->relatedUsersViaPermissionsCollections) $result += static::WARN_NOT_USED;
+		return $result;
 	}
 }

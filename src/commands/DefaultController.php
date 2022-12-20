@@ -50,8 +50,8 @@ class DefaultController extends Controller {
 					:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
 			}, static function(PermissionsCollections $permissionsCollection, bool $saved) {
 				Console::output(Console::renderColoredString($saved
-					?"%gКоллекция %b{$permissionsCollection->name} %gдобавлена%n"
-					:"%rКоллекция %b{$permissionsCollection->name} %rпропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n"));
+					?"%gКоллекция %b{$permissionsCollection->name}%g добавлена%n"
+					:"%rКоллекция %b{$permissionsCollection->name}%r пропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n"));
 			});
 		}
 	}

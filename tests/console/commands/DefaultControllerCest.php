@@ -9,9 +9,11 @@ use cusodede\permissions\commands\DefaultController;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\PermissionsModule;
+use ReflectionException;
 use Throwable;
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\base\UnknownClassException;
 use yii\db\Exception;
 use yii\helpers\Console;
 
@@ -41,7 +43,11 @@ class DefaultControllerCest {
 	 * Проверяем корректность команды отработки генератора доступов по конфигу
 	 * @param ConsoleTester $I
 	 * @return void
+	 * @throws Exception
 	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
 	 */
 	public function InitControllerPermissionsFromConfig(ConsoleTester $I):void {
 		/**
@@ -53,7 +59,7 @@ class DefaultControllerCest {
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(41, $allPermissions);
+		$I->assertCount(37, $allPermissions);
 		$I->assertCount(9, $allPermissionsCollections);
 
 		$user = $this->initUser();
@@ -98,6 +104,9 @@ class DefaultControllerCest {
 	 * @param ConsoleTester $I
 	 * @return void
 	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
 	 */
 	public function InitControllerPermissionsFromConfigUpdate(ConsoleTester $I):void {
 		Yii::$app->setModule('permissions', [
@@ -112,7 +121,7 @@ class DefaultControllerCest {
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(38, $allPermissions);
+		$I->assertCount(34, $allPermissions);
 		$I->assertCount(6, $allPermissionsCollections);
 		Console::output(Console::renderColoredString('%b------------------------%n'));
 
@@ -129,7 +138,7 @@ class DefaultControllerCest {
 		$this->initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(41, $allPermissions);
+		$I->assertCount(37, $allPermissions);
 		$I->assertCount(9, $allPermissionsCollections);
 	}
 
@@ -137,7 +146,11 @@ class DefaultControllerCest {
 	 * Проверяем корректность команды отработки генератора доступов по пути к дефолтным контроллерам приложения
 	 * @param ConsoleTester $I
 	 * @return void
+	 * @throws Exception
 	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
 	 */
 	public function InitControllerPermissionsByPath(ConsoleTester $I):void {
 		$this->initDefaultController()->actionInitControllersPermissions('@app/controllers');
@@ -190,14 +203,18 @@ class DefaultControllerCest {
 	 * Проверяем корректность команды отработки генератора доступов по пути к контроллерам модуля
 	 * @param ConsoleTester $I
 	 * @return void
+	 * @throws Exception
 	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
 	 */
 	public function InitControllerPermissionsByPathInModule(ConsoleTester $I):void {
 		$this->initDefaultController()->actionInitControllersPermissions('./src/controllers', 'permissions');
 
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
-		$I->assertCount(23, $allPermissions);
+		$I->assertCount(19, $allPermissions);
 		$I->assertCount(3, $allPermissionsCollections);
 
 		$user = $this->initUser();
@@ -247,7 +264,7 @@ class DefaultControllerCest {
 	 * @throws InvalidConfigException
 	 * @throws Throwable
 	 */
-	public function InitConfigPermissions(ConsoleTester $I) {
+	public function InitConfigPermissions(ConsoleTester $I):void {
 		$user = $this->initUser();
 		$I->assertEquals(1, $user->id);
 		$this->initDefaultController()->actionInitConfigPermissions();
@@ -261,6 +278,6 @@ class DefaultControllerCest {
 		$I->assertFalse($user->hasPermission(['execute_order_66']));
 		/*Доступ есть в конфиге, и присвоен юзеру добавлен в конфиге*/
 		$I->assertTrue($user->hasPermission(['choke_with_force']));
-
 	}
+
 }
