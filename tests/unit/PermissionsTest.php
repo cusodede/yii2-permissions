@@ -134,7 +134,7 @@ class PermissionsTest extends Unit {
 		/*Пользователь имеет все назначенные пермиссии*/
 		$this::assertTrue($user->hasPermission(ArrayHelper::getColumn($generatedPermissions, 'name')));
 
-		$controllerActions = ControllerHelper::GetControllerActions($controller::class);
+		$controllerActions = ControllerHelper::GetControllerActions($controller);
 		$this::assertNotEmpty($controllerActions);
 
 		/*Пользователь имеет доступ к каждому действию в контроллере (проверка от контроллера)*/
