@@ -10,6 +10,7 @@ use yii\base\Controller;
 use yii\base\InvalidConfigException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use yii\helpers\FileHelper;
 
 /**
  * Class CommonHelper
@@ -80,7 +81,7 @@ class CommonHelper {
 	 */
 	public static function isControllerIgnored(string $filePath, array $ignoredFilesList):bool {
 		foreach ($ignoredFilesList as $ignoredFile) {
-			if (fnmatch(Yii::getAlias($ignoredFile), $filePath)) {
+			if (fnmatch(FileHelper::normalizePath(Yii::getAlias($ignoredFile)), $filePath)) {
 				return true;
 			}
 		}
