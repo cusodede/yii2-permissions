@@ -28,6 +28,7 @@ class PermissionsCollections extends PermissionsCollectionsAR {
 			}
 		}
 		parent::afterSave($insert, $changedAttributes);
+		$this->refresh();
 	}
 
 	/**

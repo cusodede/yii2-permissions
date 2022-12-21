@@ -3,17 +3,16 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions;
 
+use cusodede\permissions\helpers\CommonHelper;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\traits\UsersPermissionsTrait;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
-use pozitronik\helpers\Utils;
 use pozitronik\traits\traits\ModuleTrait;
 use ReflectionException;
 use Throwable;
 use Yii;
-use yii\base\Exception;
 use yii\base\InvalidConfigException;
 use yii\base\Module;
 use yii\base\NotSupportedException;
@@ -34,7 +33,14 @@ class PermissionsModule extends Module {
 
 	private static ?string $_userIdentityClass = null;
 
-	public const VERBS = ['GET' => 'GET', 'HEAD' => 'HEAD', 'POST' => 'POST', 'PUT' => 'PUT', 'PATCH' => 'PATCH', 'DELETE' => 'DELETE'];
+	public const VERBS = [
+		'GET' => 'GET',
+		'HEAD' => 'HEAD',
+		'POST' => 'POST',
+		'PUT' => 'PUT',
+		'PATCH' => 'PATCH',
+		'DELETE' => 'DELETE'
+	];
 
 	/**
 	 * @inheritDoc
@@ -55,7 +61,9 @@ class PermissionsModule extends Module {
 	public static function UserIdentityClass():string|ActiveRecordInterface {
 		if (null === static::$_userIdentityClass) {
 			$identity = static::param('userIdentityClass', Yii::$app->user->identityClass);
-			static::$_userIdentityClass = (is_callable($identity))?$identity():$identity;
+			static::$_userIdentityClass = (is_callable($identity))
+				?$identity()
+				:$identity;
 		}
 		return static::$_userIdentityClass;
 	}
@@ -68,7 +76,9 @@ class PermissionsModule extends Module {
 	 */
 	public static function UserCurrentIdentity():?IdentityInterface {
 		$identity = static::param('userCurrentIdentity', Yii::$app->user->identity);
-		return (is_callable($identity))?$identity():$identity;
+		return (is_callable($identity))
+			?$identity()
+			:$identity;
 	}
 
 	/**
@@ -79,7 +89,9 @@ class PermissionsModule extends Module {
 	 * @noinspection PhpDocSignatureInspection
 	 */
 	public static function FindIdentityById(mixed $id):?IdentityInterface {
-		return (null === $id)?static::UserCurrentIdentity():static::UserIdentityClass()::findOne($id);
+		return (null === $id)
+			?static::UserCurrentIdentity()
+			:static::UserIdentityClass()::findOne($id);
 	}
 
 	/**
@@ -156,19 +168,21 @@ class PermissionsModule extends Module {
 	 */
 	public static function InitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
 		$module = null;
-		if ('' === $moduleId)
-			$moduleId = null;//для совместимости со старым вариантом конфига
+		if ('' === $moduleId) $moduleId = null;//для совместимости со старым вариантом конфига
+		$ignoredFilesList = static::param('ignorePaths', []);
 		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
 		if (null !== $moduleId && '@' === $moduleId[0]) {
-			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class]);
+			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class], $ignoredFilesList);
 			$module = substr($moduleId, 1);
 		} else {
-			$foundControllers = ControllerHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class]);
+			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class], $ignoredFilesList);
 		}
 
 		/** @var Controller[] $foundControllers */
 		foreach ($foundControllers as $controller) {
-			$module = $module??(($controller?->module?->id === Yii::$app->id)?null/*для приложения не сохраняем модуль, для удобства*/:$controller?->module?->id);
+			$module = $module??(($controller?->module?->id === Yii::$app->id)
+					?null/*для приложения не сохраняем модуль, для удобства*/
+					:$controller?->module?->id);
 			$controllerActionsNames = ControllerHelper::GetControllerActions($controller);
 			$controllerPermissions = [];
 			foreach ($controllerActionsNames as $action) {

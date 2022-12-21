@@ -15,6 +15,10 @@ return [
 			'./src/controllers' => 'permissions',
 			'@app/modules/test/controllers' => '@api'
 		],
+		'ignorePaths' => [//file masks are supported
+			'@app/test_controllers/excluded_dir/*',//ignore by directory path
+			'@app/test_controllers/excluded/ExcludedPermissionsCollectionsController.php',//ignore by file path
+		],
 		'grantAll' => [],
 		'grant' => [
 			1 => ['choke_with_force']

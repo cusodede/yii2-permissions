@@ -8,6 +8,9 @@ use Throwable;
 use Yii;
 use yii\base\Controller;
 use yii\base\InvalidConfigException;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use yii\helpers\FileHelper;
 
 /**
  * Class CommonHelper
@@ -42,6 +45,46 @@ class CommonHelper {
 		/** @var Controller|null $controller */
 		if (null === $controller = ControllerHelper::GetControllerByControllerId($controllerId, $moduleId)) return false;
 		return ControllerHelper::IsControllerHasAction($controller, $actionId);
+	}
+
+	/**
+	 * Выгружает список контроллеров в указанном неймспейсе
+	 * @param string $path
+	 * @param string|null $moduleId
+	 * @param string[]|null $parentClassFilter Фильтр по классу родителя
+	 * @param string[] $ignoredFilesList
+	 * @return Controller[]
+	 * @throws InvalidConfigException
+	 * @throws Throwable
+	 */
+	public static function GetControllersList(string $path, ?string $moduleId = null, ?array $parentClassFilter = null, array $ignoredFilesList = []):array {
+		$result = [];
+		$files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(Yii::getAlias($path)), RecursiveIteratorIterator::SELF_FIRST);
+		/** @var RecursiveDirectoryIterator $file */
+		foreach ($files as $file) {
+			if ($file->isFile()
+				&& 'php' === $file->getExtension()
+				&& false === static::isControllerIgnored($file->getRealPath(), $ignoredFilesList)
+				&& null !== $controller = ControllerHelper::LoadControllerClassFromFile($file->getRealPath(), $moduleId, $parentClassFilter)) {
+				$result[] = $controller;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Checks if file ignored in config
+	 * @param string $filePath
+	 * @param string[] $ignoredFilesList
+	 * @return bool
+	 */
+	public static function isControllerIgnored(string $filePath, array $ignoredFilesList):bool {
+		foreach ($ignoredFilesList as $ignoredFile) {
+			if (fnmatch(FileHelper::normalizePath(Yii::getAlias($ignoredFile)), FileHelper::normalizePath($filePath), FNM_NOESCAPE)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }
