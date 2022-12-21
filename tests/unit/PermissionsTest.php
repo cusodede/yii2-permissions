@@ -170,11 +170,13 @@ class PermissionsTest extends Unit {
 			$this::assertTrue($user->hasControllerPermission($permission->controller, $permission->action, null, $permission->module));
 		}
 
+		Console::output($generatedPermissionsCollections[1]->name);
 
 		/*Убираем из коллекции доступов для контроллера пермиссий все доступы*/
 		$generatedPermissionsCollections[1]->setRelatedPermissions([]);
 		$generatedPermissionsCollections[1]->save();
 
+		Console::output($generatedPermissionsCollections[1]->name);
 		$this::assertCount(0, $generatedPermissionsCollections[1]->getRelatedPermissions()->all());
 
 		/*Количество пермиссий пользователя должно уменьшиться соответственно уменьшению пермиссий в коллекции*/
