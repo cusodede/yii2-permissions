@@ -194,7 +194,7 @@ class PermissionsTest extends Unit {
 	 * @throws Throwable
 	 * @throws UnknownClassException
 	 */
-	public function testUserControllerPermissionsExcluded():void {
+	public function testExcludedUserControllerPermissions():void {
 //		if ('github' === getenv('CI')) static::markTestSkipped("This test doesn't run in github CI");//temporary!
 		$user = Users::CreateUser()->saveAndReturn();
 		$this::assertFalse($user->hasControllerPermission('index'));
