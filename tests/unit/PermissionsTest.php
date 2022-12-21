@@ -13,6 +13,7 @@ use pozitronik\helpers\ControllerHelper;
 use yii\base\InvalidConfigException;
 use yii\base\UnknownClassException;
 use yii\db\Exception;
+use yii\helpers\Console;
 use yii\web\Controller;
 
 /**
@@ -93,6 +94,7 @@ class PermissionsTest extends Unit {
 	 * @throws Exception
 	 */
 	public function testUserControllerPermissions():void {
+		Console::output(implode("\n", getenv('CI')));
 		if ('github' === getenv('CI')) static::markTestSkipped("This test doesn't run in github CI");//temporary!
 		$user = Users::CreateUser()->saveAndReturn();
 		$this::assertFalse($user->hasControllerPermission('index'));
