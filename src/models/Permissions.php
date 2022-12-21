@@ -177,6 +177,7 @@ class Permissions extends PermissionsAR {
 			}
 		}
 		parent::afterSave($insert, $changedAttributes);
+		$this->refresh();
 	}
 
 	/**
