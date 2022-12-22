@@ -149,12 +149,12 @@ class CommonHelper {
 
 	/**
 	 * Returns all loadable controller actions
-	 * @param Controller $controller
+	 * @param string $controllerClassFileName
 	 * @param bool $asRequestName Cast action name to request name
 	 * @return string[]
 	 * @throws ReflectionException
-	 * @throws UnknownClassException
 	 * @throws Throwable
+	 * @throws UnknownClassException
 	 */
 	public static function GetControllerClassActions(string $controllerClassFileName, bool $asRequestName = true):array {
 		$className = ReflectionHelper::GetClassNameFromFile(Yii::getAlias($controllerClassFileName));
