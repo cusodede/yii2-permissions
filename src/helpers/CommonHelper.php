@@ -7,6 +7,7 @@ use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\helpers\ModuleHelper;
 use pozitronik\helpers\ReflectionHelper;
+use ReflectionClass;
 use ReflectionException;
 use Throwable;
 use Yii;
@@ -106,7 +107,7 @@ class CommonHelper {
 		$module = (null === $moduleId)?Yii::$app:ModuleHelper::GetModuleById($moduleId);
 		if (null === $module) throw new InvalidConfigException("Module $moduleId not found or module not configured properly.");
 		$controllerId = implode('', array_map('ucfirst', preg_split('/-/', $controllerId, -1, PREG_SPLIT_NO_EMPTY)));
-		return "{$module->controllerPath}/{$controllerId}Controller.php";
+		return FileHelper::normalizePath("{$module->controllerPath}/{$controllerId}Controller.php");
 	}
 
 	/**
@@ -119,28 +120,36 @@ class CommonHelper {
 	 * @throws ReflectionException
 	 */
 	public static function IsControllerHasAction(string $controllerClassFileName, string $actionName):bool {
-		$controllerReflection = ReflectionHelper::New($controllerClassFileName);
-		$actions = $controllerReflection?->getMethod('actions')?->invoke(new $controllerClassFileName());
+		$className = ReflectionHelper::GetClassNameFromFile(Yii::getAlias($controllerClassFileName));
+		if ((null === $controllerReflection = ReflectionHelper::New($className)) || (null === $actions = $controllerReflection?->getMethod('actions')?->invoke(static::FakeNewController($className)))) {
+			return false;
+		}
 		return ((null !== $class = ArrayHelper::getValue($actions, $actionName)) && is_subclass_of($class, Action::class)) ||
-			static::IsControllerHasActionMethod($controllerClassFileName, ControllerHelper::GetActionRequestName($actionName));
+			static::IsControllerHasActionMethod($controllerReflection, ControllerHelper::GetActionRequestName($actionName));
 	}
 
 	/**
-	 * @param string $controllerClassFileName
+	 * @param ReflectionClass $controllerReflection
 	 * @param string $actionName
 	 * @return bool
 	 * @throws ReflectionException
-	 * @throws UnknownClassException
 	 */
-	public static function IsControllerHasActionMethod(string $controllerClassFileName, string $actionName):bool {
+	public static function IsControllerHasActionMethod(ReflectionClass $controllerReflection, string $actionName):bool {
 		if (preg_match('/^(?:[a-z\d_]+-)*[a-z\d_]+$/', $actionName)) {
 			$actionName = 'action'.str_replace(' ', '', ucwords(str_replace('-', ' ', $actionName)));
-			$controllerReflection = ReflectionHelper::New($controllerClassFileName);
-			if ((null !== $actionMethod = $controllerReflection?->getMethod($actionName)) && (null !== $disabledActions = $controllerReflection?->getProperty('disabledActions')->getValue(new $controllerClassFileName())) && !in_array($actionName, $disabledActions, true)) {
+			if ((null !== $actionMethod = $controllerReflection->getMethod($actionName)) && (null !== $disabledActions = $controllerReflection->getProperty('disabledActions')->getValue(static::FakeNewController($controllerReflection->name))) && !in_array($actionName, $disabledActions, true)) {
 				return ($actionMethod->isPublic() && $actionMethod->getName() === $actionName);
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @param string $className
+	 * @return object
+	 */
+	private static function FakeNewController(string $className):object {
+		return new $className($className, Yii::$app);
 	}
 
 }
