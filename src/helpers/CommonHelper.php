@@ -180,7 +180,7 @@ class CommonHelper {
 	 * @return object
 	 */
 	private static function FakeNewController(string $className):object {
-		return new $className($className, Yii::$app);
+		return new DynamicExtender($className);
 	}
 
 }
