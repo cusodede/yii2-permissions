@@ -71,11 +71,13 @@ class PermissionsController extends DefaultController {
 					return '';
 				},
 			]
-		], [
+		], [/* tries to return selected controller actions*/
 			'get-controller-actions' => [
 				'class' => DepDropAction::class,
 				'outputCallback' => function(string $selectedId, array $params):array {
-					$controllerClass = CommonHelper::GetControllerClassFileByControllerId($selectedId);
+					$controllerClass = (false === $moduleId = strstr($selectedId, '/', true))
+						?CommonHelper::GetControllerClassFileByControllerId($selectedId)
+						:CommonHelper::GetControllerClassFileByControllerId(strstr($selectedId, '/'), $moduleId);
 					$actions = CommonHelper::GetControllerClassActions($controllerClass);
 					return ArrayHelper::mapEx($actions, ['id' => 'value']);
 				}
