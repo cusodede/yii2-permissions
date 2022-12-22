@@ -9,6 +9,7 @@ use cusodede\permissions\models\PermissionsSearch;
 use cusodede\permissions\PermissionsModule;
 use cusodede\permissions\traits\ControllerPermissionsTrait;
 use cusodede\web\default_controller\models\DefaultController;
+use kartik\depdrop\DepDropAction;
 use kartik\grid\EditableColumnAction;
 use pozitronik\helpers\ArrayHelper;
 
@@ -68,6 +69,16 @@ class PermissionsController extends DefaultController {
 					}
 					return '';
 				},
+			]
+		], [
+			'get-controller-actions' => [
+				'class' => DepDropAction::class,
+				'outputCallback' => function ($selectedId, $params) {
+					return [
+						'id' => $selectedId,
+						'name' => (string)$params
+					];
+				}
 			]
 		]);
 	}
