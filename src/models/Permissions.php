@@ -221,7 +221,7 @@ class Permissions extends PermissionsAR {
 	public function getWarningFlags(int $flags = self::WARN_NO_PATH + self::WARN_NOT_USED):int {
 		$result = 0;
 		/*check if it is a permission controller, and its path still actual*/
-		if ($flags & static::WARN_NO_PATH && !empty($this->controller) && false === CommonHelper::IsControllerPathExists($this->module, $this->controller, $this->action)) $result += static::WARN_NO_PATH;
+		if ($flags & static::WARN_NO_PATH && PermissionsModule::param('enablePathWarnFlag', true) && !empty($this->controller) && false === CommonHelper::IsControllerPathExists($this->module, $this->controller, $this->action)) $result += static::WARN_NO_PATH;
 		if ($flags & static::WARN_NOT_USED && [] === $this->relatedUsers && [] === $this->relatedUsersViaPermissionsCollections) $result += static::WARN_NOT_USED;
 		return $result;
 	}
