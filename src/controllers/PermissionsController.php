@@ -4,11 +4,13 @@ declare(strict_types = 1);
 namespace cusodede\permissions\controllers;
 
 use cusodede\permissions\filters\PermissionFilter;
+use cusodede\permissions\helpers\CommonHelper;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsSearch;
 use cusodede\permissions\PermissionsModule;
 use cusodede\permissions\traits\ControllerPermissionsTrait;
 use cusodede\web\default_controller\models\DefaultController;
+use kartik\depdrop\DepDropAction;
 use kartik\grid\EditableColumnAction;
 use pozitronik\helpers\ArrayHelper;
 
@@ -68,6 +70,17 @@ class PermissionsController extends DefaultController {
 					}
 					return '';
 				},
+			]
+		], [/* tries to return selected controller actions*/
+			'get-controller-actions' => [
+				'class' => DepDropAction::class,
+				'outputCallback' => function(string $selectedId, array $params):array {
+					$controllerClass = (false === $moduleId = strstr($selectedId, '/', true))
+						?CommonHelper::GetControllerClassFileByControllerId($selectedId)
+						:CommonHelper::GetControllerClassFileByControllerId(strstr($selectedId, '/'), $moduleId);
+					$actions = CommonHelper::GetControllerClassActions($controllerClass);
+					return ArrayHelper::mapEx($actions, ['id' => 'value', 'name' => 'value']);
+				}
 			]
 		]);
 	}

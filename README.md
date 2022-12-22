@@ -56,10 +56,12 @@ return [
                      * '@vendor/cusodede/yii2-permissions/src/controllers' => '@permissions', # если id модуля указан через @, то модуль не будет загружаться при инициализации контроллеров (для получения списка действий)
                     */
                 ],
-                'ignorePaths' => [//поддерживаются файловые маски, например:
+                'ignorePaths' => [/* Игнорируемые пути. Поддерживаются файловые маски, например: */
                     '@app/controllers/ignored_dir/*',//ignore by directory path
                     '@app/controllers/IgnoredController.php',//ignore by file path
                 ],
+                'basicActionInput' => false,/* true: включение простого поля ввода имени действия в редакторе привилегий, false: включить выпадающий список действий выбранного контроллера*/
+                'enablePathWarnFlag' => true, /*false: отключает проверку и вывод флага Permissions::WARN_NO_PATH, требующую инстанцирования контроллеров */
                 'grantAll' => [1],/* id пользователей, которые будут получать все привилегии */
                 'grant' => [/* перечисление прямых назначений привилегий в формате user_id => [список получаемых привилегий]. Пример ниже. */
                     /*
