@@ -148,6 +148,7 @@ class CommonHelper {
 	}
 
 	/**
+	 * We doesn't care, how exactly controller class will be loaded, we just need to do some simple calls
 	 * @param string $className
 	 * @return object
 	 */
