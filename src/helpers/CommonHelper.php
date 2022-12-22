@@ -52,7 +52,7 @@ class CommonHelper {
 		/** @var Controller|null $controller */
 		if (null === $controllerFileName = static::GetControllerClassFileByControllerId($controllerId, $moduleId)) return false;
 		if (!file_exists($controllerFileName)) return false;
-		return static::IsControllerHasAction($controllerFileName, $actionId);
+		return null === $actionId || static::IsControllerHasAction($controllerFileName, $actionId);
 	}
 
 	/**
