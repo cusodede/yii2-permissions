@@ -111,9 +111,13 @@ class PermissionsModule extends Module {
 				$module = null;
 			}
 			$result[$controllerDir] = ArrayHelper::map($foundControllers, static function(Controller $model) use ($module) {
-				return (null === $module)?$model->id:$module.'/'.$model->id;
+				return (null === $module)
+					?$model->id
+					:$module.'/'.$model->id;
 			}, static function(Controller $model) use ($module) {
-				return (null === $module)?$model->id:$module.'/'.$model->id;
+				return (null === $module)
+					?$model->id
+					:$module.'/'.$model->id;
 			});
 		}
 		return $result;
