@@ -148,6 +148,33 @@ class CommonHelper {
 	}
 
 	/**
+	 * Returns all loadable controller actions
+	 * @param Controller $controller
+	 * @param bool $asRequestName Cast action name to request name
+	 * @return string[]
+	 * @throws ReflectionException
+	 * @throws UnknownClassException
+	 * @throws Throwable
+	 */
+	public static function GetControllerClassActions(string $controllerClassFileName, bool $asRequestName = true):array {
+		$className = ReflectionHelper::GetClassNameFromFile(Yii::getAlias($controllerClassFileName));
+		$controllerReflection = ReflectionHelper::New($className);
+		$actions = $controllerReflection?->getMethod('actions')?->invoke(static::FakeNewController($className));
+		$actionsNames = array_merge(preg_filter('/^action([A-Z])(\w+?)$/', '$1$2',
+			ArrayHelper::getColumn(ReflectionHelper::GetMethods($className), 'name')
+		), array_keys($actions));
+		foreach ($actionsNames as &$actionName) {
+			$actionName = static::IsControllerHasAction($controllerClassFileName, $actionName)
+				?$actionName
+				:null;
+		}
+		unset ($actionName);
+		$actionsNames = array_filter($actionsNames);
+		if ($asRequestName) $actionsNames = array_map(static fn($actionName):string => ControllerHelper::GetActionRequestName($actionName), $actionsNames);
+		return array_unique($actionsNames);
+	}
+
+	/**
 	 * We doesn't care, how exactly controller class will be loaded, we just need to do some simple calls
 	 * @param string $className
 	 * @return object

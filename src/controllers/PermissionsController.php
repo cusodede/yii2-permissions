@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace cusodede\permissions\controllers;
 
 use cusodede\permissions\filters\PermissionFilter;
+use cusodede\permissions\helpers\CommonHelper;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsSearch;
 use cusodede\permissions\PermissionsModule;
@@ -73,11 +74,10 @@ class PermissionsController extends DefaultController {
 		], [
 			'get-controller-actions' => [
 				'class' => DepDropAction::class,
-				'outputCallback' => function ($selectedId, $params) {
-					return [
-						'id' => $selectedId,
-						'name' => (string)$params
-					];
+				'outputCallback' => function(string $selectedId, array $params):array {
+					$controllerClass = CommonHelper::GetControllerClassFileByControllerId($selectedId);
+					$actions = CommonHelper::GetControllerClassActions($controllerClass);
+					return ArrayHelper::mapEx($actions, ['id' => 'value']);
 				}
 			]
 		]);
