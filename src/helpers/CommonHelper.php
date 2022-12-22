@@ -138,7 +138,7 @@ class CommonHelper {
 		if (preg_match('/^(?:[a-z\d_]+-)*[a-z\d_]+$/', $actionName)) {
 			$actionName = 'action'.str_replace(' ', '', ucwords(str_replace('-', ' ', $actionName)));
 			if (null !== $actionMethod = $controllerReflection->getMethod($actionName)) {
-				if (($controllerReflection->hasProperty('disabledActions') && null !== $disabledActions = $controllerReflection->getProperty('disabledActions')->getValue(static::FakeNewController($controllerReflection->name))) && !in_array($actionName, $disabledActions, true)) {
+				if (($controllerReflection->hasProperty('disabledActions')) && in_array($actionName, $controllerReflection->getProperty('disabledActions')->getValue(static::FakeNewController($controllerReflection->name)), true)) {
 					return false;
 				}
 				return ($actionMethod->isPublic() && $actionMethod->getName() === $actionName);
