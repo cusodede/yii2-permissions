@@ -3,13 +3,19 @@ declare(strict_types = 1);
 
 namespace cusodede\permissions\helpers;
 
+use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
+use pozitronik\helpers\ModuleHelper;
+use pozitronik\helpers\ReflectionHelper;
+use ReflectionException;
 use Throwable;
 use Yii;
+use yii\base\Action;
 use yii\base\Controller;
 use yii\base\InvalidConfigException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use yii\base\UnknownClassException;
 use yii\helpers\FileHelper;
 
 /**
@@ -43,8 +49,9 @@ class CommonHelper {
 		if (null === $controllerId) return null;
 		if (null !== $moduleId && !Yii::$app->hasModule($moduleId)) return false;
 		/** @var Controller|null $controller */
-		if (null === $controller = ControllerHelper::GetControllerByControllerId($controllerId, $moduleId)) return false;
-		return ControllerHelper::IsControllerHasAction($controller, $actionId);
+		if (null === $controllerFileName = static::GetControllerClassFileByControllerId($controllerId, $moduleId)) return false;
+		if (!file_exists($controllerFileName)) return false;
+		return static::IsControllerHasAction($controllerFileName, $actionId);
 	}
 
 	/**
@@ -82,6 +89,55 @@ class CommonHelper {
 		foreach ($ignoredFilesList as $ignoredFile) {
 			if (fnmatch(FileHelper::normalizePath(Yii::getAlias($ignoredFile)), FileHelper::normalizePath($filePath), FNM_NOESCAPE)) {
 				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Gets controller class filename by its id and module
+	 * @param string $controllerId
+	 * @param string|null $moduleId
+	 * @return string|null
+	 * @throws InvalidConfigException
+	 * @throws Throwable
+	 */
+	public static function GetControllerClassFileByControllerId(string $controllerId, ?string $moduleId = null):?string {
+		$module = (null === $moduleId)?Yii::$app:ModuleHelper::GetModuleById($moduleId);
+		if (null === $module) throw new InvalidConfigException("Module $moduleId not found or module not configured properly.");
+		$controllerId = implode('', array_map('ucfirst', preg_split('/-/', $controllerId, -1, PREG_SPLIT_NO_EMPTY)));
+		return "{$module->controllerPath}/{$controllerId}Controller.php";
+	}
+
+	/**
+	 * Checks if controller has a loadable action method (without creation of a Action object itself)
+	 * @param string $controllerClassFileName
+	 * @param string $actionName
+	 * @return bool
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 * @throws ReflectionException
+	 */
+	public static function IsControllerHasAction(string $controllerClassFileName, string $actionName):bool {
+		$controllerReflection = ReflectionHelper::New($controllerClassFileName);
+		$actions = $controllerReflection?->getMethod('actions')?->invoke(new $controllerClassFileName());
+		return ((null !== $class = ArrayHelper::getValue($actions, $actionName)) && is_subclass_of($class, Action::class)) ||
+			static::IsControllerHasActionMethod($controllerClassFileName, ControllerHelper::GetActionRequestName($actionName));
+	}
+
+	/**
+	 * @param string $controllerClassFileName
+	 * @param string $actionName
+	 * @return bool
+	 * @throws ReflectionException
+	 * @throws UnknownClassException
+	 */
+	public static function IsControllerHasActionMethod(string $controllerClassFileName, string $actionName):bool {
+		if (preg_match('/^(?:[a-z\d_]+-)*[a-z\d_]+$/', $actionName)) {
+			$actionName = 'action'.str_replace(' ', '', ucwords(str_replace('-', ' ', $actionName)));
+			$controllerReflection = ReflectionHelper::New($controllerClassFileName);
+			if ((null !== $actionMethod = $controllerReflection?->getMethod($actionName)) && (null !== $disabledActions = $controllerReflection?->getProperty('disabledActions')->getValue(new $controllerClassFileName())) && !in_array($actionName, $disabledActions, true)) {
+				return ($actionMethod->isPublic() && $actionMethod->getName() === $actionName);
 			}
 		}
 		return false;
