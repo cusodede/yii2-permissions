@@ -38,10 +38,14 @@ use yii\web\View;
 <div class="row">
 	<div class="col-md-12">
 		<?= $form->field($model, 'action')->widget(DepDrop::class, [
-			'pluginOptions'=>[
-				'depends'=>['controller-path'],
-				'placeholder' => 'Select...',
-				'url' => PermissionsModule::to('permissions/get-controller-actions')
+			'type' => DepDrop::TYPE_SELECT2,
+			'value' => $model->action,
+			'options' => ['placeholder' => $model->getAttributeLabel('action')],
+			'select2Options' => ['pluginOptions' => ['allowClear' => true]],
+			'pluginOptions' => [
+				'depends' => ['controller-path'],
+				'url' => PermissionsModule::to(['permissions/get-controller-actions']),
+				'initialize' => true
 			]
 		]) ?>
 	</div>
