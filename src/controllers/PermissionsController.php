@@ -79,7 +79,7 @@ class PermissionsController extends DefaultController {
 						?CommonHelper::GetControllerClassFileByControllerId($selectedId)
 						:CommonHelper::GetControllerClassFileByControllerId(strstr($selectedId, '/'), $moduleId);
 					$actions = CommonHelper::GetControllerClassActions($controllerClass);
-					return ArrayHelper::mapEx($actions, ['id' => 'value']);
+					return ArrayHelper::mapEx($actions, ['id' => 'value', 'name' => 'value']);
 				}
 			]
 		]);
