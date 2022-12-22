@@ -41,7 +41,12 @@ use yii\web\View;
 			'type' => DepDrop::TYPE_SELECT2,
 			'value' => $model->action,
 			'options' => ['placeholder' => $model->getAttributeLabel('action')],
-			'select2Options' => ['pluginOptions' => ['allowClear' => true]],
+			'select2Options' => [
+				'pluginOptions' => [
+					'allowClear' => true,
+					'tags' => true
+				]
+			],
 			'pluginOptions' => [
 				'depends' => ['controller-path'],
 				'url' => PermissionsModule::to(['permissions/get-controller-actions']),
