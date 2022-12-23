@@ -13,7 +13,8 @@ return [
 		'controllerDirs' => [
 			'@app/controllers' => null,
 			'./src/controllers' => 'permissions',
-			'@app/modules/test/controllers' => '@api'
+			'@app/modules/test/controllers' => '@api',
+			'@app/modules/non_existent_module/controllers' => 'fake'
 		],
 		'ignorePaths' => [//file masks are supported
 			'@app/test_controllers/excluded_dir/*',//ignore by directory path

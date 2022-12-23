@@ -9,6 +9,7 @@ use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\traits\UsersPermissionsTrait;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\ControllerHelper;
+use pozitronik\helpers\ModuleHelper;
 use pozitronik\traits\traits\ModuleTrait;
 use ReflectionException;
 use Throwable;
@@ -179,14 +180,23 @@ class PermissionsModule extends Module {
 			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class], $ignoredFilesList);
 			$module = substr($moduleId, 1);
 		} else {
+			if (null !== $moduleId && null === ModuleHelper::GetModuleById($moduleId)) {
+				$fakePermission = new PermissionsCollections([
+					'name' => static::GetControllerPermissionCollectionName($moduleId, ''),
+					'comment' => "Module '$moduleId' not found",
+				]);
+				$fakePermission->addError('id', "Module '$moduleId' not found");
+				$initPermissionCollectionHandler($fakePermission, false);
+				return;
+			}
 			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class], $ignoredFilesList);
 		}
 
 		/** @var Controller[] $foundControllers */
 		foreach ($foundControllers as $controller) {
 			$module = $module??(($controller?->module?->id === Yii::$app->id)
-					?null/*для приложения не сохраняем модуль, для удобства*/
-					:$controller?->module?->id);
+				?null/*для приложения не сохраняем модуль, для удобства*/
+				:$controller?->module?->id);
 			$controllerActionsNames = ControllerHelper::GetControllerActions($controller);
 			$controllerPermissions = [];
 			foreach ($controllerActionsNames as $action) {
