@@ -3,12 +3,11 @@ declare(strict_types = 1);
 
 namespace console\commands;
 
-use app\models\Users;
 use ConsoleTester;
-use cusodede\permissions\commands\DefaultController;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\PermissionsModule;
+use Helper\Console as ConsoleHelper;
 use ReflectionException;
 use Throwable;
 use Yii;
@@ -21,23 +20,6 @@ use yii\helpers\Console;
  * Class DefaultControllerCest
  */
 class DefaultControllerCest {
-
-	/**
-	 * @return DefaultController
-	 * @throws InvalidConfigException
-	 */
-	private function initDefaultController():DefaultController {
-		/*Я не могу создать контроллер через методы createController*, т.к. они полагаются на совпадение неймспейсов с путями, а это условие в тестах не выполняется*/
-		return Yii::createObject(DefaultController::class);
-	}
-
-	/**
-	 * @return Users
-	 * @throws Exception
-	 */
-	private function initUser():Users {
-		return Users::CreateUser()->saveAndReturn();
-	}
 
 	/**
 	 * Проверяем корректность команды отработки генератора доступов по конфигу
@@ -56,13 +38,13 @@ class DefaultControllerCest {
 		 * два - в /src/controllers
 		 * один в @app/modules/test/controllers
 		 */
-		$this->initDefaultController()->actionInitControllersPermissions();
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
 		$I->assertCount(37, $allPermissions);
 		$I->assertCount(9, $allPermissionsCollections);
 
-		$user = $this->initUser();
+		$user = ConsoleHelper::initUser();
 		$user->setRelatedPermissions($allPermissions);
 		$user->save();
 
@@ -118,7 +100,7 @@ class DefaultControllerCest {
 				],
 			]
 		]);
-		$this->initDefaultController()->actionInitControllersPermissions();
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
 		$I->assertCount(34, $allPermissions);
@@ -135,7 +117,7 @@ class DefaultControllerCest {
 				],
 			]
 		]);
-		$this->initDefaultController()->actionInitControllersPermissions();
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions();
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
 		$I->assertCount(37, $allPermissions);
@@ -153,14 +135,14 @@ class DefaultControllerCest {
 	 * @throws UnknownClassException
 	 */
 	public function InitControllerPermissionsByPath(ConsoleTester $I):void {
-		$this->initDefaultController()->actionInitControllersPermissions('@app/controllers');
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions('@app/controllers');
 
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
 		$I->assertCount(15, $allPermissions);
 		$I->assertCount(3, $allPermissionsCollections);
 
-		$user = $this->initUser();
+		$user = ConsoleHelper::initUser();
 		$user->setRelatedPermissions($allPermissions);
 		$user->save();
 
@@ -210,14 +192,14 @@ class DefaultControllerCest {
 	 * @throws UnknownClassException
 	 */
 	public function InitControllerPermissionsByPathInModule(ConsoleTester $I):void {
-		$this->initDefaultController()->actionInitControllersPermissions('./src/controllers', 'permissions');
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions('./src/controllers', 'permissions');
 
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
 		$I->assertCount(19, $allPermissions);
 		$I->assertCount(3, $allPermissionsCollections);
 
-		$user = $this->initUser();
+		$user = ConsoleHelper::initUser();
 		$user->setRelatedPermissions($allPermissions);
 		$user->save();
 
@@ -265,9 +247,9 @@ class DefaultControllerCest {
 	 * @throws Throwable
 	 */
 	public function InitConfigPermissions(ConsoleTester $I):void {
-		$user = $this->initUser();
+		$user = ConsoleHelper::initUser();
 		$I->assertEquals(1, $user->id);
-		$this->initDefaultController()->actionInitConfigPermissions();
+		ConsoleHelper::initDefaultController()->actionInitConfigPermissions();
 		/*В конфиге у юзера прибит один один пермишшен*/
 		$I->assertCount(1, $user->allPermissions());
 

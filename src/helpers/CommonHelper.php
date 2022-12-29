@@ -61,7 +61,7 @@ class CommonHelper {
 	 * @param string|null $moduleId
 	 * @param string[]|null $parentClassFilter Фильтр по классу родителя
 	 * @param string[] $ignoredFilesList
-	 * @return Controller[]
+	 * @return Controller[]|string[] Array of loaded controllers/error strings
 	 * @throws InvalidConfigException
 	 * @throws Throwable
 	 */
@@ -72,9 +72,17 @@ class CommonHelper {
 		foreach ($files as $file) {
 			if ($file->isFile()
 				&& 'php' === $file->getExtension()
-				&& false === static::isControllerIgnored($file->getRealPath(), $ignoredFilesList)
-				&& null !== $controller = ControllerHelper::LoadControllerClassFromFile($file->getRealPath(), $moduleId, $parentClassFilter)) {
-				$result[] = $controller;
+				&& false === static::isControllerIgnored($file->getRealPath(), $ignoredFilesList)) {
+				try {
+					if (null !== $controller = ControllerHelper::LoadControllerClassFromFile($file->getRealPath(), $moduleId, $parentClassFilter)) {
+						$result[] = $controller;
+					}
+				} catch (Throwable $t) {
+					$message = sprintf("File %s can't be processed due to error %s", $file->getRealPath(), $t->getMessage());
+					$result[] = $message;
+					Yii::debug($message);
+				}
+
 			}
 		}
 		return $result;
