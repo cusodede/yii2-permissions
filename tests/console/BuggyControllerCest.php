@@ -2,7 +2,6 @@
 declare(strict_types = 1);
 
 namespace console;
-use app\models\Users;
 use ConsoleTester;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
@@ -30,19 +29,12 @@ class BuggyControllerCest {
 	 * @throws Exception
 	 */
 	public function LoadBuggyControllerCest(ConsoleTester $I):void {
-		$user = Users::CreateUser()->saveAndReturn();
 		Yii::$app->setModule('permissions', [
 			'class' => PermissionsModule::class,
 			'params' => [
-				'viewPath' => [
-					'default' => './src/views/default',
-					'permissions' => './src/views/permissions',
-					'permissions-collections' => './src/views/permissions-collections'
-				],
 				'controllerDirs' => [
 					'@app/controllers_buggy' => null,
 				],
-				'grantAll' => [$user->id],
 			]
 		]);
 		ConsoleHelper::initDefaultController()->actionInitControllersPermissions();
