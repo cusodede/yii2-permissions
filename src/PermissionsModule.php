@@ -161,24 +161,19 @@ class PermissionsModule extends Module {
 	}
 
 	/**
-	 * @param string $path Путь к каталогу с контроллерами (рекурсивный корень).
-	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры (null для контроллеров приложения)
-	 * @param callable|null $initPermissionHandler
+	 * @param string $path
+	 * @param string|null $moduleId
 	 * @param callable|null $initPermissionCollectionHandler
-	 * @return void
+	 * @return array
 	 * @throws InvalidConfigException
-	 * @throws ReflectionException
 	 * @throws Throwable
-	 * @throws UnknownClassException
 	 */
-	public static function InitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
-		$module = null;
+	private static function CollectControllersFromPath(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionCollectionHandler = null):array {
 		if ('' === $moduleId) $moduleId = null;//для совместимости со старым вариантом конфига
 		$ignoredFilesList = static::param('ignorePaths', []);
 		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
 		if (null !== $moduleId && '@' === $moduleId[0]) {
 			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class], $ignoredFilesList);
-			$module = substr($moduleId, 1);
 		} else {
 			if (null !== $moduleId && null === ModuleHelper::GetModuleById($moduleId)) {
 				$fakePermission = new PermissionsCollections([
@@ -187,13 +182,24 @@ class PermissionsModule extends Module {
 				]);
 				$fakePermission->addError('id', "Module '$moduleId' not found");
 				$initPermissionCollectionHandler($fakePermission, false);
-				return;
+				return [];
 			}
 			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class], $ignoredFilesList);
 		}
+		return $foundControllers;
+	}
 
-		/** @var Controller[]|string[] $foundControllers */
-		foreach ($foundControllers as $controller) {
+	/**
+	 * @param array $controllers
+	 * @param callable|null $initPermissionHandler
+	 * @param callable|null $initPermissionCollectionHandler
+	 * @return void
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 */
+	private static function GenerateControllersPermissions(array $controllers, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
+		foreach ($controllers as $controller) {
 			if (is_string($controller)) {
 				/* When an error happens, it's description passed as string */
 				$eCollection = new PermissionsCollections([
@@ -231,6 +237,22 @@ class PermissionsModule extends Module {
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param string $path Путь к каталогу с контроллерами (рекурсивный корень).
+	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры (null для контроллеров приложения)
+	 * @param callable|null $initPermissionHandler
+	 * @param callable|null $initPermissionCollectionHandler
+	 * @return void
+	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 */
+	public static function InitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
+		$foundControllers = static::CollectControllersFromPath($path, $moduleId, $initPermissionCollectionHandler);
+		static::GenerateControllersPermissions($foundControllers, $initPermissionHandler, $initPermissionCollectionHandler);
 	}
 
 	/**
