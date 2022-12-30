@@ -216,21 +216,21 @@ class PermissionsModule extends Module {
 				$controllerActionsNames = ControllerHelper::GetControllerActions($controller);
 				$controllerPermissions = [];
 				foreach ($controllerActionsNames as $action) {
-					$permission = new Permissions([
+					$permission = Permissions::Upsert([
 						'name' => static::GetControllerActionPermissionName($module, $controller->id, $action),
 						'module' => $module,
 						'controller' => $controller->id,
 						'action' => $action,
 						'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
-					]);
+					], false);
 					if (true === $saved = $permission->save()) $controllerPermissions[] = $permission;
 					if (null !== $initPermissionHandler) {
 						$initPermissionHandler($permission, $saved);
 					}
 				}
-				$controllerPermissionsCollection = new PermissionsCollections([
+				$controllerPermissionsCollection = PermissionsCollections::Upsert([
 					'name' => static::GetControllerPermissionCollectionName($module, $controller->id),
-					'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),]);
+					'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}")], false);
 				$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
 				$saved = $controllerPermissionsCollection->save();
 				if (null !== $initPermissionCollectionHandler) {
