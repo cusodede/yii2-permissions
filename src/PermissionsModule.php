@@ -207,8 +207,7 @@ class PermissionsModule extends Module {
 					'comment' => null
 				]);
 				$eCollection->addError('name', $controller);
-				$initPermissionCollectionHandler($eCollection, false
-				);
+				$initPermissionCollectionHandler($eCollection, false);
 			} else {
 				$module = $module??(($controller?->module?->id === Yii::$app->id)
 					?null/*для приложения не сохраняем модуль, для удобства*/
