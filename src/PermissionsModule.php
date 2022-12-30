@@ -61,7 +61,7 @@ class PermissionsModule extends Module {
 	 */
 	public static function UserIdentityClass():string|ActiveRecordInterface {
 		if (null === static::$_userIdentityClass) {
-			$identity = static::param('userIdentityClass', Yii::$app->user->identityClass);
+			$identity = static::param('userIdentityClass')??Yii::$app->user->identityClass;
 			static::$_userIdentityClass = (is_callable($identity))
 				?$identity()
 				:$identity;
