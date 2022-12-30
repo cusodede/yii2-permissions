@@ -198,7 +198,7 @@ class PermissionsModule extends Module {
 	 * @throws Throwable
 	 * @throws UnknownClassException
 	 */
-	private static function GenerateControllersPermissions(array $controllers, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
+	public static function GenerateControllersPermissions(array $controllers, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
 		foreach ($controllers as $controller) {
 			if (is_string($controller)) {
 				/* When an error happens, it's description passed as string */
@@ -232,8 +232,9 @@ class PermissionsModule extends Module {
 					'name' => static::GetControllerPermissionCollectionName($module, $controller->id),
 					'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),]);
 				$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
+				$saved = $controllerPermissionsCollection->save();
 				if (null !== $initPermissionCollectionHandler) {
-					$initPermissionCollectionHandler($controllerPermissionsCollection, $controllerPermissionsCollection->save());
+					$initPermissionCollectionHandler($controllerPermissionsCollection, $saved);
 				}
 			}
 		}
