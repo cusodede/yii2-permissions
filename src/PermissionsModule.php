@@ -164,33 +164,32 @@ class PermissionsModule extends Module {
 	 * @param string $path
 	 * @param string|null $moduleId
 	 * @param callable|null $initPermissionCollectionHandler
-	 * @return array
+	 * @return Controller[]|string[]
 	 * @throws InvalidConfigException
 	 * @throws Throwable
 	 */
-	private static function CollectControllersFromPath(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionCollectionHandler = null):array {
+	private static function CollectControllersFromPath(string $path = "@app/controllers", ?string &$moduleId = null, ?callable $initPermissionCollectionHandler = null):array {
 		if ('' === $moduleId) $moduleId = null;//для совместимости со старым вариантом конфига
 		$ignoredFilesList = static::param('ignorePaths', []);
 		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
 		if (null !== $moduleId && '@' === $moduleId[0]) {
-			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class], $ignoredFilesList);
-		} else {
-			if (null !== $moduleId && null === ModuleHelper::GetModuleById($moduleId)) {
-				$fakePermission = new PermissionsCollections([
-					'name' => static::GetControllerPermissionCollectionName($moduleId, ''),
-					'comment' => "Module '$moduleId' not found",
-				]);
-				$fakePermission->addError('id', "Module '$moduleId' not found");
-				$initPermissionCollectionHandler($fakePermission, false);
-				return [];
-			}
-			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class], $ignoredFilesList);
+			$moduleId = substr($moduleId, 1);
+			return CommonHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class], $ignoredFilesList);
 		}
-		return $foundControllers;
+		if (null !== $moduleId && null === ModuleHelper::GetModuleById($moduleId)) {
+			$fakePermission = new PermissionsCollections([
+				'name' => static::GetControllerPermissionCollectionName($moduleId, ''),
+				'comment' => "Module '$moduleId' not found",
+			]);
+			$fakePermission->addError('id', "Module '$moduleId' not found");
+			$initPermissionCollectionHandler($fakePermission, false);
+			return [];
+		}
+		return CommonHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class], $ignoredFilesList);
 	}
 
 	/**
-	 * @param array $controllers
+	 * @param Controller[]|string[] $controllers
 	 * @param callable|null $initPermissionHandler
 	 * @param callable|null $initPermissionCollectionHandler
 	 * @return void
@@ -198,7 +197,7 @@ class PermissionsModule extends Module {
 	 * @throws Throwable
 	 * @throws UnknownClassException
 	 */
-	public static function GenerateControllersPermissions(array $controllers, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
+	public static function GenerateControllersPermissions(array $controllers, ?string $module = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
 		foreach ($controllers as $controller) {
 			if (is_string($controller)) {
 				/* When an error happens, it's description passed as string */
@@ -252,7 +251,7 @@ class PermissionsModule extends Module {
 	 */
 	public static function InitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
 		$foundControllers = static::CollectControllersFromPath($path, $moduleId, $initPermissionCollectionHandler);
-		static::GenerateControllersPermissions($foundControllers, $initPermissionHandler, $initPermissionCollectionHandler);
+		static::GenerateControllersPermissions($foundControllers, $moduleId, $initPermissionHandler, $initPermissionCollectionHandler);
 	}
 
 	/**
