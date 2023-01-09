@@ -62,7 +62,6 @@ class CommonHelper {
 	 * @param string[]|null $parentClassFilter Фильтр по классу родителя
 	 * @param string[] $ignoredFilesList
 	 * @return Controller[]|string[] Array of loaded controllers/error strings
-	 * @throws InvalidConfigException
 	 * @throws Throwable
 	 */
 	public static function GetControllersList(string $path, ?string $moduleId = null, ?array $parentClassFilter = null, array $ignoredFilesList = []):array {

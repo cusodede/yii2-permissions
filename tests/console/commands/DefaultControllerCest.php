@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace console\commands;
 
+use app\models\Users;
 use ConsoleTester;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
@@ -94,6 +95,7 @@ class DefaultControllerCest {
 		Yii::$app->setModule('permissions', [
 			'class' => PermissionsModule::class,
 			'params' => [
+				'userIdentityClass' => Users::class,
 				'controllerDirs' => [
 					'@app/controllers' => null,
 					'./src/controllers' => 'permissions',
@@ -110,6 +112,7 @@ class DefaultControllerCest {
 		Yii::$app->setModule('permissions', [
 			'class' => PermissionsModule::class,
 			'params' => [
+				'userIdentityClass' => Users::class,
 				'controllerDirs' => [
 					'@app/controllers' => null,
 					'./src/controllers' => 'permissions',

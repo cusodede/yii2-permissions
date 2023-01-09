@@ -61,7 +61,7 @@ class PermissionsModule extends Module {
 	 */
 	public static function UserIdentityClass():string|ActiveRecordInterface {
 		if (null === static::$_userIdentityClass) {
-			$identity = static::param('userIdentityClass', Yii::$app->user->identityClass);
+			$identity = static::param('userIdentityClass')??Yii::$app->user->identityClass;
 			static::$_userIdentityClass = (is_callable($identity))
 				?$identity()
 				:$identity;
@@ -161,6 +161,84 @@ class PermissionsModule extends Module {
 	}
 
 	/**
+	 * @param string $path
+	 * @param string|null $moduleId
+	 * @param callable|null $initPermissionCollectionHandler
+	 * @return Controller[]|string[]
+	 * @throws InvalidConfigException
+	 * @throws Throwable
+	 */
+	private static function CollectControllersFromPath(string $path = "@app/controllers", ?string &$moduleId = null, ?callable $initPermissionCollectionHandler = null):array {
+		if ('' === $moduleId) $moduleId = null;//для совместимости со старым вариантом конфига
+		$ignoredFilesList = static::param('ignorePaths', []);
+		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
+		if (null !== $moduleId && '@' === $moduleId[0]) {
+			$moduleId = substr($moduleId, 1);
+			return CommonHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class], $ignoredFilesList);
+		}
+		if (null !== $moduleId && null === ModuleHelper::GetModuleById($moduleId)) {
+			$fakePermission = new PermissionsCollections([
+				'name' => static::GetControllerPermissionCollectionName($moduleId, ''),
+				'comment' => "Module '$moduleId' not found",
+			]);
+			$fakePermission->addError('id', "Module '$moduleId' not found");
+			$initPermissionCollectionHandler($fakePermission, false);
+			return [];
+		}
+		return CommonHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class], $ignoredFilesList);
+	}
+
+	/**
+	 * @param Controller[]|string[] $controllers
+	 * @param callable|null $initPermissionHandler
+	 * @param callable|null $initPermissionCollectionHandler
+	 * @return void
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 */
+	public static function GenerateControllersPermissions(array $controllers, ?string $module = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
+		foreach ($controllers as $controller) {
+			if (is_string($controller)) {
+				/* When an error happens, it's description passed as string */
+				$eCollection = new PermissionsCollections([
+					'name' => '',
+					'comment' => null
+				]);
+				$eCollection->addError('name', $controller);
+				$initPermissionCollectionHandler($eCollection, false);
+			} else {
+				$module = $module??(($controller?->module?->id === Yii::$app->id)
+					?null/*для приложения не сохраняем модуль, для удобства*/
+					:$controller?->module?->id);
+				$controllerActionsNames = ControllerHelper::GetControllerActions($controller);
+				$controllerPermissions = [];
+				foreach ($controllerActionsNames as $action) {
+					$permission = Permissions::Upsert([
+						'name' => static::GetControllerActionPermissionName($module, $controller->id, $action),
+						'module' => $module,
+						'controller' => $controller->id,
+						'action' => $action,
+						'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
+					], false);
+					if (true === $saved = $permission->save()) $controllerPermissions[] = $permission;
+					if (null !== $initPermissionHandler) {
+						$initPermissionHandler($permission, $saved);
+					}
+				}
+				$controllerPermissionsCollection = PermissionsCollections::Upsert([
+					'name' => static::GetControllerPermissionCollectionName($module, $controller->id),
+					'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}")], false);
+				$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
+				$saved = $controllerPermissionsCollection->save();
+				if (null !== $initPermissionCollectionHandler) {
+					$initPermissionCollectionHandler($controllerPermissionsCollection, $saved);
+				}
+			}
+		}
+	}
+
+	/**
 	 * @param string $path Путь к каталогу с контроллерами (рекурсивный корень).
 	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры (null для контроллеров приложения)
 	 * @param callable|null $initPermissionHandler
@@ -172,65 +250,8 @@ class PermissionsModule extends Module {
 	 * @throws UnknownClassException
 	 */
 	public static function InitControllersPermissions(string $path = "@app/controllers", ?string $moduleId = null, ?callable $initPermissionHandler = null, ?callable $initPermissionCollectionHandler = null):void {
-		$module = null;
-		if ('' === $moduleId) $moduleId = null;//для совместимости со старым вариантом конфига
-		$ignoredFilesList = static::param('ignorePaths', []);
-		/*Если модуль указан в формате @moduleId, модуль не загружается, идентификатор подставится напрямую*/
-		if (null !== $moduleId && '@' === $moduleId[0]) {
-			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), null, [Controller::class], $ignoredFilesList);
-			$module = substr($moduleId, 1);
-		} else {
-			if (null !== $moduleId && null === ModuleHelper::GetModuleById($moduleId)) {
-				$fakePermission = new PermissionsCollections([
-					'name' => static::GetControllerPermissionCollectionName($moduleId, ''),
-					'comment' => "Module '$moduleId' not found",
-				]);
-				$fakePermission->addError('id', "Module '$moduleId' not found");
-				$initPermissionCollectionHandler($fakePermission, false);
-				return;
-			}
-			$foundControllers = CommonHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class], $ignoredFilesList);
-		}
-
-		/** @var Controller[]|string[] $foundControllers */
-		foreach ($foundControllers as $controller) {
-			if (is_string($controller)) {
-				/* When an error happens, it's description passed as string */
-				$eCollection = new PermissionsCollections([
-					'name' => '',
-					'comment' => null
-				]);
-				$eCollection->addError('name', $controller);
-				$initPermissionCollectionHandler($eCollection, false
-				);
-			} else {
-				$module = $module??(($controller?->module?->id === Yii::$app->id)
-					?null/*для приложения не сохраняем модуль, для удобства*/
-					:$controller?->module?->id);
-				$controllerActionsNames = ControllerHelper::GetControllerActions($controller);
-				$controllerPermissions = [];
-				foreach ($controllerActionsNames as $action) {
-					$permission = new Permissions([
-						'name' => static::GetControllerActionPermissionName($module, $controller->id, $action),
-						'module' => $module,
-						'controller' => $controller->id,
-						'action' => $action,
-						'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
-					]);
-					if (true === $saved = $permission->save()) $controllerPermissions[] = $permission;
-					if (null !== $initPermissionHandler) {
-						$initPermissionHandler($permission, $saved);
-					}
-				}
-				$controllerPermissionsCollection = new PermissionsCollections([
-					'name' => static::GetControllerPermissionCollectionName($module, $controller->id),
-					'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}"),]);
-				$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
-				if (null !== $initPermissionCollectionHandler) {
-					$initPermissionCollectionHandler($controllerPermissionsCollection, $controllerPermissionsCollection->save());
-				}
-			}
-		}
+		$foundControllers = static::CollectControllersFromPath($path, $moduleId, $initPermissionCollectionHandler);
+		static::GenerateControllersPermissions($foundControllers, $moduleId, $initPermissionHandler, $initPermissionCollectionHandler);
 	}
 
 	/**
