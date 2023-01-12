@@ -31,4 +31,14 @@ class CommonHelperTest extends Unit {
 		static::assertFalse(CommonHelper::IsControllerHasAction('@app/controllers/PermissionsController.php', 'disabled'));
 		static::assertFalse(CommonHelper::IsControllerHasAction('@app/controllers/PermissionsCollectionsController.php', 'disabled'));
 	}
+
+	/**
+	 * @return void
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 */
+	public function testUnexpectedControllerConstructor():void {
+		static::assertEquals(['foo'], CommonHelper::GetControllerClassActions('@app/controllers_buggy/UnusualController.php'));
+	}
 }
