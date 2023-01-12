@@ -29,5 +29,6 @@ class CommonHelperTest extends Unit {
 	 */
 	public function testCheckIsActionDisabled():void {
 		static::assertFalse(CommonHelper::IsControllerHasAction('@app/controllers/PermissionsController.php', 'disabled'));
+		static::assertFalse(CommonHelper::IsControllerHasAction('@app/controllers/PermissionsCollectionsController.php', 'disabled'));
 	}
 }
