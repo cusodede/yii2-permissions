@@ -129,11 +129,13 @@ class CommonHelper {
 	 */
 	public static function IsControllerHasAction(string $controllerClassFileName, string $actionName):bool {
 		$className = ReflectionHelper::GetClassNameFromFile(Yii::getAlias($controllerClassFileName));
-		if ((null === $controllerReflection = ReflectionHelper::New($className)) || (null === $actions = $controllerReflection?->getMethod('actions')?->invoke(static::FakeNewController($className)))) {
+		if (null === $controllerReflection = ReflectionHelper::New($className)) {
 			return false;
 		}
-		return ((null !== $class = ArrayHelper::getValue($actions, $actionName)) && is_subclass_of($class, Action::class)) ||
-			static::IsControllerHasActionMethod($controllerReflection, ControllerHelper::GetActionRequestName($actionName));
+		if ((null !== $actions = static::tryToGetActionsActions($className)) && (null !== $class = ArrayHelper::getValue($actions, $actionName)) && is_subclass_of($class, Action::class)) {
+			return true;
+		}
+		return static::IsControllerHasActionMethod($controllerReflection, ControllerHelper::GetActionRequestName($actionName));
 	}
 
 	/**
@@ -181,11 +183,11 @@ class CommonHelper {
 	 */
 	public static function GetControllerClassActions(string $controllerClassFileName, bool $asRequestName = true):array {
 		$className = ReflectionHelper::GetClassNameFromFile(Yii::getAlias($controllerClassFileName));
-		$controllerReflection = ReflectionHelper::New($className);
-		$actions = $controllerReflection?->getMethod('actions')?->invoke(static::FakeNewController($className));
 		$actionsNames = array_merge(preg_filter('/^action([A-Z])(\w+?)$/', '$1$2',
 			ArrayHelper::getColumn(ReflectionHelper::GetMethods($className), 'name')
-		), array_keys($actions));
+		), (null === $actions = static::tryToGetActionsActions($className))
+			?[]
+			:array_keys($actions));
 		foreach ($actionsNames as &$actionName) {
 			$actionName = static::IsControllerHasAction($controllerClassFileName, $actionName)
 				?$actionName
@@ -198,12 +200,32 @@ class CommonHelper {
 	}
 
 	/**
+	 * Tries to extract actions() method actions from className class
+	 * @param string $className
+	 * @return array|null null, if className not exists, or can't be instanced
+	 * @throws ReflectionException
+	 * @throws UnknownClassException
+	 */
+	public static function tryToGetActionsActions(string $className):?array {
+		if (null === $controllerReflection = ReflectionHelper::New($className)) {
+			return null;
+		}
+		return (null === $actions = static::FakeNewController($controllerReflection->name))
+			?null
+			:$controllerReflection->getMethod('actions')?->invoke($actions);
+	}
+
+	/**
 	 * We doesn't care, how exactly controller class will be loaded, we just need to do some simple calls
 	 * @param string $className
-	 * @return object
+	 * @return null|object
 	 */
-	private static function FakeNewController(string $className):object {
-		return new $className($className, Yii::$app);
+	private static function FakeNewController(string $className):?object {
+		try {
+			return new $className($className, Yii::$app);
+		} catch (Throwable) {
+			return null;
+		}
 	}
 
 }
