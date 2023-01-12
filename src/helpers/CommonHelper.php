@@ -145,13 +145,27 @@ class CommonHelper {
 		if (preg_match('/^(?:[a-z\d_]+-)*[a-z\d_]+$/', $actionName)) {
 			$actionName = 'action'.str_replace(' ', '', ucwords(str_replace('-', ' ', $actionName)));
 			if ($controllerReflection->hasMethod($actionName) && null !== $actionMethod = $controllerReflection->getMethod($actionName)) {
-				if (($controllerReflection->hasProperty('disabledActions')) && in_array($actionName, $controllerReflection->getProperty('disabledActions')->getValue(static::FakeNewController($controllerReflection->name)), true)) {
+				if (static::checkIsActionDisabled($controllerReflection, $actionName)) {
 					return false;
 				}
 				return ($actionMethod->isPublic() && $actionMethod->getName() === $actionName);
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * @param ReflectionClass $controllerReflection
+	 * @param string $actionName
+	 * @return bool
+	 * @throws ReflectionException
+	 */
+	public static function checkIsActionDisabled(ReflectionClass $controllerReflection, string $actionName):bool {
+		return (
+			($controllerReflection->hasProperty('disabledActions')) &&
+			in_array($actionName, $controllerReflection->getProperty('disabledActions')
+				->getValue(static::FakeNewController($controllerReflection->name)), true)
+		);
 	}
 
 	/**
