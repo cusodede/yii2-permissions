@@ -9,6 +9,7 @@ use pozitronik\helpers\ModuleHelper;
 use pozitronik\helpers\ReflectionHelper;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 use Throwable;
 use Yii;
 use yii\base\Action;
@@ -161,11 +162,11 @@ class CommonHelper {
 	 * @throws ReflectionException
 	 */
 	public static function checkIsActionDisabled(ReflectionClass $controllerReflection, string $actionName):bool {
-		return (
-			($controllerReflection->hasProperty('disabledActions')) &&
-			in_array($actionName, $controllerReflection->getProperty('disabledActions')
-				->getValue(static::FakeNewController($controllerReflection->name)), true)
-		);
+		if ($controllerReflection->hasProperty('disabledActions')) {
+			(new ReflectionProperty($controllerReflection->name, 'disabledActions'))->setAccessible(true);
+			return in_array($actionName, $controllerReflection->getProperty('disabledActions')->getValue(static::FakeNewController($controllerReflection->name)), true);
+		}
+		return false;
 	}
 
 	/**
