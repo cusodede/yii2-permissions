@@ -144,7 +144,7 @@ class CommonHelper {
 	public static function IsControllerHasActionMethod(ReflectionClass $controllerReflection, string $actionName):bool {
 		if (preg_match('/^(?:[a-z\d_]+-)*[a-z\d_]+$/', $actionName)) {
 			$actionName = 'action'.str_replace(' ', '', ucwords(str_replace('-', ' ', $actionName)));
-			if (null !== $actionMethod = $controllerReflection->getMethod($actionName)) {
+			if ($controllerReflection->hasMethod($actionName) && null !== $actionMethod = $controllerReflection->getMethod($actionName)) {
 				if (($controllerReflection->hasProperty('disabledActions')) && in_array($actionName, $controllerReflection->getProperty('disabledActions')->getValue(static::FakeNewController($controllerReflection->name)), true)) {
 					return false;
 				}
