@@ -163,8 +163,9 @@ class CommonHelper {
 	 */
 	public static function checkIsActionDisabled(ReflectionClass $controllerReflection, string $actionName):bool {
 		if ($controllerReflection->hasProperty('disabledActions')) {
-			(new ReflectionProperty($controllerReflection->name, 'disabledActions'))->setAccessible(true);
-			return in_array($actionName, $controllerReflection->getProperty('disabledActions')->getValue(static::FakeNewController($controllerReflection->name)), true);
+			$propertyReflection = new ReflectionProperty($controllerReflection->name, 'disabledActions');
+			$propertyReflection->setAccessible(true);
+			return in_array($actionName, $propertyReflection->getValue(static::FakeNewController($controllerReflection->name)), true);
 		}
 		return false;
 	}
