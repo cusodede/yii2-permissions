@@ -1,4 +1,4 @@
-FROM php:8.1-fpm
+FROM php:8.0.14-fpm
 RUN apt-get update \
     && apt-get install -y nano vim wget git unzip zlib1g-dev libpng-dev libzip-dev libpq-dev \
     && pecl install xdebug-3.1.2 \

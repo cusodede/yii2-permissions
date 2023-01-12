@@ -9,6 +9,7 @@ use pozitronik\helpers\ModuleHelper;
 use pozitronik\helpers\ReflectionHelper;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionProperty;
 use Throwable;
 use Yii;
 use yii\base\Action;
@@ -145,11 +146,26 @@ class CommonHelper {
 		if (preg_match('/^(?:[a-z\d_]+-)*[a-z\d_]+$/', $actionName)) {
 			$actionName = 'action'.str_replace(' ', '', ucwords(str_replace('-', ' ', $actionName)));
 			if ($controllerReflection->hasMethod($actionName) && null !== $actionMethod = $controllerReflection->getMethod($actionName)) {
-				if (($controllerReflection->hasProperty('disabledActions')) && in_array($actionName, $controllerReflection->getProperty('disabledActions')->getValue(static::FakeNewController($controllerReflection->name)), true)) {
+				if (static::checkIsActionDisabled($controllerReflection, $actionName)) {
 					return false;
 				}
 				return ($actionMethod->isPublic() && $actionMethod->getName() === $actionName);
 			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param ReflectionClass $controllerReflection
+	 * @param string $actionName
+	 * @return bool
+	 * @throws ReflectionException
+	 */
+	public static function checkIsActionDisabled(ReflectionClass $controllerReflection, string $actionName):bool {
+		if ($controllerReflection->hasProperty('disabledActions')) {
+			$propertyReflection = new ReflectionProperty($controllerReflection->name, 'disabledActions');
+			$propertyReflection->setAccessible(true);
+			return in_array($actionName, $propertyReflection->getValue(static::FakeNewController($controllerReflection->name)), true);
 		}
 		return false;
 	}
