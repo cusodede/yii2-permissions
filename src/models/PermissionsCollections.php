@@ -6,9 +6,9 @@ namespace cusodede\permissions\models;
 use cusodede\permissions\models\active_record\PermissionsCollectionsAR;
 use cusodede\permissions\models\active_record\relations\RelPermissionsCollectionsToPermissionsCollections;
 use cusodede\permissions\models\active_record\relations\RelUsersToPermissionsCollections;
+use cusodede\permissions\PermissionsModule;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\CacheHelper;
-use Yii;
 use yii\caching\TagDependency;
 
 /**
@@ -24,7 +24,7 @@ class PermissionsCollections extends PermissionsCollectionsAR {
 		if (false === $insert) {
 			$usersInGroup = ArrayHelper::getColumn($this->relatedUsersRecursively, 'id');
 			foreach ($usersInGroup as $userId) {
-				TagDependency::invalidate(Yii::$app->cache, [CacheHelper::MethodSignature('Users::allPermissions', ['id' => $userId])]);
+				TagDependency::invalidate(PermissionsModule::Cache(), [CacheHelper::MethodSignature('Users::allPermissions', ['id' => $userId])]);
 			}
 		}
 		parent::afterSave($insert, $changedAttributes);
