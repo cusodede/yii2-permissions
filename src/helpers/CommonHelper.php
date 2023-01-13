@@ -207,12 +207,10 @@ class CommonHelper {
 	 * @throws UnknownClassException
 	 */
 	public static function tryToGetActionsActions(string $className):?array {
-		if (null === $controllerReflection = ReflectionHelper::New($className)) {
+		if ((null === $controllerReflection = ReflectionHelper::New($className)) || null === $actions = static::FakeNewController($controllerReflection->name)) {
 			return null;
 		}
-		return (null === $actions = static::FakeNewController($controllerReflection->name))
-			?null
-			:$controllerReflection->getMethod('actions')?->invoke($actions);
+		return $controllerReflection->getMethod('actions')?->invoke($actions);
 	}
 
 	/**
