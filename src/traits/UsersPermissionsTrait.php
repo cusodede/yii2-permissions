@@ -44,7 +44,7 @@ trait UsersPermissionsTrait {
 	 */
 	public function hasPermission(array $permissions, int $logic = Permissions::LOGIC_OR):bool {
 		$cacheKey = CacheHelper::MethodSignature(__METHOD__, func_get_args(), ['id' => $this->id]);
-		return Yii::$app->cache->getOrSet($cacheKey, function() use ($permissions, $logic) {
+		return PermissionsModule::Cache()->getOrSet($cacheKey, function() use ($permissions, $logic) {
 			$result = false;
 			$allUserPermissionsNames = ArrayHelper::getColumn(self::allPermissions(), 'name');
 			foreach ($permissions as $current_permission_name) {
@@ -81,8 +81,8 @@ trait UsersPermissionsTrait {
 	 */
 	public function allPermissions(bool $force = false):array {
 		$cacheKey = CacheHelper::MethodSignature('Users::allPermissions', ['id' => $this->id]);
-		if ($force) Yii::$app->cache->delete($cacheKey);
-		return Yii::$app->cache->getOrSet($cacheKey, function() {
+		if ($force) PermissionsModule::Cache()->delete($cacheKey);
+		return PermissionsModule::Cache()->getOrSet($cacheKey, function() {
 			return array_merge(Permissions::allUserPermissions($this->id), Permissions::allUserConfigurationPermissions($this->id));
 		}, null, new TagDependency(['tags' => $cacheKey]));
 	}
@@ -211,7 +211,7 @@ trait UsersPermissionsTrait {
 			'action' => $actionId,
 			'verb' => $verb
 		]);
-		return Yii::$app->cache->getOrSet($cacheKey, fn() => [] !== Permissions::allUserPermissions($this->id, [
+		return PermissionsModule::Cache()->getOrSet($cacheKey, fn() => [] !== Permissions::allUserPermissions($this->id, [
 				'module' => $moduleId,
 				'controller' => $controllerId,
 				'action' => $actionId,
@@ -260,7 +260,7 @@ trait UsersPermissionsTrait {
 			}, [$methodSignature]);
 			return;
 		}
-		TagDependency::invalidate(Yii::$app->cache, [CacheHelper::MethodSignature($methodSignature, ['id' => $this->id])]);
+		TagDependency::invalidate(PermissionsModule::Cache(), [CacheHelper::MethodSignature($methodSignature, ['id' => $this->id])]);
 	}
 
 }

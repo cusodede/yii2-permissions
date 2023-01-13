@@ -11,7 +11,6 @@ use cusodede\permissions\PermissionsModule;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\CacheHelper;
 use Throwable;
-use Yii;
 use yii\base\InvalidConfigException;
 use yii\caching\TagDependency;
 
@@ -173,7 +172,7 @@ class Permissions extends PermissionsAR {
 			));
 
 			foreach ($usersIds as $userId) {
-				TagDependency::invalidate(Yii::$app->cache, [CacheHelper::MethodSignature('Users::allPermissions', ['id' => $userId])]);
+				TagDependency::invalidate(PermissionsModule::Cache(), [CacheHelper::MethodSignature('Users::allPermissions', ['id' => $userId])]);
 			}
 		}
 		parent::afterSave($insert, $changedAttributes);

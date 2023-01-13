@@ -18,6 +18,7 @@ use yii\base\InvalidConfigException;
 use yii\base\Module;
 use yii\base\NotSupportedException;
 use yii\base\UnknownClassException;
+use yii\caching\CacheInterface;
 use yii\console\Application as ConsoleApplication;
 use yii\db\ActiveRecordInterface;
 use yii\db\StaleObjectException;
@@ -33,6 +34,11 @@ class PermissionsModule extends Module {
 	public $controllerPath = '@vendor/cusodede/yii2-permissions/src/controllers';
 
 	private static ?string $_userIdentityClass = null;
+	/**
+	 * Caching class, used by module. null for global cache.
+	 * @var string|null
+	 */
+	private static mixed $_cacheComponent = null;
 
 	public const VERBS = [
 		'GET' => 'GET',
@@ -80,6 +86,21 @@ class PermissionsModule extends Module {
 		return (is_callable($identity))
 			?$identity()
 			:$identity;
+	}
+
+	/**
+	 * @return CacheInterface
+	 * @throws InvalidConfigException
+	 * @throws Throwable
+	 */
+	public static function Cache():CacheInterface {
+		if (null === static::$_cacheComponent) {
+			static::$_cacheComponent = static::param('cache', Yii::$app->cache);
+			if (!is_object(static::$_cacheComponent)) {
+				static::$_cacheComponent = Yii::createObject(static::$_cacheComponent);
+			}
+		}
+		return static::$_cacheComponent;
 	}
 
 	/**

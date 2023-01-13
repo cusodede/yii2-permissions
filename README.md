@@ -43,9 +43,10 @@ return [
         'permissions' => [
             'class' => cusodede\permissions\PermissionsModule::class,
             'params' => [
+                'cache' => null, /* Собственный компонент кеширования, который будет использоваться классом, null для кеша Yii. */
                 'viewPath' => [
-                    'permissions' => '@vendor/cusodede/yii2-permissions/src/views/permissions', /* путь к кастомным шаблонам для управления доступами */
-                    'permissions-collections' => '@vendor/cusodede/yii2-permissions/src/views/permissions-collections' /* путь к кастомным шаблонам для управления коллекциями доступов */
+                    'permissions' => '@vendor/cusodede/yii2-permissions/src/views/permissions', /* Путь к кастомным шаблонам для управления доступами */
+                    'permissions-collections' => '@vendor/cusodede/yii2-permissions/src/views/permissions-collections' /* Путь к кастомным шаблонам для управления коллекциями доступов */
                 ],
                 'userIdentityClass' => Yii::$app->user->identityClass, /* Имя класса (либо замыкание, это имя возвращающее), определяющего identity пользователя. */
                 'userCurrentIdentity' => Yii::$app->user->identity, /* Экземпляр класса, идентифицирующий сущность текущего пользователя */
