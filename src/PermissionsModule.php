@@ -190,6 +190,7 @@ class PermissionsModule extends Module {
 
 	/**
 	 * @param Controller[]|string[] $controllers
+	 * @param string|null $module
 	 * @param callable|null $initPermissionHandler
 	 * @param callable|null $initPermissionCollectionHandler
 	 * @return void
