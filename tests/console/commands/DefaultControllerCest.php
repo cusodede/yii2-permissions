@@ -80,8 +80,23 @@ class DefaultControllerCest {
 		$I->assertTrue($user->hasControllerPermission('permissions-collections', 'create', null, 'permissions'));
 		$I->assertTrue($user->hasControllerPermission('permissions', 'ajax-search', 'POST', 'permissions'));
 		$I->assertTrue($user->hasControllerPermission('permissions-collections', 'edit', 'GET', 'permissions'));
+	}
+
+	/**
+	 * Этот тест может быть пропущен, т.к. он предназначен только для ручной проверки корректности вывода
+	 * @return void
+	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 * @skip
+	 */
+	public function InitControllerPermissionsTrice():void {
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions();
 		//Перезапуск генератора, чтобы убедиться, что вывод повторных добавлений отсутствует
 		ConsoleHelper::initDefaultController()->actionInitControllersPermissions();
+		//Перезапуск генератора, чтобы убедиться, что вывод повторных добавлений присутствует
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions(null, null, true);
 	}
 
 	/**
