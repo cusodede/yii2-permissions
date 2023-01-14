@@ -45,14 +45,14 @@ class DefaultController extends Controller {
 		if (is_string($path)) $pathMapping = [$path => $moduleId];
 		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
 		foreach ($pathMapping as $controller_dir => $module_id) {
-			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved, bool $alreadyExists) use ($showAll) {
+			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved, bool $alreadyExists = false) use ($showAll) {
 				Console::output(Console::renderColoredString($saved
 					?"%gДоступ %b{$permission->name}%g добавлен%n"
 					:($alreadyExists
 						?($showAll?"":"%yДоступ %b{$permission->name}%y уже есть%n")
 						:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"))
 				);
-			}, static function(PermissionsCollections $permissionsCollection, bool $saved, bool $alreadyExists) use ($showAll) {
+			}, static function(PermissionsCollections $permissionsCollection, bool $saved, bool $alreadyExists = false) use ($showAll) {
 				Console::output(Console::renderColoredString($saved
 					?"%gКоллекция %b{$permissionsCollection->name}%g добавлена%n"
 					:($alreadyExists
