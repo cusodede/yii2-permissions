@@ -243,9 +243,10 @@ class PermissionsModule extends Module {
 						'action' => $action,
 						'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
 					], false);
+					$alreadyExist = !$permission->isNewRecord;
 					if (true === $saved = $permission->save()) $controllerPermissions[] = $permission;
 					if (null !== $initPermissionHandler) {
-						$initPermissionHandler($permission, $saved, Permissions::find()->where(['name' => $permission->name])->one() && !$saved);
+						$initPermissionHandler($permission, $saved, $alreadyExist);
 					}
 				}
 				$controllerPermissionsCollection = PermissionsCollections::Upsert([

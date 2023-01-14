@@ -80,6 +80,8 @@ class DefaultControllerCest {
 		$I->assertTrue($user->hasControllerPermission('permissions-collections', 'create', null, 'permissions'));
 		$I->assertTrue($user->hasControllerPermission('permissions', 'ajax-search', 'POST', 'permissions'));
 		$I->assertTrue($user->hasControllerPermission('permissions-collections', 'edit', 'GET', 'permissions'));
+		//Перезапуск генератора, чтобы убедиться, что вывод повторных добавлений отсутствует
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions();
 	}
 
 	/**

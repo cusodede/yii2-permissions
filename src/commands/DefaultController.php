@@ -46,18 +46,19 @@ class DefaultController extends Controller {
 		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
 		foreach ($pathMapping as $controller_dir => $module_id) {
 			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved, bool $alreadyExists = false) use ($showAll) {
-				Console::output(Console::renderColoredString($saved
-					?"%gДоступ %b{$permission->name}%g добавлен%n"
-					:($alreadyExists
-						?($showAll?"":"%yДоступ %b{$permission->name}%y уже есть%n")
-						:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"))
-				);
+				if ($alreadyExists && !$showAll) return;
+				Console::output(Console::renderColoredString(
+					$alreadyExists
+						?($showAll?"%yДоступ %b{$permission->name}%y уже есть%n":"")
+						:($saved?"%gДоступ %b{$permission->name}%g добавлен%n":"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n")
+				));
 			}, static function(PermissionsCollections $permissionsCollection, bool $saved, bool $alreadyExists = false) use ($showAll) {
-				Console::output(Console::renderColoredString($saved
-					?"%gКоллекция %b{$permissionsCollection->name}%g добавлена%n"
-					:($alreadyExists
-						?($showAll?"":"%yКоллекция %b{$permissionsCollection->name}%y уже есть%n")
-						:"%rКоллекция %b{$permissionsCollection->name}%r пропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n")));
+				if ($alreadyExists && !$showAll) return;
+				Console::output(Console::renderColoredString(
+					$alreadyExists
+						?($showAll?"%yКоллекция %b{$permissionsCollection->name}%y уже есть%n":"")
+						:($saved?"%gКоллекция %b{$permissionsCollection->name}%g добавлена%n":"%rКоллекция %b{$permissionsCollection->name}%r пропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n")
+				));
 			});
 		}
 	}
