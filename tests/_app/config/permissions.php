@@ -1,11 +1,13 @@
 <?php
 declare(strict_types = 1);
 
+use app\models\Users;
 use cusodede\permissions\PermissionsModule;
 
 return [
 	'class' => PermissionsModule::class,
 	'params' => [
+		'userIdentityClass' => Users::class,
 		'viewPath' => [
 			'permissions' => './src/views/permissions',
 			'permissions-collections' => './src/views/permissions-collections'
