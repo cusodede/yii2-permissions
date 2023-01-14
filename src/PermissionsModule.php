@@ -252,9 +252,10 @@ class PermissionsModule extends Module {
 					'name' => static::GetControllerPermissionCollectionName($module, $controller->id),
 					'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}")], false);
 				$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
+				$alreadyExist = !$controllerPermissionsCollection->isNewRecord;
 				$saved = $controllerPermissionsCollection->save();
 				if (null !== $initPermissionCollectionHandler) {
-					$initPermissionCollectionHandler($controllerPermissionsCollection, $saved, PermissionsCollections::find()->where(['name' => $controllerPermissionsCollection->name])->one() && !$saved);
+					$initPermissionCollectionHandler($controllerPermissionsCollection, $saved, $alreadyExist);
 				}
 			}
 		}
