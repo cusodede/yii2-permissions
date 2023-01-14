@@ -33,25 +33,31 @@ class DefaultController extends Controller {
 	/**
 	 * Для всех контроллеров по пути $path добавляет наборы правил доступа в БД. Если путь не указан, берётся маппинг из параметра controllerDirs конфига.
 	 * @param null|string $path Путь к каталогу с контроллерами (рекурсивный корень). Если null, берётся маппинг из параметра controllerDirs конфига.
-	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры, null для автоматического определения
+	 * @param string|null $moduleId Модуль, которому принадлежат контроллеры, null для автоматического определения.
+	 * @param bool $showAll Включить отображение вывода для корректно пропущенных доступов (например, для повторно создаваемых).
 	 * @throws InvalidConfigException
 	 * @throws ReflectionException
 	 * @throws Throwable
 	 * @throws UnknownClassException
 	 */
-	public function actionInitControllersPermissions(?string $path = null, ?string $moduleId = null):void {
+	public function actionInitControllersPermissions(?string $path = null, ?string $moduleId = null, bool $showAll = false):void {
 		$pathMapping = [];
 		if (is_string($path)) $pathMapping = [$path => $moduleId];
 		if (null === $path) $pathMapping = PermissionsModule::param(Permissions::CONTROLLER_DIRS);
 		foreach ($pathMapping as $controller_dir => $module_id) {
-			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved) {
+			PermissionsModule::InitControllersPermissions($controller_dir, $module_id, static function(Permissions $permission, bool $saved, bool $alreadyExists) use ($showAll) {
 				Console::output(Console::renderColoredString($saved
 					?"%gДоступ %b{$permission->name}%g добавлен%n"
-					:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"));
-			}, static function(PermissionsCollections $permissionsCollection, bool $saved) {
+					:($alreadyExists
+						?($showAll?"":"%yДоступ %b{$permission->name}%y уже есть%n")
+						:"%rДоступ %b{$permission->name}%r пропущен (".CommonHelper::Errors2String($permission->errors).")%n"))
+				);
+			}, static function(PermissionsCollections $permissionsCollection, bool $saved, bool $alreadyExists) use ($showAll) {
 				Console::output(Console::renderColoredString($saved
 					?"%gКоллекция %b{$permissionsCollection->name}%g добавлена%n"
-					:"%rКоллекция %b{$permissionsCollection->name}%r пропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n"));
+					:($alreadyExists
+						?($showAll?"":"%yКоллекция %b{$permissionsCollection->name}%y уже есть%n")
+						:"%rКоллекция %b{$permissionsCollection->name}%r пропущена (".CommonHelper::Errors2String($permissionsCollection->errors).")%n")));
 			});
 		}
 	}
