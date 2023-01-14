@@ -203,7 +203,7 @@ class PermissionsModule extends Module {
 				'comment' => "Module '$moduleId' not found",
 			]);
 			$fakePermission->addError('id', "Module '$moduleId' not found");
-			$initPermissionCollectionHandler($fakePermission, false);
+			$initPermissionCollectionHandler($fakePermission, false, false);
 			return [];
 		}
 		return CommonHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class], $ignoredFilesList);
@@ -243,18 +243,20 @@ class PermissionsModule extends Module {
 						'action' => $action,
 						'comment' => "Разрешить доступ к действию {$action} контроллера {$controller->id}".(null === $module?"":" модуля {$module}")
 					], false);
+					$alreadyExist = !$permission->isNewRecord;
 					if (true === $saved = $permission->save()) $controllerPermissions[] = $permission;
 					if (null !== $initPermissionHandler) {
-						$initPermissionHandler($permission, $saved);
+						$initPermissionHandler($permission, $saved, $alreadyExist);
 					}
 				}
 				$controllerPermissionsCollection = PermissionsCollections::Upsert([
 					'name' => static::GetControllerPermissionCollectionName($module, $controller->id),
 					'comment' => sprintf("Доступ ко всем действиям контроллера %s%s", $controller->id, null === $module?'':" модуля {$module}")], false);
 				$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
+				$alreadyExist = !$controllerPermissionsCollection->isNewRecord;
 				$saved = $controllerPermissionsCollection->save();
 				if (null !== $initPermissionCollectionHandler) {
-					$initPermissionCollectionHandler($controllerPermissionsCollection, $saved);
+					$initPermissionCollectionHandler($controllerPermissionsCollection, $saved, $alreadyExist);
 				}
 			}
 		}

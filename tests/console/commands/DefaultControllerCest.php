@@ -83,6 +83,23 @@ class DefaultControllerCest {
 	}
 
 	/**
+	 * Этот тест может быть пропущен, т.к. он предназначен только для ручной проверки корректности вывода
+	 * @return void
+	 * @throws InvalidConfigException
+	 * @throws ReflectionException
+	 * @throws Throwable
+	 * @throws UnknownClassException
+	 * @skip
+	 */
+	public function InitControllerPermissionsTrice():void {
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions();
+		//Перезапуск генератора, чтобы убедиться, что вывод повторных добавлений отсутствует
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions();
+		//Перезапуск генератора, чтобы убедиться, что вывод повторных добавлений присутствует
+		ConsoleHelper::initDefaultController()->actionInitControllersPermissions(null, null, true);
+	}
+
+	/**
 	 * Проверяет корректность добавления нового контроллера в конфигурации
 	 * @param ConsoleTester $I
 	 * @return void
