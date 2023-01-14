@@ -203,7 +203,7 @@ class PermissionsModule extends Module {
 				'comment' => "Module '$moduleId' not found",
 			]);
 			$fakePermission->addError('id', "Module '$moduleId' not found");
-			$initPermissionCollectionHandler($fakePermission, false);
+			$initPermissionCollectionHandler($fakePermission, false, false);
 			return [];
 		}
 		return CommonHelper::GetControllersList(Yii::getAlias($path), $moduleId, [Controller::class], $ignoredFilesList);
