@@ -245,7 +245,7 @@ class PermissionsModule extends Module {
 					], false);
 					if (true === $saved = $permission->save()) $controllerPermissions[] = $permission;
 					if (null !== $initPermissionHandler) {
-						$initPermissionHandler($permission, $saved);
+						$initPermissionHandler($permission, $saved, Permissions::find()->where(['name' => $permission->name])->one() && !$saved);
 					}
 				}
 				$controllerPermissionsCollection = PermissionsCollections::Upsert([
@@ -254,7 +254,7 @@ class PermissionsModule extends Module {
 				$controllerPermissionsCollection->relatedPermissions = $controllerPermissions;
 				$saved = $controllerPermissionsCollection->save();
 				if (null !== $initPermissionCollectionHandler) {
-					$initPermissionCollectionHandler($controllerPermissionsCollection, $saved);
+					$initPermissionCollectionHandler($controllerPermissionsCollection, $saved, PermissionsCollections::find()->where(['name' => $controllerPermissionsCollection->name])->one() && !$saved);
 				}
 			}
 		}
