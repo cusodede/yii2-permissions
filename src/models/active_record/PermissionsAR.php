@@ -57,7 +57,8 @@ class PermissionsAR extends ActiveRecord {
 			[['name'], 'required'],
 			[['controller', 'action', 'verb', 'module'], 'string', 'max' => 255],
 			[['name'], 'unique'],
-			[Permissions::ALLOWED_EMPTY_PARAMS, 'default', 'value' => null]
+			[Permissions::ALLOWED_EMPTY_PARAMS, 'default', 'value' => null],
+			[['controller', 'action', 'verb', 'module'], 'unique']
 		];
 	}
 
