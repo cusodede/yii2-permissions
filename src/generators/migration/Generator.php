@@ -66,6 +66,6 @@ class Generator extends YiiGenerator {
 	 * @return string the migration file path
 	 */
 	public function getMigrationFileName(string $postfix):string {
-		return sprintf("%s%s.php", date('ymd_His'), $postfix);
+		return sprintf("%s%s.php", date('ymd_000000'), $postfix);//Gii doesn't allow to use high accurate timestamps in filenames, because file ids generated from them
 	}
 }
