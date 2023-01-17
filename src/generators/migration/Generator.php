@@ -5,7 +5,6 @@ namespace cusodede\permissions\generators\migration;
 
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
-use yii\db\Query;
 use yii\gii\CodeFile;
 use yii\gii\Generator as YiiGenerator;
 use yii\helpers\ArrayHelper;
@@ -77,21 +76,24 @@ class Generator extends YiiGenerator {
 
 			if ($this->includePermissions) {
 				$className = $this->getMigrationFileName('_permissions_collections_to_permissions');
-				$relationInsertData = [];
+				$codeLines = [];
 				/** @var PermissionsCollections $permissionCollection */
 				foreach (PermissionsCollections::find()->all() as $permissionCollection) {
 					$names = ArrayHelper::getColumn($permissionCollection->relatedPermissions, 'name');
-					$relationInsertData[] = [
-						$permissionCollection->name => $names
+					$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT));
+					$codeLines[] = [
+						"\$collection = PermissionsCollections::find()->where(['name' => $permissionCollection->name])->one();",
+						"\$collection->relatedPermissions = Permissions::find()->where(['name' => $names])->all()",
+						"\$collection->save();"
 					];
 				}
-				array_walk($relationInsertData, static function(&$a, $k) {
-					unset($a['id']);
-				});
-				$permissions_collections_to_permissions = str_replace(['{', '}'], ['[', ']'], json_encode($relationInsertData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT));
+
 				$files[] = new CodeFile(
 					$className,
-					$this->render('permissions_collections_to_permissions_migration.php', compact('className', 'permissions_collections_to_permissions'))
+					$this->render('permissions_collections_to_permissions_migration.php', [
+						'className' => $className,
+						'code' => implode("\n", $codeLines)
+					])
 				);
 			}
 		}

@@ -6,7 +6,7 @@ use yii\web\View;
 /**
  * @var View $this
  * @var string $className
- * @var string $permissions_collections_to_permissions
+ * @var string $code
  * @var null|string $namespace
  */
 
@@ -16,6 +16,8 @@ if (!empty($namespace)) {
 }
 ?>
 use app\components\db\Migration;
+use cusodede\permissions\models\Permissions;
+use cusodede\permissions\models\PermissionsCollections;
 
 /**
 * Class <?= $className."\n" ?>
@@ -25,7 +27,7 @@ class <?= $className ?> extends Migration {
 	* {@inheritdoc}
 	*/
 	public function safeUp():void {
-		$this->upsert('sys_relation_permissions_collections_to_permissions', <?= $permissions_collections_to_permissions ?>)
+		<?= $code ?>)
 	}
 
 	/**
