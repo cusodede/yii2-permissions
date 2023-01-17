@@ -6,7 +6,7 @@ use yii\web\View;
 /**
  * @var View $this
  * @var string $className
- * @var string $permissions
+ * @var string $permissions_collections_to_permissions
  * @var null|string $namespace
  */
 
@@ -25,7 +25,7 @@ class <?= $className ?> extends Migration {
 	* {@inheritdoc}
 	*/
 	public function safeUp():void {
-		$this->upsert('sys_permissions', <?= $permissions ?>)
+		$this->upsert('sys_relation_permissions_collections_to_permissions', <?= $permissions_collections_to_permissions ?>)
 	}
 
 	/**

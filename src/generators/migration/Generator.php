@@ -4,6 +4,8 @@ declare(strict_types = 1);
 namespace cusodede\permissions\generators\migration;
 
 use cusodede\permissions\models\Permissions;
+use cusodede\permissions\models\PermissionsCollections;
+use yii\db\Query;
 use yii\gii\CodeFile;
 use yii\gii\Generator as YiiGenerator;
 use yii\helpers\ArrayHelper;
@@ -59,6 +61,39 @@ class Generator extends YiiGenerator {
 				$className,
 				$this->render('permissions_migration.php', compact('className', 'permissions'))
 			);
+		}
+
+		if ($this->includePermissionsCollections) {
+			$className = $this->getMigrationFileName('_permissions_collections');
+			$permissionsData = ArrayHelper::getColumn(PermissionsCollections::find()->all(), 'attributes');
+			array_walk($permissionsData, static function(&$a, $k) {
+				unset($a['id']);
+			});
+			$permissions_collections = str_replace(['{', '}'], ['[', ']'], json_encode($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT));
+			$files[] = new CodeFile(
+				$className,
+				$this->render('permissions_collections_migration.php', compact('className', 'permissions_collections'))
+			);
+
+			if ($this->includePermissions) {
+				$className = $this->getMigrationFileName('_permissions_collections_to_permissions');
+				$relationInsertData = [];
+				/** @var PermissionsCollections $permissionCollection */
+				foreach (PermissionsCollections::find()->all() as $permissionCollection) {
+					$names = ArrayHelper::getColumn($permissionCollection->relatedPermissions, 'name');
+					$relationInsertData[] = [
+						$permissionCollection->name => $names
+					];
+				}
+				array_walk($relationInsertData, static function(&$a, $k) {
+					unset($a['id']);
+				});
+				$permissions_collections_to_permissions = str_replace(['{', '}'], ['[', ']'], json_encode($relationInsertData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT));
+				$files[] = new CodeFile(
+					$className,
+					$this->render('permissions_collections_to_permissions_migration.php', compact('className', 'permissions_collections_to_permissions'))
+				);
+			}
 		}
 
 		return $files;
