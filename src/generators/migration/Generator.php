@@ -5,9 +5,12 @@ namespace cusodede\permissions\generators\migration;
 
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
+use cusodede\permissions\PermissionsModule;
+use cusodede\permissions\traits\UsersPermissionsTrait;
 use yii\gii\CodeFile;
 use yii\gii\Generator as YiiGenerator;
 use yii\helpers\ArrayHelper;
+use yii\web\IdentityInterface;
 
 /**
  * Generates a migration which stores current permission data
@@ -16,16 +19,16 @@ class Generator extends YiiGenerator {
 
 	public bool $includePermissions = true;
 	public bool $includePermissionsCollections = true;
-	public bool $includeUserAccounts = true;
+	public bool $includeRelationsToUserAccounts = true;
 
 	/**
 	 * {@inheritdoc}
 	 */
 	public function attributeLabels():array {
 		return [
-			'includePermissions' => 'Include atomic permissions in migration',
-			'includePermissionsCollections' => 'Include permissions collections in migration',
-			'includeUserAccounts' => 'Include users accounts in migration'
+			'includePermissions' => 'Create atomic permissions migration',
+			'includePermissionsCollections' => 'Create permissions collections migration',
+			'includeUserAccounts' => 'Create migration with relations to users accounts'
 		];
 	}
 
@@ -117,6 +120,50 @@ class Generator extends YiiGenerator {
 					])
 				);
 			}
+		}
+
+		if ($this->includeRelationsToUserAccounts) {
+			$className = $this->getMigrationFileName('_users_to_permissions');
+			$codeLines = [];
+			/** @var UsersPermissionsTrait $user */
+			foreach (PermissionsModule::UserIdentityClass()::find()->all() as $user) {
+				if ([] === $names = ArrayHelper::getColumn($user->relatedPermissions, 'name')) continue;
+				$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE));
+				$codeLines[] = implode("\n\t\t", [
+					"\$user = PermissionsModule::UserIdentityClass()::find()->where(['id' => '{$user->id}'])->one();",
+					"\$user->relatedPermissions = Permissions::find()->where(['name' => {$names}])->all();",
+					"\$user->save();"
+				]);
+			}
+
+			$files[] = new CodeFile(
+				$className,
+				$this->render('users_to_permissions_migration.php', [
+					'className' => $className,
+					'code' => implode("\n\t\t", $codeLines)
+				])
+			);
+
+			$className = $this->getMigrationFileName('_users_to_permissions_collections');
+			$codeLines = [];
+			/** @var UsersPermissionsTrait $user */
+			foreach (PermissionsModule::UserIdentityClass()::find()->all() as $user) {
+				if ([] === $names = ArrayHelper::getColumn($user->relatedPermissionsCollections, 'name')) continue;
+				$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE));
+				$codeLines[] = implode("\n\t\t", [
+					"\$user = PermissionsModule::UserIdentityClass()::find()->where(['id' => '{$user->id}'])->one();",
+					"\$user->relatedPermissions = PermissionsCollections::find()->where(['name' => {$names}])->all();",
+					"\$user->save();"
+				]);
+			}
+
+			$files[] = new CodeFile(
+				$className,
+				$this->render('users_to_permissions_collections_migration.php', [
+					'className' => $className,
+					'code' => implode("\n\t\t", $codeLines)
+				])
+			);
 		}
 
 		return $files;
