@@ -17,6 +17,7 @@ if (!empty($namespace)) {
 ?>
 use app\components\db\Migration;
 use cusodede\permissions\models\Permissions;
+use cusodede\permissions\PermissionsModule;
 
 /**
 * Class <?= $className."\n" ?>
