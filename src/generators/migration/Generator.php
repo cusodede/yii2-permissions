@@ -4,9 +4,9 @@ declare(strict_types = 1);
 namespace cusodede\permissions\generators\migration;
 
 use cusodede\permissions\models\Permissions;
-use Yii;
 use yii\gii\CodeFile;
 use yii\gii\Generator as YiiGenerator;
+use yii\helpers\ArrayHelper;
 
 /**
  * Generates a migration which stores current permission data
@@ -50,12 +50,14 @@ class Generator extends YiiGenerator {
 
 		if ($this->includePermissions) {
 			$className = $this->getMigrationFileName('_permissions');
+			$permissionsData = ArrayHelper::getColumn(Permissions::find()->all(), 'attributes');
+			array_walk($permissionsData, static function(&$a, $k) {
+				unset($a['id']);
+			});
+			$permissions = str_replace(['{', '}'], ['[', ']'], json_encode($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT));
 			$files[] = new CodeFile(
 				$className,
-				$this->render('permissions_migration.php', [
-					'className' => $className,
-					'permissions' => Permissions::find()->all()
-				])
+				$this->render('permissions_migration.php', compact('className', 'permissions'))
 			);
 		}
 

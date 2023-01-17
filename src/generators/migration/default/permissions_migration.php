@@ -1,12 +1,12 @@
 <?php
 declare(strict_types = 1);
-use cusodede\permissions\models\Permissions;
+
 use yii\web\View;
 
 /**
  * @var View $this
  * @var string $className
- * @var Permissions[] $permissions
+ * @var string $permissions
  * @var null|string $namespace
  */
 
@@ -25,6 +25,7 @@ class <?= $className ?> extends Migration {
 	* {@inheritdoc}
 	*/
 	public function safeUp() {
+		$this->upsert('sys_permissions', <?= $permissions ?>)
 
 	}
 
