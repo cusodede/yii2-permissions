@@ -25,7 +25,7 @@ class <?= $className ?> extends Migration {
 	* {@inheritdoc}
 	*/
 	public function safeUp():void {
-		$this->upsert('sys_permissions', <?= $permissions ?>)
+		$this->upsert('sys_permissions', <?= $permissions ?>);
 	}
 
 	/**
