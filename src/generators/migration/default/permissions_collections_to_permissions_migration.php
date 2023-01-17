@@ -27,7 +27,7 @@ class <?= $className ?> extends Migration {
 	* {@inheritdoc}
 	*/
 	public function safeUp():void {
-		<?= $code ?>)
+		<?= $code ?>
 	}
 
 	/**

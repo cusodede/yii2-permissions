@@ -80,19 +80,19 @@ class Generator extends YiiGenerator {
 				/** @var PermissionsCollections $permissionCollection */
 				foreach (PermissionsCollections::find()->all() as $permissionCollection) {
 					$names = ArrayHelper::getColumn($permissionCollection->relatedPermissions, 'name');
-					$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT));
-					$codeLines[] = [
-						"\$collection = PermissionsCollections::find()->where(['name' => $permissionCollection->name])->one();",
-						"\$collection->relatedPermissions = Permissions::find()->where(['name' => $names])->all()",
+					$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE));
+					$codeLines[] = implode("\n\t\t", [
+						"\$collection = PermissionsCollections::find()->where(['name' => '{$permissionCollection->name}'])->one();",
+						"\$collection->relatedPermissions = Permissions::find()->where(['name' => {$names}])->all();",
 						"\$collection->save();"
-					];
+					]);
 				}
 
 				$files[] = new CodeFile(
 					$className,
 					$this->render('permissions_collections_to_permissions_migration.php', [
 						'className' => $className,
-						'code' => implode("\n", $codeLines)
+						'code' => implode("\n\t\t", $codeLines)
 					])
 				);
 			}
