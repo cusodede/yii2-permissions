@@ -20,7 +20,7 @@ use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 
 /**
-* Class <?= $className."\n" ?>
+* Class <?= $className."php\n" ?>
 */
 class <?= $className ?> extends Migration {
 	/**

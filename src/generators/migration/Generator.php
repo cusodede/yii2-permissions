@@ -19,6 +19,7 @@ class Generator extends YiiGenerator {
 	public bool $includePermissions = true;
 	public bool $includePermissionsCollections = true;
 	public bool $includeRelationsToUserAccounts = true;
+	public string $savePath = '@app/migrations';
 
 	/**
 	 * {@inheritdoc}
@@ -27,7 +28,8 @@ class Generator extends YiiGenerator {
 		return [
 			'includePermissions' => 'Create atomic permissions migration',
 			'includePermissionsCollections' => 'Create permissions collections migration',
-			'includeRelationsToUserAccounts' => 'Create migration with relations to users accounts'
+			'includeRelationsToUserAccounts' => 'Create migration with relations to users accounts',
+			'savePath' => 'Where to save generated files'
 		];
 	}
 
@@ -60,7 +62,8 @@ class Generator extends YiiGenerator {
 			$permissions = str_replace(['{', '}'], ['[', ']'], json_encode($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT));
 			$files[] = new CodeFile(
 				$className,
-				$this->render('permissions_migration.php', compact('className', 'permissions'))
+				$this->render('permissions_migration.php', compact('className', 'permissions')),
+				['path' => $this->savePath]
 			);
 		}
 
@@ -172,6 +175,6 @@ class Generator extends YiiGenerator {
 	 * @return string the migration file path
 	 */
 	public function getMigrationFileName(string $postfix):string {
-		return sprintf("m%s%s.php", date('ymd_000000'), $postfix);//Gii doesn't allow to use high accurate timestamps in filenames, because file ids generated from them
+		return sprintf("m%s%s", date('ymd_000000'), $postfix);//Gii doesn't allow to use high accurate timestamps in filenames, because file ids generated from them
 	}
 }

@@ -18,7 +18,7 @@ if (!empty($namespace)) {
 use app\components\db\Migration;
 
 /**
-* Class <?= $className."\n" ?>
+* Class <?= $className."php\n" ?>
 */
 class <?= $className ?> extends Migration {
 	/**
