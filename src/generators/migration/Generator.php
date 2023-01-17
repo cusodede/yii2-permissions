@@ -59,7 +59,7 @@ class Generator extends YiiGenerator {
 			array_walk($permissionsData, static function(&$a, $k) {
 				unset($a['id']);
 			});
-			$permissions = str_replace(['{', '}'], ['[', ']'], json_encode($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT));
+			$permissions = static::array2php($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 			$files[] = new CodeFile(
 				$className,
 				$this->render('permissions_migration.php', compact('className', 'permissions')),
@@ -73,7 +73,7 @@ class Generator extends YiiGenerator {
 			array_walk($permissionsData, static function(&$a, $k) {
 				unset($a['id']);
 			});
-			$permissions_collections = str_replace(['{', '}'], ['[', ']'], json_encode($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT));
+			$permissions_collections = static::array2php($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 			$files[] = new CodeFile(
 				$className,
 				$this->render('permissions_collections_migration.php', compact('className', 'permissions_collections'))
@@ -84,7 +84,7 @@ class Generator extends YiiGenerator {
 			/** @var PermissionsCollections $permissionCollection */
 			foreach (PermissionsCollections::find()->all() as $permissionCollection) {
 				if ([] === $names = ArrayHelper::getColumn($permissionCollection->relatedSlavePermissionsCollections, 'name')) continue;
-				$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE));
+				$names = static::array2php($names);
 				$codeLines[] = implode("\n\t\t", [
 					"\$collection = PermissionsCollections::find()->where(['name' => '{$permissionCollection->name}'])->one();",
 					"\$collection->relatedSlavePermissionsCollections = PermissionsCollections::find()->where(['name' => {$names}])->all();",
@@ -106,7 +106,7 @@ class Generator extends YiiGenerator {
 				/** @var PermissionsCollections $permissionCollection */
 				foreach (PermissionsCollections::find()->all() as $permissionCollection) {
 					if ([] === $names = ArrayHelper::getColumn($permissionCollection->relatedPermissions, 'name')) continue;
-					$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE));
+					$names = static::array2php($names);
 					$codeLines[] = implode("\n\t\t", [
 						"\$collection = PermissionsCollections::find()->where(['name' => '{$permissionCollection->name}'])->one();",
 						"\$collection->relatedPermissions = Permissions::find()->where(['name' => {$names}])->all();",
@@ -130,7 +130,7 @@ class Generator extends YiiGenerator {
 			/** @var UsersPermissionsTrait $user */
 			foreach (PermissionsModule::UserIdentityClass()::find()->all() as $user) {
 				if ([] === $names = ArrayHelper::getColumn($user->relatedPermissions, 'name')) continue;
-				$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE));
+				$names = static::array2php($names);
 				$codeLines[] = implode("\n\t\t", [
 					"\$user = PermissionsModule::UserIdentityClass()::find()->where(['id' => '{$user->id}'])->one();",
 					"\$user->relatedPermissions = Permissions::find()->where(['name' => {$names}])->all();",
@@ -151,7 +151,7 @@ class Generator extends YiiGenerator {
 			/** @var UsersPermissionsTrait $user */
 			foreach (PermissionsModule::UserIdentityClass()::find()->all() as $user) {
 				if ([] === $names = ArrayHelper::getColumn($user->relatedPermissionsCollections, 'name')) continue;
-				$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE));
+				$names = static::array2php($names);
 				$codeLines[] = implode("\n\t\t", [
 					"\$user = PermissionsModule::UserIdentityClass()::find()->where(['id' => '{$user->id}'])->one();",
 					"\$user->relatedPermissions = PermissionsCollections::find()->where(['name' => {$names}])->all();",
@@ -176,5 +176,14 @@ class Generator extends YiiGenerator {
 	 */
 	public function getMigrationFileName(string $postfix):string {
 		return sprintf("m%s%s", date('ymd_000000'), $postfix);//Gii doesn't allow to use high accurate timestamps in filenames, because file ids generated from them
+	}
+
+	/**
+	 * @param array $data
+	 * @param int $params
+	 * @return string
+	 */
+	private static function array2php(array $data, int $params = JSON_UNESCAPED_UNICODE):string {
+		return str_replace(['{', '}', ':', '....'], ['[', ']', "=>", "\t"], json_encode($data, $params));
 	}
 }
