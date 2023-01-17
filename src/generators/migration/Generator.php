@@ -10,7 +10,6 @@ use cusodede\permissions\traits\UsersPermissionsTrait;
 use yii\gii\CodeFile;
 use yii\gii\Generator as YiiGenerator;
 use yii\helpers\ArrayHelper;
-use yii\web\IdentityInterface;
 
 /**
  * Generates a migration which stores current permission data

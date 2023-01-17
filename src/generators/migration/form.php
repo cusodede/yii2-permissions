@@ -11,7 +11,7 @@ use yii\web\View;
 
 ?>
 <div class="module-form">
-	<?= $form->field($generator, 'includePermissions')->checkbox(); ?>
-	<?= $form->field($generator, 'includePermissionsCollections')->checkbox(); ?>
-	<?= $form->field($generator, 'includeUserAccounts')->checkbox(); ?>
+	<?= $form->field($generator, 'includePermissions')->checkbox() ?>
+	<?= $form->field($generator, 'includePermissionsCollections')->checkbox() ?>
+	<?= $form->field($generator, 'includeUserAccounts')->checkbox() ?>
 </div>
