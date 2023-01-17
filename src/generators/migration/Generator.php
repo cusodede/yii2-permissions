@@ -78,7 +78,7 @@ class Generator extends YiiGenerator {
 			$codeLines = [];
 			/** @var PermissionsCollections $permissionCollection */
 			foreach (PermissionsCollections::find()->all() as $permissionCollection) {
-				$names = ArrayHelper::getColumn($permissionCollection->relatedSlavePermissionsCollections, 'name');
+				if ([] === $names = ArrayHelper::getColumn($permissionCollection->relatedSlavePermissionsCollections, 'name')) continue;
 				$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE));
 				$codeLines[] = implode("\n\t\t", [
 					"\$collection = PermissionsCollections::find()->where(['name' => '{$permissionCollection->name}'])->one();",
@@ -100,7 +100,7 @@ class Generator extends YiiGenerator {
 				$codeLines = [];
 				/** @var PermissionsCollections $permissionCollection */
 				foreach (PermissionsCollections::find()->all() as $permissionCollection) {
-					$names = ArrayHelper::getColumn($permissionCollection->relatedPermissions, 'name');
+					if ([] === $names = ArrayHelper::getColumn($permissionCollection->relatedPermissions, 'name')) continue;
 					$names = str_replace(['{', '}'], ['[', ']'], json_encode($names, JSON_UNESCAPED_UNICODE));
 					$codeLines[] = implode("\n\t\t", [
 						"\$collection = PermissionsCollections::find()->where(['name' => '{$permissionCollection->name}'])->one();",
