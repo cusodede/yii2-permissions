@@ -27,7 +27,7 @@ class Generator extends YiiGenerator {
 		return [
 			'includePermissions' => 'Create atomic permissions migration',
 			'includePermissionsCollections' => 'Create permissions collections migration',
-			'includeUserAccounts' => 'Create migration with relations to users accounts'
+			'includeRelationsToUserAccounts' => 'Create migration with relations to users accounts'
 		];
 	}
 
