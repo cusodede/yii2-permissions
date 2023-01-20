@@ -245,7 +245,7 @@ class Generator extends YiiGenerator {
 	 * @param bool $includeRelationsToUserAccounts
 	 */
 	public function setIncludeRelationsToUserAccounts(bool $includeRelationsToUserAccounts):void {
-		$this->includeRelationsToUserAccounts = $includeRelationsToUserAccounts;
+		$this->_includeRelationsToUserAccounts = $includeRelationsToUserAccounts;
 	}
 
 	/**
