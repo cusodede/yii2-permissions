@@ -19,7 +19,7 @@ use app\components\db\Migration;
 use cusodede\permissions\models\PermissionsCollections;
 
 /**
-* Class <?= $className."php\n" ?>
+* Class <?= $className ?>
 */
 class <?= $className ?> extends Migration {
 	/**

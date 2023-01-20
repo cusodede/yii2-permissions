@@ -59,10 +59,12 @@ class Generator extends YiiGenerator {
 			array_walk($permissionsData, static function(&$a, $k) {
 				unset($a['id']);
 			});
+			$columnsData = array_keys(ArrayHelper::getValue($permissionsData, 0, []));
 			$permissions = static::array2php($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
+			$columns = static::array2php($columnsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 			$files[] = new CodeFile(
-				$className,
-				$this->render('permissions_migration.php', compact('className', 'permissions')),
+				$className.".php",
+				$this->render('permissions_migration.php', compact('className', 'columns', 'permissions')),
 				['path' => $this->savePath]
 			);
 		}
@@ -73,10 +75,12 @@ class Generator extends YiiGenerator {
 			array_walk($permissionsData, static function(&$a, $k) {
 				unset($a['id']);
 			});
+			$columnsData = array_keys(ArrayHelper::getValue($permissionsData, 0, []));
 			$permissions_collections = static::array2php($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
+			$columns = static::array2php($columnsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 			$files[] = new CodeFile(
 				$className,
-				$this->render('permissions_collections_migration.php', compact('className', 'permissions_collections'))
+				$this->render('permissions_collections_migration.php', compact('className', 'columns', 'permissions_collections'))
 			);
 
 			$className = $this->getMigrationFileName('_permissions_collections_to_collections');
@@ -93,7 +97,7 @@ class Generator extends YiiGenerator {
 			}
 
 			$files[] = new CodeFile(
-				$className,
+				$className.".php",
 				$this->render('permissions_collections_to_permissions_collections_migration.php', [
 					'className' => $className,
 					'code' => implode("\n\t\t", $codeLines)
@@ -115,7 +119,7 @@ class Generator extends YiiGenerator {
 				}
 
 				$files[] = new CodeFile(
-					$className,
+					$className.".php",
 					$this->render('permissions_collections_to_permissions_migration.php', [
 						'className' => $className,
 						'code' => implode("\n\t\t", $codeLines)
@@ -139,7 +143,7 @@ class Generator extends YiiGenerator {
 			}
 
 			$files[] = new CodeFile(
-				$className,
+				$className.".php",
 				$this->render('users_to_permissions_migration.php', [
 					'className' => $className,
 					'code' => implode("\n\t\t", $codeLines)
@@ -160,7 +164,7 @@ class Generator extends YiiGenerator {
 			}
 
 			$files[] = new CodeFile(
-				$className,
+				$className.".php",
 				$this->render('users_to_permissions_collections_migration.php', [
 					'className' => $className,
 					'code' => implode("\n\t\t", $codeLines)
@@ -184,6 +188,6 @@ class Generator extends YiiGenerator {
 	 * @return string
 	 */
 	private static function array2php(array $data, int $params = JSON_UNESCAPED_UNICODE):string {
-		return str_replace(['{', '}', ':', '....'], ['[', ']', " =>", "\t"], json_encode($data, $params));
+		return str_replace(['{', '}', ':', '    '], ['[', ']', " =>", "\t"], json_encode($data, $params));
 	}
 }
