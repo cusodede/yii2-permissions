@@ -14,4 +14,5 @@ use yii\web\View;
 	<?= $form->field($generator, 'includePermissions')->checkbox() ?>
 	<?= $form->field($generator, 'includePermissionsCollections')->checkbox() ?>
 	<?= $form->field($generator, 'includeRelationsToUserAccounts')->checkbox() ?>
+	<?= $form->field($generator, 'savePath')->textInput() ?>
 </div>
