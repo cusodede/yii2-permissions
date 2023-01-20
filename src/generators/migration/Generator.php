@@ -79,7 +79,7 @@ class Generator extends YiiGenerator {
 			$permissions_collections = static::array2php($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 			$columns = static::array2php($columnsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 			$files[] = new CodeFile(
-				$className,
+				$className.".php",
 				$this->render('permissions_collections_migration.php', compact('className', 'columns', 'permissions_collections'))
 			);
 
