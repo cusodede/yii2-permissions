@@ -27,6 +27,16 @@ class Generator extends YiiGenerator {
 	protected string $_savePath = '@app/migrations';
 
 	/**
+	 * @inheritDoc
+	 */
+	public function rules():array {
+		return [
+			[['includePermissions', 'includePermissionsCollections', 'includeRelationsToUserAccounts'], 'boolean'],
+			[['savePath'], 'string']
+		];
+	}
+
+	/**
 	 * {@inheritdoc}
 	 */
 	public function attributeLabels():array {
