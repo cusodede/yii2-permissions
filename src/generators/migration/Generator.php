@@ -13,13 +13,17 @@ use yii\helpers\ArrayHelper;
 
 /**
  * Generates a migration which stores current permission data
+ * @property bool $includePermissions
+ * @property bool $includePermissionsCollections
+ * @property bool $includeRelationsToUserAccounts
+ * @property string $savePath
+ *
  */
 class Generator extends YiiGenerator {
-
-	public bool $includePermissions = true;
-	public bool $includePermissionsCollections = true;
-	public bool $includeRelationsToUserAccounts = true;
-	public string $savePath = '@app/migrations';
+	protected bool $_includePermissions = true;
+	protected bool $_includePermissionsCollections = true;
+	protected bool $_includeRelationsToUserAccounts = true;
+	protected string $_savePath = '@app/migrations';
 
 	/**
 	 * {@inheritdoc}
@@ -189,5 +193,54 @@ class Generator extends YiiGenerator {
 	 */
 	private static function array2php(array $data, int $params = JSON_UNESCAPED_UNICODE):string {
 		return str_replace(['{', '}', '": ', '    '], ['[', ']', '" => ', "\t"], json_encode($data, $params));
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getIncludePermissions():bool {
+		return $this->_includePermissions;
+	}
+
+	/**
+	 * @param bool $includePermissions
+	 */
+	public function setIncludePermissions(bool $includePermissions):void {
+		$this->_includePermissions = $includePermissions;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getIncludePermissionsCollections():bool {
+		return $this->_includePermissionsCollections;
+	}
+
+	/**
+	 * @param bool $includePermissionsCollections
+	 */
+	public function setIncludePermissionsCollections(bool $includePermissionsCollections):void {
+		$this->_includePermissionsCollections = $includePermissionsCollections;
+	}
+
+	/**
+	 * @return bool
+	 */
+	public function getIncludeRelationsToUserAccounts():bool {
+		return $this->_includeRelationsToUserAccounts;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getSavePath():string {
+		return $this->_savePath;
+	}
+
+	/**
+	 * @param string $savePath
+	 */
+	public function setSavePath(string $savePath):void {
+		$this->_savePath = $savePath;
 	}
 }
