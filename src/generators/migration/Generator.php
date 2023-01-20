@@ -242,6 +242,13 @@ class Generator extends YiiGenerator {
 	}
 
 	/**
+	 * @param bool $includeRelationsToUserAccounts
+	 */
+	public function setIncludeRelationsToUserAccounts(bool $includeRelationsToUserAccounts):void {
+		$this->includeRelationsToUserAccounts = $includeRelationsToUserAccounts;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getSavePath():string {
@@ -254,4 +261,6 @@ class Generator extends YiiGenerator {
 	public function setSavePath(string $savePath):void {
 		$this->_savePath = $savePath;
 	}
+
+
 }
