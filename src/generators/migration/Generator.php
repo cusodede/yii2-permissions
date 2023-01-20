@@ -7,6 +7,7 @@ use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\PermissionsModule;
 use cusodede\permissions\traits\UsersPermissionsTrait;
+use Yii;
 use yii\gii\CodeFile;
 use yii\gii\Generator as YiiGenerator;
 use yii\helpers\ArrayHelper;
@@ -78,7 +79,7 @@ class Generator extends YiiGenerator {
 			$permissions = static::array2php($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 			$columns = static::array2php($columnsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 			$files[] = new CodeFile(
-				FileHelper::normalizePath(sprintf("%s%s%s.php", $this->savePath, DIRECTORY_SEPARATOR, $className)),
+				Yii::getAlias(FileHelper::normalizePath(sprintf("%s%s%s.php", $this->savePath, DIRECTORY_SEPARATOR, $className))),
 				$this->render('permissions_migration.php', compact('className', 'columns', 'permissions')),
 				['path' => $this->savePath]
 			);
@@ -94,7 +95,7 @@ class Generator extends YiiGenerator {
 			$permissions_collections = static::array2php($permissionsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 			$columns = static::array2php($columnsData, JSON_UNESCAPED_UNICODE + JSON_PRETTY_PRINT);
 			$files[] = new CodeFile(
-				FileHelper::normalizePath(sprintf("%s%s%s.php", $this->savePath, DIRECTORY_SEPARATOR, $className)),
+				Yii::getAlias(FileHelper::normalizePath(sprintf("%s%s%s.php", $this->savePath, DIRECTORY_SEPARATOR, $className))),
 				$this->render('permissions_collections_migration.php', compact('className', 'columns', 'permissions_collections'))
 			);
 
@@ -112,7 +113,7 @@ class Generator extends YiiGenerator {
 			}
 
 			$files[] = new CodeFile(
-				FileHelper::normalizePath(sprintf("%s%s%s.php", $this->savePath, DIRECTORY_SEPARATOR, $className)),
+				Yii::getAlias(FileHelper::normalizePath(sprintf("%s%s%s.php", $this->savePath, DIRECTORY_SEPARATOR, $className))),
 				$this->render('permissions_collections_to_permissions_collections_migration.php', [
 					'className' => $className,
 					'code' => implode("\n\t\t", $codeLines)
@@ -134,7 +135,7 @@ class Generator extends YiiGenerator {
 				}
 
 				$files[] = new CodeFile(
-					FileHelper::normalizePath(sprintf("%s%s%s.php", $this->savePath, DIRECTORY_SEPARATOR, $className)),
+					Yii::getAlias(FileHelper::normalizePath(sprintf("%s%s%s.php", $this->savePath, DIRECTORY_SEPARATOR, $className))),
 					$this->render('permissions_collections_to_permissions_migration.php', [
 						'className' => $className,
 						'code' => implode("\n\t\t", $codeLines)
