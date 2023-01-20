@@ -25,6 +25,7 @@
 	},
 	"require-dev": {
 		"yiisoft/yii2": "dev-master",
+		"yiisoft/yii2-gii" : "dev-master",
 		"phpunit/phpunit": "^9.5",
 		"codeception/codeception": "^4.1",
 		"codeception/module-asserts": "^1.3",
