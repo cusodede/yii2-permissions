@@ -188,6 +188,6 @@ class Generator extends YiiGenerator {
 	 * @return string
 	 */
 	private static function array2php(array $data, int $params = JSON_UNESCAPED_UNICODE):string {
-		return str_replace(['{', '}', ':', '    '], ['[', ']', " =>", "\t"], json_encode($data, $params));
+		return str_replace(['{', '}', '": ', '    '], ['[', ']', '" => ', "\t"], json_encode($data, $params));
 	}
 }
