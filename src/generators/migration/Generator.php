@@ -158,7 +158,7 @@ class Generator extends YiiGenerator {
 				$names = static::array2php($names);
 				$codeLines[] = implode("\n\t\t", [
 					"\$user = PermissionsModule::UserIdentityClass()::find()->where(['id' => '{$user->id}'])->one();",
-					"\$user->relatedPermissions = PermissionsCollections::find()->where(['name' => {$names}])->all();",
+					"\$user->relatedPermissionsCollections = PermissionsCollections::find()->where(['name' => {$names}])->all();",
 					"\$user->save();"
 				]);
 			}
