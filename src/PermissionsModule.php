@@ -8,6 +8,7 @@ use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use cusodede\permissions\traits\UsersPermissionsTrait;
 use pozitronik\helpers\ArrayHelper;
+use pozitronik\helpers\CacheHelper;
 use pozitronik\helpers\ControllerHelper;
 use pozitronik\helpers\ModuleHelper;
 use pozitronik\traits\traits\ModuleTrait;
@@ -143,6 +144,38 @@ class PermissionsModule extends Module {
 			});
 		}
 		return $result;
+	}
+
+	/**
+	 * Collects all registered controllers paths and returns them, grouped by modules.
+	 * @return string[]
+	 * @throws InvalidConfigException
+	 * @throws Throwable
+	 */
+	public static function GetRegisteredControllersList():array {
+		$cacheKey = CacheHelper::MethodSignature(__METHOD__, func_get_args());
+		return static::Cache()->getOrSet($cacheKey, function() {
+			$registeredRoutes = Permissions::find()
+				->distinct()
+				->select(['module', 'controller'])
+				->where(['not', ['controller' => null]])
+				->orderBy(['module' => SORT_ASC, 'controller' => SORT_ASC])
+				->asArray()
+				->all();
+			$appRoutes = [];
+			$moduleRoutes = [];
+			foreach ($registeredRoutes as $route) {
+				$module = $route['module'];
+				$controller = $route['controller'];
+				if (null === $module) {
+					$appRoutes['@app'][$controller] = $controller;
+				} else {
+					$moduleRoutes["@{$module}"][$controller] = $module.'/'.$controller;
+				}
+			}
+			//made app controllers at the top
+			return ($appRoutes + $moduleRoutes);
+		});
 	}
 
 	/**
