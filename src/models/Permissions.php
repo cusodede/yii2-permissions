@@ -175,6 +175,9 @@ class Permissions extends PermissionsAR {
 				TagDependency::invalidate(PermissionsModule::Cache(), [CacheHelper::MethodSignature('Users::allPermissions', ['id' => $userId])]);
 			}
 		}
+		if ([] !== array_intersect(['controller', 'module'], $changedAttributes)) {
+			TagDependency::invalidate(PermissionsModule::Cache(), [PermissionsModule::REGISTERED_CONTROLLERS_LIST]);
+		}
 		parent::afterSave($insert, $changedAttributes);
 		$this->refresh();
 	}
