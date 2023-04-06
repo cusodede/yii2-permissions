@@ -349,4 +349,14 @@ class PermissionsModule extends Module {
 			}
 		}
 	}
+
+	/**
+	 * Returns the sorted list of all modules names, required by inline editor
+	 * @return array
+	 */
+	public static function GetModulesList():array {
+		$modules = array_keys(Yii::$app->modules);
+		sort($modules);
+		return array_combine($modules, $modules);
+	}
 }

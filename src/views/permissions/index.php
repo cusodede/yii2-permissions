@@ -132,6 +132,27 @@ $id = 'permissions-index-grid';
 			[
 				'class' => EditableColumn::class,
 				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
+					'valueIfNull' => '',
+					'formOptions' => [
+						'action' => PermissionsModule::to('permissions/editDefault'),
+					],
+					'inputType' => Editable::INPUT_SELECT2,
+					'options' => [
+						'data' => PermissionsModule::GetModulesList(),
+						'pluginOptions' => [
+							'multiple' => false,
+							'allowClear' => true,
+							'placeholder' => '',
+							'tags' => true
+						]
+					]
+				],
+				'attribute' => 'module',
+				'format' => 'text'
+			],
+			[
+				'class' => EditableColumn::class,
+				'editableOptions' => static fn(Permissions $permission, int $key, int $index) => [
 					'valueIfNull' => '*',
 					'formOptions' => [
 						'action' => PermissionsModule::to('permissions/editDefault')
@@ -158,12 +179,6 @@ $id = 'permissions-index-grid';
 				]),
 				'attribute' => 'verb',
 				'format' => 'text'
-			],
-			[
-				'class' => DataColumn::class,
-				'attribute' => 'module',
-				'format' => 'raw',
-				'value' => static fn(Permissions $permission):string => $permission->module??''
 			],
 			[
 				'class' => DataColumn::class,
