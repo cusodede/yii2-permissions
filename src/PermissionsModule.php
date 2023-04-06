@@ -178,7 +178,7 @@ class PermissionsModule extends Module {
 			}
 			//made app controllers at the top
 			return ($appRoutes + $moduleRoutes);
-		}, null, new TagDependency(static::REGISTERED_CONTROLLERS_LIST));
+		}, null, new TagDependency(['tags' => static::REGISTERED_CONTROLLERS_LIST]));
 	}
 
 	/**
