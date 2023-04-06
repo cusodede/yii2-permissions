@@ -20,6 +20,7 @@ use yii\base\Module;
 use yii\base\NotSupportedException;
 use yii\base\UnknownClassException;
 use yii\caching\CacheInterface;
+use yii\caching\TagDependency;
 use yii\console\Application as ConsoleApplication;
 use yii\db\ActiveRecordInterface;
 use yii\db\StaleObjectException;
@@ -31,6 +32,8 @@ use yii\web\IdentityInterface;
  */
 class PermissionsModule extends Module {
 	use ModuleTrait;
+
+	public const REGISTERED_CONTROLLERS_LIST = 'REGISTERED_CONTROLLERS_LIST';
 
 	public $controllerPath = '@vendor/cusodede/yii2-permissions/src/controllers';
 
@@ -175,7 +178,7 @@ class PermissionsModule extends Module {
 			}
 			//made app controllers at the top
 			return ($appRoutes + $moduleRoutes);
-		});
+		}, null, new TagDependency(static::REGISTERED_CONTROLLERS_LIST));
 	}
 
 	/**
