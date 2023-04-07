@@ -26,6 +26,7 @@ class DefaultControllerCest {
 		Yii::$app->setModule('permissions', [
 			'class' => PermissionsModule::class,
 			'params' => [
+				'enablePathWarnFlag' => true,
 				'viewPath' => [
 					'default' => './src/views/default',
 					'permissions' => './src/views/permissions',
