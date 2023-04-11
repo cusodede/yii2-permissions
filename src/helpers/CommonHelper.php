@@ -105,13 +105,14 @@ class CommonHelper {
 
 	/**
 	 * Gets controller class filename by its id and module
-	 * @param string $controllerId
+	 * @param string|null $controllerId
 	 * @param string|null $moduleId
 	 * @return string|null
 	 * @throws InvalidConfigException
 	 * @throws Throwable
 	 */
-	public static function GetControllerClassFileByControllerId(string $controllerId, ?string $moduleId = null):?string {
+	public static function GetControllerClassFileByControllerId(?string $controllerId, ?string $moduleId = null):?string {
+		if (null === $controllerId) return null;
 		$module = (null === $moduleId)?Yii::$app:ModuleHelper::GetModuleById($moduleId);
 		if (null === $module) throw new InvalidConfigException("Module $moduleId not found or module not configured properly.");
 		$controllerId = implode('', array_map('ucfirst', preg_split('/-/', $controllerId, -1, PREG_SPLIT_NO_EMPTY)));
@@ -137,7 +138,6 @@ class CommonHelper {
 		}
 		return static::IsControllerHasActionMethod($controllerReflection, ControllerHelper::GetActionRequestName($actionName));
 	}
-
 	/**
 	 * @param ReflectionClass $controllerReflection
 	 * @param string $actionName

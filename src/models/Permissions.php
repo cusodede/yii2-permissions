@@ -195,23 +195,27 @@ class Permissions extends PermissionsAR {
 	 * @param null|string $controllerPath
 	 */
 	public function setControllerPath(?string $controllerPath):void {
-		if (null === $controllerPath || '' === $controllerPath) {
-			$this->module = null;
-			$this->controller = null;
-			return;
-		}
+		[$this->module, $this->controller] = static::SplitControllerPath($controllerPath);
+	}
+
+	/**
+	 * @param string|null $controllerPath
+	 * @return array<null|string,null|string> 0 => module, 1 => controller
+	 */
+	public static function SplitControllerPath(?string $controllerPath):array {
+		$result = [null, null];
+		if (null === $controllerPath || '' === $controllerPath) return $result;
 		if (('@' === $controllerPath[0]) && (false !== $divisor = strpos($controllerPath, '/'))) {//consider this as module path
-			if (Yii::$app->id === $this->module = substr($controllerPath, 1, $divisor - 1)) $this->module = null;
-			if ('' === $this->module) {//@/some
-				$this->module = null;
-				$this->controller = null;
-				return;
+			if (Yii::$app->id === $result[0] = substr($controllerPath, 1, $divisor - 1)) $result[0] = null;
+			if ('' === $result[0]) {//@/some
+				return $result;
 			}
-			$this->controller = substr($controllerPath, $divisor + 1);
+			$result[1] = substr($controllerPath, $divisor + 1);
 		} else {
-			$this->module = null;
-			$this->controller = $controllerPath;
+			$result[0] = null;
+			$result[1] = $controllerPath;
 		}
+		return $result;
 	}
 
 	/**
