@@ -11,6 +11,7 @@ use cusodede\permissions\PermissionsModule;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\CacheHelper;
 use Throwable;
+use Yii;
 use yii\base\InvalidConfigException;
 use yii\caching\TagDependency;
 
@@ -186,22 +187,35 @@ class Permissions extends PermissionsAR {
 	 * @return string|null
 	 */
 	public function getControllerPath():?string {
-		return (null === $this->module)?$this->controller:"{$this->module}/{$this->controller}";
+		return (null === $this->module)?$this->controller:"@{$this->module}/{$this->controller}";
 	}
 
 	/**
+	 * Accepts controller path, and split it to module/application path, depending of @ symbol at the start of the path
 	 * @param null|string $controllerPath
 	 */
 	public function setControllerPath(?string $controllerPath):void {
-		$this->module = null;
-		$this->controller = $controllerPath;/*by default*/
-		/*Если контроллер пришёл в виде foo/bar или @foo/bar - foo указывает на модуль*/
-		if ((!empty($path = explode('/', $this->controller))) && 2 === count($path)) {
-			/** @var array $matches */
-			$this->module = $path[0];
-			$this->module = '@' === $this->module[0]?substr($this->module, 1):$this->module;//strip @ if presents
-			$this->controller = $path[1];
+		[$this->module, $this->controller] = static::SplitControllerPath($controllerPath);
+	}
+
+	/**
+	 * @param string|null $controllerPath
+	 * @return array<null|string,null|string> 0 => module, 1 => controller
+	 */
+	public static function SplitControllerPath(?string $controllerPath):array {
+		$result = [null, null];
+		if (null === $controllerPath || '' === $controllerPath) return $result;
+		if (('@' === $controllerPath[0]) && (false !== $divisor = strpos($controllerPath, '/'))) {//consider this as module path
+			if (Yii::$app->id === $result[0] = substr($controllerPath, 1, $divisor - 1)) $result[0] = null;
+			if ('' === $result[0]) {//@/some
+				return [null, null];
+			}
+			$result[1] = substr($controllerPath, $divisor + 1);
+		} else {
+			$result[0] = null;
+			$result[1] = $controllerPath;
 		}
+		return $result;
 	}
 
 	/**

@@ -25,7 +25,7 @@ use yii\web\View;
 	<div class="col-md-12">
 		<?= $form->field($model, 'controllerPath')->widget(Select2::class, [
 			'options' => ['id' => 'controller-path'],
-			'data' => PermissionsModule::GetRegisteredControllersList(),
+			'data' => PermissionsModule::GetRegisteredControllerPathsList(),
 			'pluginOptions' => [
 				'multiple' => false,
 				'allowClear' => true,
@@ -61,19 +61,6 @@ use yii\web\View;
 	<div class="col-md-12">
 		<?= $form->field($model, 'verb')->widget(Select2::class, [
 			'data' => PermissionsModule::VERBS,
-			'pluginOptions' => [
-				'multiple' => false,
-				'allowClear' => true,
-				'placeholder' => '',
-				'tags' => true
-			]
-		]) ?>
-	</div>
-</div>
-<div class="row">
-	<div class="col-md-12">
-		<?= $form->field($model, 'module')->widget(Select2::class, [
-			'data' => PermissionsModule::GetModulesList(),
 			'pluginOptions' => [
 				'multiple' => false,
 				'allowClear' => true,

@@ -224,4 +224,68 @@ class PermissionsTest extends Unit {
 		$this::assertCount(3, $generatedPermissionsCollections);
 	}
 
+	/**
+	 * @return void
+	 */
+	public function testSetControllerPath():void {
+		$permission = new Permissions();
+		$permission->controllerPath = 'app_controller';
+		static::assertNull($permission->module);
+		static::assertEquals('app_controller', $permission->controller);
+
+		$permission->controllerPath = 'sub_folder/app_controller';
+		static::assertNull($permission->module);
+		static::assertEquals('sub_folder/app_controller', $permission->controller);
+
+		$permission->controllerPath = 'folder/sub_folder/app_controller';
+		static::assertNull($permission->module);
+		static::assertEquals('folder/sub_folder/app_controller', $permission->controller);
+
+		$permission->controllerPath = '@module/module_controller';
+		static::assertEquals('module', $permission->module);
+		static::assertEquals('module_controller', $permission->controller);
+
+		$permission->controllerPath = '@module/sub_folder/module_controller';
+		static::assertEquals('module', $permission->module);
+		static::assertEquals('sub_folder/module_controller', $permission->controller);
+
+		$permission->controllerPath = '@'.Yii::$app->id.'/sub_folder/app_controller';
+		static::assertNull($permission->module);
+		static::assertEquals('sub_folder/app_controller', $permission->controller);
+
+		$permission = new Permissions();
+		$permission->controllerPath = '@/sub_folder/app_controller';
+		static::assertNull($permission->module);
+		static::assertNull($permission->controller);
+
+		$permission = new Permissions();
+		$permission->controllerPath = '';
+		static::assertNull($permission->module);
+		static::assertNull($permission->controller);
+	}
+
+	/**
+	 * @return void
+	 */
+	public function testGetControllerPath():void {
+		$permission = new Permissions();
+
+		$permission->controller = 'app_controller';
+		static::assertEquals('app_controller', $permission->controllerPath);
+
+		$permission->controller = 'sub_folder/app_controller';
+		static::assertEquals('sub_folder/app_controller', $permission->controllerPath);
+
+		$permission->controller = 'folder/sub_folder/app_controller';
+		static::assertEquals('folder/sub_folder/app_controller', $permission->controllerPath);
+
+		$permission->module = 'module';
+		$permission->controller = 'module_controller';
+		static::assertEquals('@module/module_controller', $permission->controllerPath);
+
+		$permission->module = 'module';
+		$permission->controller = 'sub_folder/module_controller';
+		static::assertEquals('@module/sub_folder/module_controller', $permission->controllerPath);
+	}
+
 }
