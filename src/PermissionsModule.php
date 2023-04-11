@@ -173,7 +173,7 @@ class PermissionsModule extends Module {
 				if (null === $module) {
 					$appRoutes['@app'][$controller] = $controller;
 				} else {
-					$moduleRoutes["@{$module}"]["@{$module}/{$controller}"] = "{$module}/{$controller}";
+					$moduleRoutes["@{$module}"]["@{$module}/{$controller}"] = $controller;
 				}
 			}
 			//made app controllers at the top
