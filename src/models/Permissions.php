@@ -11,6 +11,7 @@ use cusodede\permissions\PermissionsModule;
 use pozitronik\helpers\ArrayHelper;
 use pozitronik\helpers\CacheHelper;
 use Throwable;
+use Yii;
 use yii\base\InvalidConfigException;
 use yii\caching\TagDependency;
 
@@ -196,8 +197,9 @@ class Permissions extends PermissionsAR {
 	public function setControllerPath(?string $controllerPath):void {
 		if (null === $controllerPath) return;
 		if (('@' === $controllerPath[0]) && (false !== $divisor = strpos($controllerPath, '/'))) {//consider this as module path
-			$this->module = substr($controllerPath, 1, $divisor - 1);
-			$this->controller = substr($controllerPath, $divisor+1);
+			if (Yii::$app->id === $this->module = substr($controllerPath, 1, $divisor - 1)) $this->module = null;
+
+			$this->controller = substr($controllerPath, $divisor + 1);
 		} else {
 			$this->module = null;
 			$this->controller = $controllerPath;
