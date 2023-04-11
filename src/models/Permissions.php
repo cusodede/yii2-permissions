@@ -186,21 +186,21 @@ class Permissions extends PermissionsAR {
 	 * @return string|null
 	 */
 	public function getControllerPath():?string {
-		return (null === $this->module)?$this->controller:"{$this->module}/{$this->controller}";
+		return (null === $this->module)?$this->controller:"@{$this->module}/{$this->controller}";
 	}
 
 	/**
+	 * Accepts controller path, and split it to module/application path, depending of @ symbol at the start of the path
 	 * @param null|string $controllerPath
 	 */
 	public function setControllerPath(?string $controllerPath):void {
-		$this->module = null;
-		$this->controller = $controllerPath;/*by default*/
-		/*Если контроллер пришёл в виде foo/bar или @foo/bar - foo указывает на модуль*/
-		if ((!empty($path = explode('/', $this->controller))) && 2 === count($path)) {
-			/** @var array $matches */
-			$this->module = $path[0];
-			$this->module = '@' === $this->module[0]?substr($this->module, 1):$this->module;//strip @ if presents
-			$this->controller = $path[1];
+		if (null === $controllerPath) return;
+		if (('@' === $controllerPath[0]) && (false !== $divisor = strpos($controllerPath, '/'))) {//consider this as module path
+			$this->module = substr($controllerPath, 1, $divisor - 1);
+			$this->controller = substr($controllerPath, $divisor+1);
+		} else {
+			$this->module = null;
+			$this->controller = $controllerPath;
 		}
 	}
 
