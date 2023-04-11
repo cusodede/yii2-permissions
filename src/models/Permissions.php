@@ -208,7 +208,7 @@ class Permissions extends PermissionsAR {
 		if (('@' === $controllerPath[0]) && (false !== $divisor = strpos($controllerPath, '/'))) {//consider this as module path
 			if (Yii::$app->id === $result[0] = substr($controllerPath, 1, $divisor - 1)) $result[0] = null;
 			if ('' === $result[0]) {//@/some
-				return $result;
+				return [null, null];
 			}
 			$result[1] = substr($controllerPath, $divisor + 1);
 		} else {
