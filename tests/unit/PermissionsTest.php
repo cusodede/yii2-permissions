@@ -252,6 +252,16 @@ class PermissionsTest extends Unit {
 		$permission->controllerPath = '@'.Yii::$app->id.'/sub_folder/app_controller';
 		static::assertNull($permission->module);
 		static::assertEquals('sub_folder/app_controller', $permission->controller);
+
+		$permission = new Permissions();
+		$permission->controllerPath = '@/sub_folder/app_controller';
+		static::assertNull($permission->module);
+		static::assertNull($permission->controller);
+
+		$permission = new Permissions();
+		$permission->controllerPath = '';
+		static::assertNull($permission->module);
+		static::assertNull($permission->controller);
 	}
 
 	/**

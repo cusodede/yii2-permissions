@@ -195,10 +195,14 @@ class Permissions extends PermissionsAR {
 	 * @param null|string $controllerPath
 	 */
 	public function setControllerPath(?string $controllerPath):void {
-		if (null === $controllerPath) return;
+		if (null === $controllerPath || '' === $controllerPath) return;
 		if (('@' === $controllerPath[0]) && (false !== $divisor = strpos($controllerPath, '/'))) {//consider this as module path
 			if (Yii::$app->id === $this->module = substr($controllerPath, 1, $divisor - 1)) $this->module = null;
-
+			if ('' === $this->module) {//@/some
+				$this->module = null;
+				$this->controller = null;
+				return;
+			}
 			$this->controller = substr($controllerPath, $divisor + 1);
 		} else {
 			$this->module = null;
