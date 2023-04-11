@@ -25,7 +25,7 @@ use yii\web\View;
 	<div class="col-md-12">
 		<?= $form->field($model, 'controllerPath')->widget(Select2::class, [
 			'options' => ['id' => 'controller-path'],
-			'data' => PermissionsModule::GetRegisteredControllersList(),
+			'data' => PermissionsModule::GetRegisteredControllerPathsList(),
 			'pluginOptions' => [
 				'multiple' => false,
 				'allowClear' => true,

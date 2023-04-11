@@ -155,7 +155,7 @@ class PermissionsModule extends Module {
 	 * @throws InvalidConfigException
 	 * @throws Throwable
 	 */
-	public static function GetRegisteredControllersList():array {
+	public static function GetRegisteredControllerPathsList():array {
 		$cacheKey = CacheHelper::MethodSignature(__METHOD__, func_get_args());
 		return static::Cache()->getOrSet($cacheKey, function() {
 			$registeredRoutes = Permissions::find()
