@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 
 use app\models\Users;
+use app\modules\partner_storage\PartnerStorageModule;
 use app\modules\test\TestModule;
 use kartik\grid\Module as GridModule;
 use pozitronik\grid_config\GridConfigModule;
@@ -32,6 +33,9 @@ $config = [
 		],
 		'test' => [
 			'class' => TestModule::class
+		],
+		'partner-storage' => [
+			'class' => PartnerStorageModule::class,
 		],
 	],
 	'components' => [
