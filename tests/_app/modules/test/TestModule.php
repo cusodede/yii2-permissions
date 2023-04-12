@@ -6,7 +6,7 @@ namespace app\modules\test;
 use yii\base\Module;
 
 /**
- * Class ApiModule
+ * Class TestModule
  */
 class TestModule extends Module {
 
