@@ -2,6 +2,7 @@
 declare(strict_types = 1);
 
 use app\models\Users;
+use app\modules\partner_storage\controllers\agreement\subscription\BrandController;
 use Codeception\Test\Unit;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
@@ -112,7 +113,8 @@ class PermissionsTest extends Unit {
 			}, static function(PermissionsCollections $permissionsCollection, bool $saved) use (&$generatedPermissionsCollections) {
 				static::assertTrue($saved);
 				$generatedPermissionsCollections[] = $permissionsCollection;
-			});
+			}
+		);
 
 		/*Мы знаем, сколько сгенерится доступов и коллекций*/
 		$this::assertCount(15, $generatedPermissions);
@@ -286,6 +288,40 @@ class PermissionsTest extends Unit {
 		$permission->module = 'module';
 		$permission->controller = 'sub_folder/module_controller';
 		static::assertEquals('@module/sub_folder/module_controller', $permission->controllerPath);
+	}
+
+	/**
+	 * Проверяет корректность доступа ко вложенным контроллерам
+	 * @return void
+	 * @throws Exception
+	 * @throws Throwable
+	 */
+	public function testHasPermissionForSubFolderController():void {
+		$user = Users::CreateUser()->saveAndReturn();
+		$this::assertFalse($user->hasControllerPermission('index'));
+		$this::assertEmpty($user->relatedPermissions);
+
+		/*
+		 * Для этого теста используется контроллер tests/_app/modules/partner_storage/controllers/agreement/subscription/BrandController.php
+		 * внутри модуля PartnerStorageModule
+		 * */
+		PermissionsModule::InitControllersPermissions('@app/modules/partner_storage',
+			'partner-storage',
+			static function(Permissions $permission, bool $saved) use (&$generatedPermissions) {
+				static::assertTrue($saved);
+				$generatedPermissions[] = $permission;
+			}, static function(PermissionsCollections $permissionsCollection, bool $saved) use (&$generatedPermissionsCollections) {
+				static::assertTrue($saved);
+				$generatedPermissionsCollections[] = $permissionsCollection;
+			}
+		);
+
+		$this::assertCount(1, $generatedPermissions);
+		$this::assertCount(1, $generatedPermissionsCollections);
+
+		$this::assertFalse(BrandController::hasPermission('index', $user->id, 'partner-storage'));
+		$this::assertTrue($user->grantPermission('partner-storage:agreement/subscription/brand:index'));
+		$this::assertTrue(BrandController::hasPermission('index', $user->id, 'partner-storage'));
 	}
 
 }
