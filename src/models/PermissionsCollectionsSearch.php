@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace cusodede\permissions\models;
 
 use yii\data\ActiveDataProvider;
+use yii\db\Expression;
 
 /**
  * Class PermissionsCollectionsSearch
@@ -61,8 +62,8 @@ class PermissionsCollectionsSearch extends PermissionsCollections {
 	 */
 	private function filterData($query):void {
 		$query->andFilterWhere([self::tableName().'.id' => $this->id])
-			->andFilterWhere(['like', self::tableName().'.name', $this->name])
-			->andFilterWhere(['like', Permissions::tableName().'.name', $this->permission]);
+			->andFilterWhere(['like', new Expression('lower('.self::tableName().'.name)'), mb_strtolower($this->name)])
+			->andFilterWhere(['like', new Expression('lower('.Permissions::tableName().'.name)'), mb_strtolower($this->permission)]);
 	}
 
 	/**
