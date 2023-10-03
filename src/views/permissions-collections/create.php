@@ -9,7 +9,9 @@ declare(strict_types = 1);
 use cusodede\permissions\models\PermissionsCollections;
 use yii\web\View;
 use yii\bootstrap4\ActiveForm;
+use cusodede\permissions\assets\PermissionsCollectionsCreateAsset;
 
+PermissionsCollectionsCreateAsset::register($this);
 ?>
 
 <?php $form = ActiveForm::begin(); ?>

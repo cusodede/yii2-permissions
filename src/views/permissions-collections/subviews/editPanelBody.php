@@ -12,6 +12,7 @@ use cusodede\permissions\controllers\PermissionsCollectionsController;
 use cusodede\permissions\controllers\PermissionsController;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
+use cusodede\permissions\helpers\PermissionsCollectionsHelper;
 use yii\bootstrap4\ActiveForm;
 use kartik\switchinput\SwitchInput;
 use pozitronik\helpers\ArrayHelper;
@@ -50,6 +51,33 @@ use yii\web\View;
 		</div>
 	</div>
 </div>
+<?php if ([] !== $permissionsCollections = (PermissionsCollections::find()->where(null === $model->id?'1 = 1':['<>', 'id', $model->id])->all())): ?>
+	<?php if ($model->isNewRecord): ?>
+		<div class="row mt-2 mb-4">
+			<div class="col-md-10">
+				<div class="form-group">
+					<label class="control-label" for="copy-permission">Скопировать разрешения из группы доступов</label>
+					<?= Html::dropDownList(
+						'copy-permission',
+						[],
+						ArrayHelper::map($permissionsCollections, 'id', 'name'),
+						[
+							'class' => 'form-control',
+							'id' => 'copy-permission-select',
+							'prompt' => '',
+							'options' => PermissionsCollectionsHelper::getOptionsDataAttributes()
+						]
+					) ?>
+				</div>
+			</div>
+			<div class="col-md-2">
+				<div class="form-group">
+					<?= Html::button('Копировать', ['id' => 'copy-permission-btn', 'class' => 'btn btn-primary float-right mt-4']) ?>
+				</div>
+			</div>
+		</div>
+	<?php endif; ?>
+<?php endif; ?>
 <div class="row">
 	<div class="col-md-12">
 		<?= ([] === $permissions = Permissions::find()->all())/*Можно назначить только права из БД*/
@@ -62,9 +90,10 @@ use yii\web\View;
 			]) ?>
 	</div>
 </div>
-<div class="row">
+
+<div class="row mt-4">
 	<div class="col-md-12">
-		<?= ([] === $permissionsCollections = PermissionsCollections::find()->where(null === $model->id?'1 = 1':['<>', 'id', $model->id])->all())/*Проверяем, есть ли другие коллекции, кроме этой*/
+		<?= ([] === $permissionsCollections)
 			?Html::a('Сначала создайте другие группы доступов', PermissionsCollectionsController::to('index'), ['class' => 'btn btn-warning'])
 			:$form->field($model, 'relatedSlavePermissionsCollections')->widget(MultiSelectListBox::class, [
 				'options' => [
@@ -74,4 +103,5 @@ use yii\web\View;
 			]) ?>
 	</div>
 </div>
+
 
