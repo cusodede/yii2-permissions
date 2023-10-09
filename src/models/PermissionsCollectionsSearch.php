@@ -20,7 +20,8 @@ class PermissionsCollectionsSearch extends PermissionsCollections {
 	public function rules():array {
 		return [
 			['id', 'integer'],
-			[['name', 'permission'], 'string', 'max' => 128]
+			[['name', 'permission'], 'string', 'max' => 128],
+			[['name', 'permission'], 'default', 'value' => '']
 		];
 	}
 
