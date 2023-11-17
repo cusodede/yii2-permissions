@@ -233,6 +233,15 @@ trait UsersPermissionsTrait {
 	}
 
 	/**
+	 * Вернуть всех пользователей с перегруженными доступами
+	 * @return ActiveQuery
+	 * @throws Throwable
+	 */
+	public function allGrantedUsers():ActiveQuery {
+		return $this::find()->where(['id' => $this->isAllPermissionsGranted()]);
+	}
+
+	/**
 	 * Проверяет доступность url
 	 * @param string $url
 	 * @return bool
