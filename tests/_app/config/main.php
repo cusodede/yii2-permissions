@@ -46,7 +46,7 @@ $config = [
 			'class' => DummyCache::class,
 		],
 		'user' => [
-			'class' => Users::class,
+			'identityClass' => Users::class,
 			'enableAutoLogin' => true,
 		],
 		'errorHandler' => [
