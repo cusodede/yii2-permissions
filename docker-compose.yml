@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
     postgres:
         container_name: yii2_permissions_postgres
