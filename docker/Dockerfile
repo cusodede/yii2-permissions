@@ -1,9 +1,9 @@
-FROM php:8.1.14-fpm
+FROM php:8.4-fpm
 RUN apt-get update \
     && apt-get install -y nano vim wget git unzip zlib1g-dev libpng-dev libzip-dev libpq-dev \
-    && pecl install xdebug-3.1.2 \
+    && pecl install xdebug \
     && docker-php-ext-enable xdebug \
-    && printf "\n" | pecl install apcu-5.1.21 \
+    && printf "\n" | pecl install apcu \
     && docker-php-ext-enable apcu
 
 RUN docker-php-ext-install pdo bcmath zip gd sockets pdo_pgsql pgsql
