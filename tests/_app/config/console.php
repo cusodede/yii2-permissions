@@ -1,5 +1,6 @@
 <?php
 declare(strict_types = 1);
+use app\models\Users;
 use yii\caching\DummyCache;
 
 $db = require __DIR__.'/db.php';
@@ -21,6 +22,9 @@ $config = [
 	'components' => [
 		'cache' => [
 			'class' => DummyCache::class,
+		],
+		'user' => [
+			'class' => Users::class,
 		],
 		'db' => $db
 	],
