@@ -7,18 +7,19 @@
 
 actor: FunctionalTester
 modules:
-    enabled:
-        # add a framework module here
-        - \Helper\Functional
-        - Filesystem
-        - Asserts
-        - Yii2
-        - Db
-        - Cli
-        - REST:
-              depends: Yii2
-    step_decorators: ~
+  enabled:
+    # add a framework module here
+    - \Helper\Functional
+    - Filesystem
+    - Asserts
+    - Yii2:
+        configFile: './tests/_app/config/main.php'
+    - Db
+    - Cli
+    - REST:
+        depends: Yii2
+  step_decorators: ~
 extensions:
-    enabled:
-        - Codeception\Extension\RunFailed
-        - Extensions\DatabaseMigrationExtension
+  enabled:
+    - Codeception\Extension\RunFailed
+    - Extensions\DatabaseMigrationExtension
