@@ -40,10 +40,10 @@ class DefaultControllerCest {
 		]);
 
 		$I->amLoggedInAs($user);
-		$I->amOnRoute('permissions/default');
+		$I->amOnRoute('/permissions/default');
 		$I->seeResponseCodeIs(200);
 
-		$I->amOnRoute('permissions/default/init-controllers-permissions');
+		$I->amOnRoute('/permissions/default/init-controllers-permissions');
 
 		$allPermissions = Permissions::find()->all();
 		$allPermissionsCollections = PermissionsCollections::find()->all();
@@ -54,7 +54,7 @@ class DefaultControllerCest {
 
 		rename("{$appDir}/controllers_test", "{$appDir}/controllers_test_in_progress");
 
-		$I->amOnRoute('permissions/default/drop-unused-controllers-permissions', ['confirm' => true]);
+		$I->amOnRoute('/permissions/default/drop-unused-controllers-permissions', ['confirm' => true]);
 		//rename it back
 		rename("{$appDir}/controllers_test_in_progress", "{$appDir}/controllers_test");
 
