@@ -165,8 +165,8 @@ class UsersPermissionsTraitEdgeCasesTest extends Unit {
 	 * @throws Throwable
 	 */
 	public function testLargePermissionSetMemoryUsage(): void {
-		// Get initial permission count to account for existing permissions
-		$initialPermissionCount = count($this->testUser->allPermissions());
+		// Get initial config-based permissions count (setRelatedPermissions doesn't affect these)
+		$initialConfigPermissions = count(Permissions::allUserConfigurationPermissions($this->testUser->id));
 		
 		// ARRANGE: Create a large number of permissions
 		$largePermissionSet = [];
@@ -182,7 +182,7 @@ class UsersPermissionsTraitEdgeCasesTest extends Unit {
 		// Measure memory before
 		$memoryBefore = memory_get_usage(true);
 
-		// ACT: Grant all permissions
+		// ACT: Set permissions (replaces direct relations, keeps config-based)
 		$this->testUser->setRelatedPermissions($largePermissionSet);
 
 		// Get all permissions (this loads everything into memory)
@@ -197,9 +197,9 @@ class UsersPermissionsTraitEdgeCasesTest extends Unit {
 		$this::assertLessThan(50 * 1024 * 1024, $memoryUsed, 'Memory usage should be reasonable with large permission sets'); // 50MB threshold
 
 		// ASSERT: Functionality should still work correctly
-		// Account for any existing permissions (config-based or from other tests)
-		$expectedCount = $initialPermissionCount + 1000;
-		$this::assertCount($expectedCount, $allPermissions, "Should return all $expectedCount permissions (1000 created + $initialPermissionCount existing)");
+		// setRelatedPermissions replaces direct relations but preserves config-based permissions
+		$expectedCount = $initialConfigPermissions + 1000;
+		$this::assertCount($expectedCount, $allPermissions, "Should return all $expectedCount permissions (1000 direct + $initialConfigPermissions config-based)");
 		$this::assertTrue($this->testUser->hasPermission(['large_set_permission_500']));
 		$this::assertFalse($this->testUser->hasPermission(['nonexistent_permission']));
 	}

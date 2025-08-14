@@ -66,7 +66,7 @@ class UsersPermissionsTraitTest extends Unit {
 	 * @throws Throwable
 	 */
 	public function testHasPermissionWithOrLogic():void {
-		// ARRANGE: Grant some permissions to user
+		// ARRANGE: Grant permissions using grantPermission (should ADD if linkModels adds)
 		$this::assertTrue($this->testUser->grantPermission($this->testPermissions['basic']));
 		$this::assertTrue($this->testUser->grantPermission($this->testPermissions['advanced']));
 
@@ -99,7 +99,7 @@ class UsersPermissionsTraitTest extends Unit {
 	 * @throws Throwable
 	 */
 	public function testHasPermissionWithAndLogic():void {
-		// ARRANGE: Grant some permissions to user
+		// ARRANGE: Grant multiple permissions (now additive with linkModel fix)
 		$this::assertTrue($this->testUser->grantPermission($this->testPermissions['basic']));
 		$this::assertTrue($this->testUser->grantPermission($this->testPermissions['advanced']));
 
@@ -251,13 +251,13 @@ class UsersPermissionsTraitTest extends Unit {
 			'Should be able to grant permission by string name'
 		);
 
-		// ACT & ASSERT: Grant by ID
+		// ACT & ASSERT: Grant by ID (now adds to existing)
 		$this::assertTrue(
 			$this->testUser->grantPermission($this->testPermissions['advanced']->id),
 			'Should be able to grant permission by ID'
 		);
 
-		// ACT & ASSERT: Grant by object
+		// ACT & ASSERT: Grant by object (adds to existing)
 		$this::assertTrue(
 			$this->testUser->grantPermission($this->testPermissions['controller']),
 			'Should be able to grant permission by object'
@@ -269,7 +269,7 @@ class UsersPermissionsTraitTest extends Unit {
 		// ASSERT: User should now have more permissions than initially
 		static::assertGreaterThan($initialCount, count($this->testUser->relatedPermissions));
 
-		// ASSERT: Check that user actually has these permissions
+		// ASSERT: Check that user actually has all these permissions (additive behavior)
 		$this::assertTrue($this->testUser->hasPermission(['basic_permission_test']));
 		$this::assertTrue($this->testUser->hasPermission(['advanced_permission_test']));
 		$this::assertTrue($this->testUser->hasPermission(['controller:action:get_test']));
@@ -302,10 +302,11 @@ class UsersPermissionsTraitTest extends Unit {
 	 * @throws Throwable
 	 */
 	public function testRevokePermission():void {
-		// ARRANGE: Grant permissions first
+		// ARRANGE: Grant multiple permissions (now additive with linkModel fix)
 		$this::assertTrue($this->testUser->grantPermission($this->testPermissions['basic']));
 		$this::assertTrue($this->testUser->grantPermission($this->testPermissions['advanced']));
 		$this::assertTrue($this->testUser->hasPermission(['basic_permission_test']));
+		$this::assertTrue($this->testUser->hasPermission(['advanced_permission_test']));
 
 		// ACT & ASSERT: Revoke by string name
 		$this::assertTrue(
@@ -313,6 +314,7 @@ class UsersPermissionsTraitTest extends Unit {
 			'Should be able to revoke permission by string name'
 		);
 		$this::assertFalse($this->testUser->hasPermission(['basic_permission_test']));
+		$this::assertTrue($this->testUser->hasPermission(['advanced_permission_test']), 'Other permissions should remain');
 
 		// ACT & ASSERT: Revoke by object
 		$this::assertTrue(
