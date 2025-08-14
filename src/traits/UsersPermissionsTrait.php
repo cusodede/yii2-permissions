@@ -129,7 +129,7 @@ trait UsersPermissionsTrait {
 		} elseif (is_int($permission)) {
 			if (null === $permission = Permissions::findModel($permission)) return false;
 		}
-		$this->setRelatedPermissions($permission);
+		RelUsersToPermissions::linkModel($this, $permission);
 		$this->invalidateUserTag('Users::allPermissions');
 		return true;
 	}
@@ -230,6 +230,15 @@ trait UsersPermissionsTrait {
 	 */
 	public function isAllPermissionsGranted():bool {
 		return in_array($this->id, PermissionsModule::param(Permissions::GRANT_ALL, []), true);
+	}
+
+	/**
+	 * Вернуть всех пользователей с перегруженными доступами
+	 * @return ActiveQuery
+	 * @throws Throwable
+	 */
+	public function allGrantedUsers():ActiveQuery {
+		return $this::find()->where(['id' => $this->isAllPermissionsGranted()]);
 	}
 
 	/**
