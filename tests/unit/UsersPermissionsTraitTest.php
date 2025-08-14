@@ -6,7 +6,9 @@ use Codeception\Test\Unit;
 use cusodede\permissions\models\Permissions;
 use cusodede\permissions\models\PermissionsCollections;
 use Helper\Unit as UnitHelper;
+use yii\base\Action;
 use yii\db\Exception;
+use yii\web\Controller;
 
 /**
  * Comprehensive Unit Tests for UsersPermissionsTrait
@@ -520,37 +522,43 @@ class UsersPermissionsTraitTest extends Unit {
 
 	/**
 	 * Test hasActionPermission() functionality
-	 * Note: This test creates a mock Action object
+	 * Note: This test creates a proper mock Action object
 	 *
 	 * @return void
 	 * @throws Throwable
 	 */
 	public function testHasActionPermission():void {
-		// Create a simple action-like object
-		$mockAction = new class {
-			public $id = 'action';
-			public $controller;
+		// Create a proper mock Controller
+		$mockController = $this->createMock(Controller::class);
+		$mockController->id = 'test-controller';
+		$mockController->module = Yii::$app;
+		
+		// Create a proper mock Action
+		$mockAction = $this->createMock(Action::class);
+		$mockAction->id = 'action';
+		$mockAction->controller = $mockController;
 
-			public function __construct() {
-				$this->controller = new class {
-					public $id = 'test-controller';
-					public $module;
-
-					public function __construct() {
-						$this->module = Yii::$app;
-					}
-				};
-			}
-		};
-
-		// Grant permission
+		// Grant permission that matches the action
 		$this::assertTrue($this->testUser->grantPermission($this->testPermissions['controller']));
 
-		// This method requires the Action interface, so we'll test the underlying logic
-		// by testing hasControllerPermission directly
+		// ACT & ASSERT: Test hasActionPermission with mock action
 		$this::assertTrue(
-			$this->testUser->hasControllerPermission('test-controller', 'action', 'GET'),
-			'Should have controller permission that would allow action'
+			$this->testUser->hasActionPermission($mockAction),
+			'Should have permission for mock action when controller permission is granted'
+		);
+
+		// ACT & ASSERT: Test without permission (create different action)
+		$mockControllerOther = $this->createMock(Controller::class);
+		$mockControllerOther->id = 'other-controller';
+		$mockControllerOther->module = Yii::$app;
+		
+		$mockActionOther = $this->createMock(Action::class);
+		$mockActionOther->id = 'other-action';
+		$mockActionOther->controller = $mockControllerOther;
+
+		$this::assertFalse(
+			$this->testUser->hasActionPermission($mockActionOther),
+			'Should not have permission for different controller action'
 		);
 	}
 
