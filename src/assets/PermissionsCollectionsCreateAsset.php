@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace cusodede\permissions\assets;
 
 use yii\web\AssetBundle;
+use yii\web\JqueryAsset;
 
 /**
  * Class PermissionsCollectionsCreateAsset
@@ -20,7 +21,7 @@ class PermissionsCollectionsCreateAsset extends AssetBundle {
 			'js/create.js'
 		];
 		$this->depends = [
-			'yii\web\JqueryAsset'
+			JqueryAsset::class
 		];
 
 		parent::init();

@@ -8,7 +8,9 @@ namespace Helper;
 
 use app\models\Users;
 use Codeception\Module;
+use Codeception\TestInterface;
 use cusodede\permissions\commands\DefaultController;
+use JsonException;
 use yii\base\InvalidConfigException;
 use yii\db\Exception;
 use Yii;
@@ -17,6 +19,20 @@ use Yii;
  * Class Console
  */
 class Console extends Module {
+
+	/**
+	 * **HOOK** executed before test
+	 * @param TestInterface $test
+	 * @throws JsonException
+	 */
+	public function _before(TestInterface $test): void {
+		parent::_before($test);
+		
+		$this->debugSection("Cache", "Clear cache");
+		if (Yii::$app && Yii::$app->cache) {
+			Yii::$app->cache->flush();
+		}
+	}
 	/**
 	 * @return DefaultController
 	 * @throws InvalidConfigException

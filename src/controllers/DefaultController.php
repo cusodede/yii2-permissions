@@ -22,13 +22,13 @@ use yii\web\Response;
  */
 class DefaultController extends VendorDefaultController {
 
-	public const PERMISSION = 1;
-	public const PERMISSIONS_COLLECTION = 2;
+	public const int PERMISSION = 1;
+	public const int PERMISSIONS_COLLECTION = 2;
 
 	/**
 	 * Название контроллера
 	 */
-	protected const DEFAULT_TITLE = 'Сервис доступов';
+	protected const string DEFAULT_TITLE = 'Сервис доступов';
 
 	protected array $disabledActions = [
 		'actionCreate',
@@ -38,7 +38,7 @@ class DefaultController extends VendorDefaultController {
 		'actionEdit'
 	];
 
-	protected const ACTION_TITLES = [
+	protected const array ACTION_TITLES = [
 		'init-config-permissions' => 'Импорт из конфига',
 		'init-controllers-permissions' => 'Генерация доступов по контроллерам',
 	];

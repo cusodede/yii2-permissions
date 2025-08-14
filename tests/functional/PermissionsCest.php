@@ -30,7 +30,7 @@ class PermissionsCest {
 
 		$I->amLoggedInAs($user);
 		/*Фильтр должен отбрить*/
-		$I->amOnRoute('permissions/permissions/index');
+		$I->amOnRoute('/permissions/permissions/index');
 		$I->seeResponseCodeIs(403);
 
 		PermissionsModule::InitControllersPermissions('@app/controllers',
@@ -45,7 +45,7 @@ class PermissionsCest {
 		$user->setRelatedPermissions($generatedPermissions);
 		$user->save();
 		/*Фильтр должен пустить*/
-		$I->amOnRoute('permissions/permissions/index');
+		$I->amOnRoute('/permissions/permissions/index');
 		$I->seeResponseCodeIs(200);
 	}
 
@@ -56,7 +56,7 @@ class PermissionsCest {
 	 */
 	public function checkUnauthorizedUser(FunctionalTester $I):void {
 		Yii::$app->user->logout();
-		$I->amOnRoute('permissions/permissions/index');
+		$I->amOnRoute('/permissions/permissions/index');
 		$I->seeResponseCodeIs(403);
 	}
 
