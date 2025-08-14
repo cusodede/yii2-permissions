@@ -33,7 +33,7 @@ use yii\web\IdentityInterface;
 class PermissionsModule extends Module {
 	use ModuleTrait;
 
-	public const REGISTERED_CONTROLLERS_LIST = 'REGISTERED_CONTROLLERS_LIST';
+	public const string REGISTERED_CONTROLLERS_LIST = 'REGISTERED_CONTROLLERS_LIST';
 
 	public $controllerPath = '@vendor/cusodede/yii2-permissions/src/controllers';
 
@@ -44,7 +44,7 @@ class PermissionsModule extends Module {
 	 */
 	private static mixed $_cacheComponent = null;
 
-	public const VERBS = [
+	public const array VERBS = [
 		'GET' => 'GET',
 		'HEAD' => 'HEAD',
 		'POST' => 'POST',

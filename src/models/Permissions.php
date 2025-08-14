@@ -28,29 +28,29 @@ use yii\caching\TagDependency;
  */
 class Permissions extends PermissionsAR {
 	/*Любое из перечисленных прав*/
-	public const LOGIC_OR = 0;
+	public const int LOGIC_OR = 0;
 	/*Все перечисленные права*/
-	public const LOGIC_AND = 1;
+	public const int LOGIC_AND = 1;
 	/*Ни одно из перечисленных прав*/
-	public const LOGIC_NOT = 2;
+	public const int LOGIC_NOT = 2;
 
 	/*Минимальный/максимальный приоритет*/
-	public const PRIORITY_MIN = 0;
-	public const PRIORITY_MAX = 100;
+	public const int PRIORITY_MIN = 0;
+	public const int PRIORITY_MAX = 100;
 
 	/*Параметры разрешения, для которых пустой фильтр приравнивается к любому значению*/
-	public const ALLOWED_EMPTY_PARAMS = ['action', 'verb'];
+	public const array ALLOWED_EMPTY_PARAMS = ['action', 'verb'];
 
-	public const GRANT_ALL = 'grantAll';
-	public const CONTROLLER_DIRS = 'controllerDirs';
+	public const string GRANT_ALL = 'grantAll';
+	public const string CONTROLLER_DIRS = 'controllerDirs';
 	/*Название параметра с преднастроенными правилами доступов*/
-	public const CONFIGURATION_PERMISSIONS = 'permissions';
+	public const string CONFIGURATION_PERMISSIONS = 'permissions';
 	/*Перечисление назначений конфигураций через конфиги, id => ['...', '...']*/
-	public const GRANT_PERMISSIONS = 'grant';
+	public const string GRANT_PERMISSIONS = 'grant';
 
 	/*Флаги возможных проблем доступа */
-	public const WARN_NO_PATH = 0x1;//пермиссия отвечает за доступ к несуществующему контроллеру
-	public const WARN_NOT_USED = 0x2;//пермиссия не используется (ни напрямую, ни на коллекцию)
+	public const int WARN_NO_PATH = 0x1;//пермиссия отвечает за доступ к несуществующему контроллеру
+	public const int WARN_NOT_USED = 0x2;//пермиссия не используется (ни напрямую, ни на коллекцию)
 
 	/**
 	 * @inheritDoc
@@ -162,7 +162,7 @@ class Permissions extends PermissionsAR {
 	/**
 	 * При изменении права, нужно удалить кеши прав всем пользователям, у которых:
 	 *    - право назначено напрямую
-	 *    - право есть в  группе прав, назначенной пользователю
+	 *    - право есть в группе прав, назначенной пользователю
 	 * @inheritDoc
 	 */
 	public function afterSave($insert, $changedAttributes):void {
