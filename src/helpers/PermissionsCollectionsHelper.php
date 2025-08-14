@@ -15,6 +15,7 @@ class PermissionsCollectionsHelper {
 	 */
 	public static function getOptionsDataAttributes():array {
 		$optionsArray = [];
+		/** @var PermissionsCollections[] $permissionsCollections */
 		$permissionsCollections = PermissionsCollections::find()->all();
 		foreach ($permissionsCollections as $collection) {
 			$optionsArray[$collection->id] = [
