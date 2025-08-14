@@ -16,6 +16,6 @@ RUN php -r "unlink('composer-setup.php');"
 RUN mv composer.phar /usr/local/bin/composer
 RUN curl --remote-name --time-cond ./php/cacert.pem https://curl.se/ca/cacert.pem
 
-ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR /var/www
